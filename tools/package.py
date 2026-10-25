@@ -61,7 +61,16 @@ def bundle_files(root=ROOT):
         if path.is_file():
             if path.suffix in ('.sqlite3', '.db', '.pem', '.log') or path.name == '.env':
                 raise ValueError(f'Runtime/private state in package: {path}')
-            result[path.relative_to(root).as_posix()] = path.read_bytes()
+            data = path.read_bytes()
+            if path.name.lower().endswith(('.sdd-review.json', '.sdd-review-candidate.json')):
+                raise ValueError(f'Runtime review data in package: {path}')
+            # Runtime reports can be renamed or use JSON's supported encodings.
+            # Inspect the known format marker rather than trusting the extension.
+            try: value = json.loads(data)
+            except (ValueError, UnicodeError, RecursionError): value = None
+            if isinstance(value, dict) and value.get('kind') in ('sdd-review-report', 'sdd-review-candidate'):
+                raise ValueError(f'Runtime review data in package: {path}')
+            result[path.relative_to(root).as_posix()] = data
     for name in ROOT_FILES:
         if name not in result:
             raise ValueError(f'Missing package file: {name}')
@@ -104,6 +113,11 @@ def check_adapters(root, plugin):
         raise ValueError('Expected six agent targets and the shared target')
     aliases = set(registry['targets']) | {'all'}
     for target in registry['targets'].values():
+        if 'reads_shared' in target and not isinstance(target['reads_shared'], bool):
+            raise ValueError('Shared discovery capability must be boolean')
+        if 'command' in target and (not isinstance(target['command'], str)
+                or not re.fullmatch(r'[a-z][a-z0-9-]*', target['command'])):
+            raise ValueError('Agent command must be a plain executable name')
         if 'path' not in target or ('env' in target) != ('env_path' in target):
             raise ValueError('Agent target needs a path and paired environment override')
         for key in ('path', 'env_path'):

@@ -55,6 +55,14 @@ For every contract item, record:
 
 Existing tests count as evidence only for the behavior they actually assert. Test names, test counts, generated files, process exit code, and UI visibility do not by themselves prove business success.
 
+For broad error promises such as “any unknown value raises X”, inspect the actual
+accepted input domain and rejection path. Probe materially different invalid classes
+within that domain, including values the validation operation itself cannot handle;
+the wrong exception is a contract failure, not successful rejection. A green inherited
+suite or a change elsewhere does not verify unchanged mandatory error behavior. Do
+not invent new schema requirements: if the contract leaves the domain ambiguous,
+record that limit instead of silently narrowing “any” to the tested examples.
+
 ### 3. Verify the evidence
 
 Prefer current, reproducible evidence. Run safe, relevant checks when the user's request and repository rules permit them. Record the exact command and result; distinguish a fresh run from a historical report.

@@ -80,7 +80,7 @@ When a compatible grilling Skill is available and the user asks to use it, its c
 
 ### 4. Write the contract
 
-Follow the repository's established Spec location and format when it preserves the contract model. In a fresh repository with no established location, use the suite default `design/spec.md` unless the user names another destination, and record the choice in AGENTS.md so later runs stay consistent. Otherwise use [references/artifact-template.md](references/artifact-template.md).
+Follow the repository's established Spec location and format when it preserves the contract model. In a fresh repository with no established location, use the suite default `design/spec.md` unless the user names another destination, and record that verified Spec pointer in AGENTS.md within existing authority. Requirements owns this Spec pointer, not future Plan/Tasks/card locations; leave those to planning. Preserve existing rules and their approval conditions. Otherwise use [references/artifact-template.md](references/artifact-template.md).
 
 The contract must make these explicit, as applicable:
 

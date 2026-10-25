@@ -298,3 +298,18 @@ Record which cases actually ran, raw outputs, evaluator decisions and limits. Pa
 Use [project-view.md](project-view.md) for portable generation/update, provenance,
 next-action dependency ordering and status-only non-trigger cases. This evaluates
 a derived view, not approval, project completion or live architecture discovery.
+
+## Entry proportionality regression
+
+Use [forward/entry.md](forward/entry.md) with fresh independent actors. A clear
+local correction should finish under existing authority without manufacturing a
+lifecycle; a status-only request stays read-only; missing core domain semantics
+and a reserved Plan gate remain real stops even for small changes. Compare against
+the frozen old entry on identical bounded input, and do not infer benefit if both
+already behave correctly. Deterministic fixture checks do not establish this behavior.
+## R&D pilot task matrix
+
+Maintainer protocol: [forward/pilot.md](forward/pilot.md). Five synthetic tasks
+cover bounded repair, two-slice feature, explicit requirements revision, read-only
+review and stale-evidence resume. Inputs and evaluator-only probes are bundled;
+deterministic checks do not establish actor behavior or cross-host readiness.

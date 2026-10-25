@@ -196,3 +196,11 @@ blanket low-risk exemption. Record concrete added complexity and its owning risk
 - Selects sequence, state, class/protocol, data and deployment/trust views only when they clarify actual risks; procedural modules do not acquire fictitious classes.
 - Does not add business semantics, runtime services or a fixed diagram quota. Records justified omissions and consistent names/signatures across views.
 - Presents all selected Plan views and their review state on a requested board; the board copies source and does not invent missing design or approval.
+
+## Artifact source-of-truth map consistency
+
+Use [forward/layout.md](forward/layout.md) in fresh isolated actors when changing
+layout registration. Check actual artifacts against current project pointers in both
+default and custom layouts. A correct application with contradictory Plan/Tasks/card
+location instructions still has a finding; preserve any first-round miss and guided
+repair separately. Do not mistake a pointer/wording check for semantic behavior proof.

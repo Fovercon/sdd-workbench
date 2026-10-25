@@ -132,6 +132,14 @@ Order slices as a directed acyclic graph. Prefer an early tracer slice that cros
 
 Before implementing a slice, expand only that slice into a short-lived execution card. Include verified files and symbols, preconditions, the exact RED command, implementation constraints, focused and regression verification, and the evidence to report.
 
+Keep the project's source-of-truth map consistent with the actual artifacts: the
+stable Plan owns design; Tasks owns slices/dependencies and, for small work, the
+current card. A separate card follows its existing agreed pointer. Verify inherited
+or earlier agent-added location statements before using them. Within existing
+authority, consolidate a stale agent-added pointer instead of appending a second,
+contradictory convention. Preserve approved project rules and custom layouts; route
+any real policy change through its owner. Do not move cards into the Plan by prediction.
+
 Executable cards must not contain placeholders such as “handle errors”, “update related code”, or unresolved `TBD`s. Route unresolved product behavior back to the Spec and consequential design choices back to the Plan.
 
 Do not require a commit unless the user or repository workflow authorizes it.

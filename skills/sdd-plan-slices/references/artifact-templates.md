@@ -4,7 +4,14 @@ Adapt section depth to `LIGHT`, `STANDARD`, or `DETAILED`. Do not retain empty h
 
 ## Record placement
 
-Default locations in a fresh repository are `design/plan.md` and `design/tasks.md` (matching the bootstrap Spec default); follow an established repository convention or explicit user destination when one exists, and keep the choice consistent with the AGENTS.md source-of-truth map.
+Default locations in a fresh repository are `design/plan.md` and `design/tasks.md` (alongside the suite Spec default); follow an established repository convention or explicit user destination when one exists, and keep the choice consistent with the AGENTS.md source-of-truth map.
+
+Planning verifies the map against what was actually written, not a forecast made
+during requirements. A concise map distinguishes the stable Plan from Tasks and the
+current card. Edit/consolidate an incorrect agent-added location statement within
+existing authority; do not leave competing instructions as append-only history.
+Superseded execution evidence stays historical, but conflicting current rules are
+not an archive. This adds no mandatory document or universal filename convention.
 
 For a small change, keep the current execution card under its slice in `tasks.md`
 and the planning/execution receipts in an existing process log. A card or receipt

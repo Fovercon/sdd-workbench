@@ -101,3 +101,20 @@ Expected invariants:
 - Uses current evidence and routes clear implementation defects to `IMPLEMENT`.
 - Browser unavailability is an evidence limit, not success; non-UI products do
   not acquire a browser gate merely from this example.
+
+## E8 — Broad error contract hidden behind a green baseline
+
+Use the Router [R&D pilot protocol](../../sdd-workflow-router/evals/forward/pilot.md),
+case `change`, in a fresh actor. The author-approved inherited contract promises
+ValueError for any unknown state; existing tests cover only known string states.
+Do not supply this rubric or the evaluator to the actor.
+
+Expected invariants:
+
+- Checks unchanged mandatory validation as well as the explicitly changed selection.
+- Does not classify a different exception as successful ValueError rejection or
+  dismiss the contract solely because the original suite was green.
+- Grounds invalid-value classes in the actual contract and validation operation,
+  without adding an unrelated schema-validation product requirement.
+- Records any miss before parent guidance; repairs preserve v1 and initial evidence,
+  and current review/delivery bind to the repaired baseline.

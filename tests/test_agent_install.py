@@ -68,7 +68,8 @@ class AgentInstallTests(unittest.TestCase):
     def test_each_target_retains_upgrade_backup_and_rolls_back(self):
         self.assertEqual(self.cli('install','--source',str(self.source),'--agent','all').returncode,0)
         original = package.load(self.source/'plugin.json')['version']
-        package.bump_version('0.3.0',self.source)
+        major,minor,patch=map(int,original.split('-')[0].split('.'))
+        package.bump_version(f'{major}.{minor}.{patch+1}',self.source)
         with (self.source/'skills/sdd-code-review/SKILL.md').open('a') as f: f.write('\nFixture upgrade\n')
         result = self.cli('install','--source',str(self.source),'--agent','all')
         self.assertEqual(result.returncode,0,result.stderr)

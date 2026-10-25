@@ -1,12 +1,64 @@
 {
   "schema": 1,
   "targets": {
-    "codex": {"path": ".codex/skills", "env": "CODEX_HOME", "env_path": "skills", "aliases": []},
-    "hermes": {"path": ".hermes/skills", "env": "HERMES_HOME", "env_path": "skills", "aliases": ["hermes-agent"]},
-    "zcode": {"path": ".zcode/skills", "aliases": []},
-    "deepseek": {"path": ".dsh/skills", "env": "DSH_HOME", "env_path": "skills", "aliases": ["deepseek-harness", "dsh"]},
-    "opencode": {"path": ".config/opencode/skills", "env": "XDG_CONFIG_HOME", "env_path": "opencode/skills", "aliases": ["open-code"]},
-    "pi": {"path": ".pi/agent/skills", "env": "PI_CODING_AGENT_DIR", "env_path": "skills", "aliases": ["pi-agent"]},
-    "shared": {"path": ".agents/skills", "aliases": []}
+    "codex": {
+      "path": ".codex/skills",
+      "env": "CODEX_HOME",
+      "env_path": "skills",
+      "aliases": [],
+      "command": "codex",
+      "reads_shared": true
+    },
+    "hermes": {
+      "path": ".hermes/skills",
+      "env": "HERMES_HOME",
+      "env_path": "skills",
+      "aliases": [
+        "hermes-agent"
+      ],
+      "command": "hermes",
+      "reads_shared": false
+    },
+    "zcode": {
+      "path": ".zcode/skills",
+      "aliases": [],
+      "command": "zcode",
+      "reads_shared": false
+    },
+    "deepseek": {
+      "path": ".dsh/skills",
+      "env": "DSH_HOME",
+      "env_path": "skills",
+      "aliases": [
+        "deepseek-harness",
+        "dsh"
+      ],
+      "command": "dsh",
+      "reads_shared": true
+    },
+    "opencode": {
+      "path": ".config/opencode/skills",
+      "env": "XDG_CONFIG_HOME",
+      "env_path": "opencode/skills",
+      "aliases": [
+        "open-code"
+      ],
+      "command": "opencode",
+      "reads_shared": true
+    },
+    "pi": {
+      "path": ".pi/agent/skills",
+      "env": "PI_CODING_AGENT_DIR",
+      "env_path": "skills",
+      "aliases": [
+        "pi-agent"
+      ],
+      "command": "pi",
+      "reads_shared": true
+    },
+    "shared": {
+      "path": ".agents/skills",
+      "aliases": []
+    }
   }
 }

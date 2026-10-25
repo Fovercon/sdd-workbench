@@ -5,7 +5,7 @@
     {
       "name": "sdd-workbench",
       "source": "./",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "description": "Requirements, design, implementation, verification and delivery skills"
     }
   ]

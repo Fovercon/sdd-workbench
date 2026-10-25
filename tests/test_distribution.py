@@ -2,6 +2,7 @@
 import copy
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -43,6 +44,15 @@ class DistributionTests(unittest.TestCase):
         self.assertIn('skills/sdd-workflow-router/scripts/project_view_lib/vendor/mermaid-12.2.0.min.js.gz', files)
         self.assertTrue(all('05-notes' not in name and 'PPT' not in name for name in files))
 
+    def test_active_installation_examples_use_the_current_release(self):
+        version=package.load(ROOT/'plugin.json')['version']
+        for file in (ROOT/'README.md',ROOT/'docs/AGENT-COMPATIBILITY.md'):
+            text=file.read_text(encoding='utf-8')
+            pins=re.findall(r'sdd-workbench(?:/tree/|/releases/tag/|#|@)v(\d+\.\d+\.\d+)',text)
+            pins+=re.findall(r'(?:--ref|--branch|git checkout) v(\d+\.\d+\.\d+)',text)
+            self.assertTrue(pins,file)
+            self.assertEqual(set(pins),{version},file)
+
     def test_all_adapter_projections_and_complete_resources_are_packaged(self):
         _, _, files = package.check(self.source)
         for name in ('adapters/deepseek.mjs', 'agent-targets.json', 'cordis.patch.yml',
@@ -61,7 +71,9 @@ class DistributionTests(unittest.TestCase):
                      ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='../outside')),
                      ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='C:/outside')),
                      ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='..\\outside')),
-                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(aliases=['codex']))]
+                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(aliases=['codex'])),
+                     ('agent-targets.json', lambda v: v['targets']['pi'].update(reads_shared='yes')),
+                     ('agent-targets.json', lambda v: v['targets']['pi'].update(command='pi --version'))]
         for name, mutate in mutations:
             path = self.source / name; original = path.read_bytes()
             data = package.load(path); mutate(data); atomic_json(path, data)

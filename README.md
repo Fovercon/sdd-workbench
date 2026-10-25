@@ -4,6 +4,24 @@
 
 安装整套后，代理仍按当前工作选择主要 skill，无需一次加载全部流程。
 
+## 先从一个真实任务开始
+
+你可以直接在项目对话里说：
+
+> 用 SDD Workbench 修复这个局部问题：<现象>。正确行为依据是 <来源>。
+> 请实际完成修复和相应验证，保留我的其他修改，不要提交或发布。
+
+清楚的小改动不应强制生成整套文档；业务含义不明、数据/安全风险或你保留的审批仍需先处理。
+只想问进度就明确说“只报告，不修改”；要新功能则先提供使用者、目标和已知约束。
+[第一次使用](docs/QUICKSTART.md)包含常见任务、预期结果和卡住时的处理方式。
+
+安装异常时，在完整源码或 Release ZIP 目录运行 `python3 -B tools/doctor.py --agent all`。
+这条只读命令检查技能副本、内容差异和安装回执；[诊断说明](docs/DOCTOR.md)解释结果与自定义入口。
+
+**推广状态**：当前是有明确验证边界的套件，不是六平台业务认证或公司全面推广批准。
+[不足清单与框架对比](docs/optimization/BASELINE-REVIEW.md)、[优化计划](docs/optimization/PLAN.md)
+和[独立 agents / 专家审查包](docs/optimization/REVIEW-KIT.md)公开记录待解决问题与验证方法。
+
 ## 安装
 
 ### 六平台代理共用一套 skills
@@ -11,7 +29,7 @@
 推荐在终端执行这一行（需要 Node.js 20+ 和 Git）：
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 此命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)，将全部 12 个 skills
@@ -24,12 +42,12 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 
 | 平台 | 一行安装命令 |
 |---|---|
-| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a codex -y` |
-| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a hermes-agent -y` |
-| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a zcode -y` |
-| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.2.1'` |
-| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a opencode -y` |
-| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.2.1` |
+| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a codex -y` |
+| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a hermes-agent -y` |
+| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a zcode -y` |
+| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.3.0'` |
+| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a opencode -y` |
+| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.3.0` |
 
 原生插件仍读取仓库中的同一个 `skills/`，不维护平台专用指令副本。DeepSeek 命令中的
 `cli` 是 profile 名，可换成实际使用的 profile；需要 Harness 0.2.1-rc.2。
@@ -41,7 +59,7 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 支持插件命令的 Codex 客户端也可执行：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.2.1 && codex plugin add sdd-workbench@sdd-workbench
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.3.0 && codex plugin add sdd-workbench@sdd-workbench
 ```
 
 ZCode 可在 Settings → Plugins → Create marketplace 中填写
@@ -54,14 +72,14 @@ ZCode 可在 Settings → Plugins → Create marketplace 中填写
 需要 Python 3.10+ 和 Git；安装器无第三方依赖，支持 macOS、Linux、Windows：
 
 ```sh
-git clone --branch v0.2.1 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.3.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
 python3 tools/install.py install --agent all
 ```
 
 `all` 为六个平台各安装一份受回执管理的完整副本；若希望只有一个公共目录，使用
 `--agent shared`，并按兼容说明配置 Hermes、ZCode 的入口。也可以下载
-[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.2.1)，解压后运行安装器。
+[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.3.0)，解压后运行安装器。
 Windows 可将 `python3` 替换为 `python`。
 
 可指定 `--agent codex hermes zcode deepseek opencode pi` 中的一个或多个。
@@ -72,6 +90,12 @@ Windows 可将 `python3` 替换为 `python`。
 安装器会保护无关 skills 和用户编辑。旧的同名内容不同时停止；显式使用 `--adopt`
 可先备份再迁移。回执和备份位于各目标旁的 `.sdd-workbench/`，请保留。
 同一目录选择一种安装管理方式；Vercel CLI 与原生插件不使用 Python 的回执和备份。
+
+v0.3.0 起提供写入前预览：`python3 -B tools/install.py install --agent all --dry-run`。
+它列出逐技能差异与阻塞，不创建锁或备份；已发布 v0.2.1 的工具尚无此参数。
+更新、回退、中断恢复和维护者交接的完整路径见[安装维护指南](docs/OPERATIONS.md)。
+需要多名 agents/专家跨版本审查时，可用 v0.3.0 新增的[反馈校验工具](docs/REVIEW-FEEDBACK.md)
+固定来源、关联复验并保留争议；普通任务无需额外填写报告。
 
 ## 开始使用
 
@@ -112,7 +136,7 @@ Windows 可将 `python3` 替换为 `python`。
 
 ```sh
 git fetch --tags origin
-git checkout v0.2.1
+git checkout v0.3.0
 python3 tools/install.py install --agent all
 python3 tools/install.py status --agent all
 ```

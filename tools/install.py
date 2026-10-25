@@ -6,11 +6,13 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
+sys.dont_write_bytecode = True
 import uuid
 
-from package import ROOT, check, load, tree_hashes, valid_name
+from package import ROOT, VERSION, check, digest, load, tree_hashes, valid_name
 
 
 def target_directories(selected=None, home=None, environ=None):
@@ -48,6 +50,25 @@ def exists(path):
 
 def fingerprints(path):
     return tree_hashes(path) if exists(path) else None
+
+
+def valid_tree_record(value):
+    return isinstance(value, dict) and all(
+        isinstance(path, str) and bool(path) and isinstance(sha, str)
+        and re.fullmatch(r'[0-9a-f]{64}', sha) is not None for path, sha in value.items())
+
+
+def valid_journal(value, destination):
+    return (isinstance(value, dict) and value.get('schema') == 1
+            and value.get('destination') == str(destination)
+            and isinstance(value.get('transaction_id'), str) and value['transaction_id'].isalnum()
+            and isinstance(value.get('before_hashes'), dict) and isinstance(value.get('after_hashes'), dict)
+            and set(value['before_hashes']) == set(value['after_hashes'])
+            and all(valid_name(name) for name in value['before_hashes'])
+            and all(v is None or valid_tree_record(v)
+                    for records in (value['before_hashes'], value['after_hashes']) for v in records.values())
+            and all(key in value and (value[key] is None or isinstance(value[key], dict))
+                    for key in ('before_receipt', 'after_receipt')))
 
 
 def remove_tree(path):
@@ -91,13 +112,18 @@ class Installation:
                 else: fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
     def receipt(self):
-        if not self.receipt_path.exists(): return None
         if self.receipt_path.is_symlink(): raise ValueError('Receipt cannot be a symlink')
+        if not self.receipt_path.exists(): return None
         value = load(self.receipt_path)
-        if value.get('schema') != 1 or value.get('destination') != str(self.dest) or not isinstance(value.get('skills'), dict):
+        if (not isinstance(value, dict) or value.get('schema') != 1
+                or value.get('destination') != str(self.dest) or not isinstance(value.get('skills'), dict)
+                or value.get('name') != 'sdd-workbench' or not isinstance(value.get('version'), str)
+                or not VERSION.fullmatch(value['version'])):
             raise ValueError('Installation receipt belongs to another destination or schema')
         if any(not valid_name(name) for name in value['skills']):
             raise ValueError('Invalid skill ownership in receipt')
+        if not all(valid_tree_record(record) for record in value['skills'].values()):
+            raise ValueError('Invalid skill fingerprints in receipt')
         if not isinstance(value.get('transaction_id'), str) or not value['transaction_id'].isalnum():
             raise ValueError('Invalid backup identity in receipt')
         return value
@@ -109,14 +135,14 @@ class Installation:
             raise ValueError('Locally modified managed skills; preserve or explicitly --force with a backup: ' + ', '.join(changed))
 
     def ensure_idle(self):
-        if self.journal_path.exists():
+        if exists(self.journal_path):
             raise ValueError('An interrupted operation exists; run recover before installing or rolling back')
 
     def status(self):
         value = self.receipt()
         return {'installed': bool(value), 'version': value['version'] if value else None,
                 'destination': str(self.dest), 'state': str(self.state),
-                'pending_recovery': self.journal_path.exists(),
+                'pending_recovery': exists(self.journal_path),
                 'changed': [name for name, expected in value['skills'].items()
                             if fingerprints(self.dest / name) != expected] if value else []}
 
@@ -207,14 +233,54 @@ class Installation:
             raise ValueError('Existing skills differ; use --adopt to back up and migrate them: ' + ', '.join(unmanaged))
         return plugin, source, before, expected
 
+    def preview(self, source=ROOT, adopt=False, force=False):
+        """Observe the same preflight and actual trees without a lock or any writes."""
+        plugin, suite, _files = check(Path(source))
+        before = self.receipt()
+        expected = {name: tree_hashes(Path(source)/'skills'/name) for name in suite['skills']}
+        blocked = None
+        try: self.preflight(source, adopt, force)
+        except (OSError, ValueError, KeyError, TypeError) as error: blocked = str(error)
+        recorded = before['skills'] if before else {}
+        current, errors = {}, {}
+        for name in sorted(set(expected) | set(recorded)):
+            try: current[name] = fingerprints(self.dest/name)
+            except (OSError, ValueError) as error:
+                current[name] = None; errors[name] = str(error)
+        requires = (not before or before['version'] != plugin['version'] or recorded != expected
+                    or bool(errors) or any(current[n] != expected[n] for n in expected))
+        rows = []
+        for name, actual in current.items():
+            wanted = expected.get(name)
+            owned = name in recorded
+            if name in errors: action = 'UNREADABLE'
+            elif not requires: action = 'UNCHANGED'
+            elif wanted is None: action = 'REMOVE'
+            elif actual is None: action = 'INSTALL'
+            elif not owned: action = 'ADOPT_IDENTICAL' if actual == wanted else 'ADOPT'
+            elif actual == wanted: action = 'REINSTALL'
+            else: action = 'REPLACE'
+            actual_files, wanted_files = actual or {}, wanted or {}
+            rows.append({'name':name, 'path':str(self.dest/name), 'action':action,
+                         'managed_before':owned, 'locally_modified':owned and actual != recorded[name],
+                         'current_sha256':digest(json.dumps(actual,sort_keys=True).encode()) if actual is not None else None,
+                         'source_sha256':digest(json.dumps(wanted,sort_keys=True).encode()) if wanted is not None else None,
+                         'files':None if name in errors else {
+                             'added':sorted(set(wanted_files)-set(actual_files)),
+                             'removed':sorted(set(actual_files)-set(wanted_files)),
+                             'changed':sorted(n for n in set(actual_files)&set(wanted_files) if actual_files[n] != wanted_files[n])},
+                         'inspection_error':errors.get(name)})
+        return {'eligible':blocked is None and not errors, 'destination':str(self.dest), 'state':str(self.state),
+                'current_version':before['version'] if before else None, 'target_version':plugin['version'],
+                'requires_transaction':bool(requires), 'options':{'force':force,'adopt':adopt},
+                'blocked_reason':blocked or ('Unreadable skill directories' if errors else None), 'skills':rows}
+
     def recover(self):
         with self.locked():
-            if not self.journal_path.exists(): return {'recovered': False}
             if self.journal_path.is_symlink(): raise ValueError('Journal cannot be a symlink')
+            if not self.journal_path.exists(): return {'recovered': False}
             journal = load(self.journal_path)
-            if (journal.get('schema') != 1 or journal.get('destination') != str(self.dest)
-                    or not isinstance(journal.get('transaction_id'), str) or not journal['transaction_id'].isalnum()
-                    or any(not valid_name(name) for name in journal.get('before_hashes', {}))):
+            if not valid_journal(journal, self.dest):
                 raise ValueError('Invalid recovery journal')
             tx = self.state / 'transactions' / journal['transaction_id']
             if load(tx / 'transaction.json') != journal:
@@ -240,7 +306,9 @@ class Installation:
             self.clean(before, force)
             tx = self.state / 'transactions' / before['transaction_id']
             journal = load(tx / 'transaction.json')
-            if journal.get('after_receipt') != before: raise ValueError('Backup receipt changed')
+            if (not valid_journal(journal, self.dest) or journal['transaction_id'] != before['transaction_id']
+                    or journal['after_receipt'] != before):
+                raise ValueError('Invalid or changed rollback transaction')
             targets = {}
             for name, expected in journal['before_hashes'].items():
                 source = tx / 'before' / name
@@ -261,6 +329,7 @@ def main():
         if command == 'install':
             p.add_argument('--source', type=Path, default=ROOT)
             p.add_argument('--adopt', action='store_true', help='Back up and migrate pre-existing different skills')
+            p.add_argument('--dry-run', action='store_true', help='Read-only per-target/skill preview; creates no lock or backup')
         if command in ('install', 'rollback'):
             p.add_argument('--force', action='store_true', help='Back up and replace locally modified managed skills')
     args = parser.parse_args()
@@ -268,6 +337,22 @@ def main():
         targets = target_directories(args.agent, args.home)
         if (args.dest or args.state) and len(targets) != 1:
             raise ValueError('--dest/--state requires exactly one agent target')
+        if args.command == 'install' and args.dry_run:
+            plugin, _suite, files = check(args.source)
+            plans = {}
+            for name, dest in targets.items():
+                try:
+                    plans[name] = Installation(args.dest or dest, args.state).preview(args.source,args.adopt,args.force)
+                except (OSError, ValueError, KeyError, TypeError) as error:
+                    plans[name] = {'eligible':False, 'destination':str(args.dest or dest),
+                                   'blocked_reason':str(error), 'skills':[]}
+            eligible = all(p['eligible'] for p in plans.values())
+            print(json.dumps({'schema':1, 'operation':'INSTALL_PREVIEW', 'read_only':True,
+                              'advisory':True, 'eligible':eligible, 'source':{
+                                  'path':str(args.source.resolve()), 'declared_version':plugin['version'],
+                                  'package_sha256':digest(json.dumps({n:digest(d) for n,d in files.items()},sort_keys=True).encode())},
+                              'agents':plans},ensure_ascii=False,indent=2))
+            return 0 if eligible else 1
         installations = [(name, Installation(args.dest or dest, args.state)) for name, dest in targets.items()]
         if args.command == 'install':
             # Detect known conflicts across all selected targets before the first

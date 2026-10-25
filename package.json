@@ -1,6 +1,6 @@
 {
   "name": "sdd-workbench",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "description": "One SDD skill suite for Codex, Hermes, ZCode, DeepSeek Harness, OpenCode and Pi.",
   "main": "./adapters/deepseek.mjs",

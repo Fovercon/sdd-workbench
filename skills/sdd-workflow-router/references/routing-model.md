@@ -90,6 +90,12 @@ Agent-rule absence is not automatically a hard stop when higher-level instructio
 
 ## 6. Normal route selection
 
+For a concrete diff, commit range, PR or code-area engineering review, use
+`sdd-code-review` when no approved specification governs that subject. When a
+Spec/convergence baseline does govern it, use `sdd-converge-review`. Choosing the
+route is diagnostic, not execution of either review. A directly selected applicable
+stage needs no routing interposition.
+
 Walk from the earliest relevant gate:
 
 1. A durable project baseline is required and Agent rules are missing/stale/conflicted -> `sdd-project-bootstrap`.
@@ -251,3 +257,63 @@ A good route record can answer:
 - What single later route follows if that result succeeds?
 
 The route is weak if it recommends several Skills in parallel without dependency reasoning, reports the whole project as a single stage despite mixed scopes, or uses an artifact inventory as proof of readiness.
+
+## 10. Diagnostic procedure and result meanings
+
+This procedure applies to ENTRY, STATUS, AFTER_OUTCOME and REROUTE, not a visibly
+applicable direct task or an explicitly requested VIEW. Inspect relevant instructions,
+user decisions, contracts, workspace and evidence. Identify a bounded subject; if
+multiple efforts cannot be distinguished, request the smallest identifying fact.
+
+Build only the applicable state map: Agent rules, requirements, design, current
+slice/tasks, verification, implementation, convergence, Finish, context freshness
+and change propagation. Use §4 states; missing facts stay UNKNOWN. Do not search
+for every possible artifact or infer earlier approval from later files.
+
+Apply §7 exception precedence before §6's earliest unsatisfied relevant gate:
+identity/context; affected approved baselines; a real human gate; unavailable domain
+evaluation; then lifecycle selection. Diagnose one owner/objective/stop condition,
+with at most one later route when it follows deterministically. When two routes
+remain plausible, identify which missing contract fact would decide between them.
+Do not provide a menu just to avoid a decision.
+
+In AFTER_OUTCOME, verify the named result and cited baseline before using §8.
+Spec AUTHORIZED_DERIVATION and delegated Plan bases retain their exact meanings
+and are valid only under RUN's authority conditions. A finished slice closes only
+that slice. CONVERGED permits Finish assessment, not delivery. REVIEW_COMPLETE
+provides findings, not repair authority: a separate explicit repair request may
+already supply that authority and should be consumed after leaving read-only review,
+without asking for it again. IMPACT_READY does not authorize contract mutation;
+RESUME_READY restores context, not action permission.
+
+| Diagnostic outcome | Meaning |
+|---|---|
+| `NEXT_STEP_READY` | One primary skill, HUMAN_GATE or bounded PROJECT_ACTION is supported; a recommendation, not execution approval. Use HUMAN_GATE when exact subject/version, owner and requested approval are known. |
+| `HUMAN_DECISION_REQUIRED` | An unresolved intent, authority, risk or target choice prevents selecting one truthful next route. |
+| `RECONCILIATION_REQUIRED` | Observable baseline, ownership or source conflict must be reconciled first. |
+| `INSUFFICIENT_CONTEXT` | Work identity or material evidence cannot be established. |
+| `NO_ROUTING_NEEDED` | A clear applicable workflow/direct task already owns the request, or SDD routing is unnecessary. This creates no new authority. |
+
+Validate the route against current primary evidence, the owner's trigger and
+prerequisites, existing authority, the exact unresolved question and an observable
+end to the next step. In RUN the controller uses the same evidence selection, then
+continues authorized work under closed-loop-model; diagnostic stopping restrictions
+do not terminate the mission.
+
+## 11. Detailed diagnostic record
+
+Keep these facts in context or an existing project record, using the template only
+when useful. A normal reply explains user-visible results, actual verification,
+artifact paths/approval bases, unfinished work and next action; it need not dump
+this inventory. An explicitly requested audit receives the full record.
+
+1. outcome, operation, bounded subject and evidence timestamp;
+2. existing authorization and applicable instructions;
+3. authoritative baseline and relevant gate states;
+4. trigger classification and precedence reason;
+5. one primary route, owner, required inputs, objective and stop condition;
+6. blockers, real human questions, stale evidence or conflicts;
+7. one later route only if it follows deterministically.
+
+Use established record locations; do not invent a permanent workflow-state directory.
+No presentation shortcut removes a gate, actual question, evidence or authority check.
