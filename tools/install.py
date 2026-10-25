@@ -351,7 +351,7 @@ def main():
                               'advisory':True, 'eligible':eligible, 'source':{
                                   'path':str(args.source.resolve()), 'declared_version':plugin['version'],
                                   'package_sha256':digest(json.dumps({n:digest(d) for n,d in files.items()},sort_keys=True).encode())},
-                              'agents':plans},ensure_ascii=False,indent=2))
+                              'agents':plans},ensure_ascii=True,indent=2))
             return 0 if eligible else 1
         installations = [(name, Installation(args.dest or dest, args.state)) for name, dest in targets.items()]
         if args.command == 'install':
@@ -368,11 +368,11 @@ def main():
                 else: value = installation.status()
             except (OSError, ValueError, KeyError, TypeError) as error:
                 if completed:
-                    print(json.dumps({'completed': completed, 'failed_agent': name, 'error': str(error)}, ensure_ascii=False))
+                    print(json.dumps({'completed': completed, 'failed_agent': name, 'error': str(error)}, ensure_ascii=True))
                 raise
             completed[name] = value
         result = next(iter(completed.values())) if args.agent is None else {'agents': completed}
-        print(json.dumps(result, ensure_ascii=False, indent=2)); return 0
+        print(json.dumps(result, ensure_ascii=True, indent=2)); return 0
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(str(error), file=sys.stderr); return 1
 

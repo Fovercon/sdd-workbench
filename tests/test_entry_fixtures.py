@@ -51,7 +51,7 @@ class EntryFixtures(unittest.TestCase):
         project=self.base/'project';receipt=self.base/'receipt.json'
         result=subprocess.run([sys.executable,'-B',str(ENTRY),'--case','bounded','--output',str(project),'--receipt',str(receipt)],capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
-        value=json.loads(receipt.read_text())
+        value=json.loads(receipt.read_text(encoding='utf-8'))
         for name,sha in value['inputs'].items():self.assertEqual(hashlib.sha256((project/name).read_bytes()).hexdigest(),sha)
         invalid=self.base/'invalid'
         result=subprocess.run([sys.executable,'-B',str(ENTRY),'--case','status','--output',str(invalid),'--receipt',str(invalid/'answers.json')],capture_output=True,text=True)
@@ -59,8 +59,8 @@ class EntryFixtures(unittest.TestCase):
         self.assertFalse(invalid.exists())
 
     def test_entry_outcome_vocabulary_matches_diagnostic_reference(self):
-        entry=(ROOT/'skills/sdd-workflow-router/SKILL.md').read_text()
-        model=(ROOT/'skills/sdd-workflow-router/references/routing-model.md').read_text()
+        entry=(ROOT/'skills/sdd-workflow-router/SKILL.md').read_text(encoding='utf-8')
+        model=(ROOT/'skills/sdd-workflow-router/references/routing-model.md').read_text(encoding='utf-8')
         entry_section=entry.split('For diagnostics return one of ')[1].split('; use their')[0]
         model_section=model.split('## 10. Diagnostic procedure')[1].split('## 11.')[0]
         public=set(re.findall(r'`([A-Z_]+)`',entry_section))
@@ -78,7 +78,7 @@ class EntryFixtures(unittest.TestCase):
                ROOT/'skills/sdd-plan-slices/evals/forward/layout.md']
         checked=0
         for file in files:
-            for ref in re.findall(r'(?<!!)\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)',file.read_text()):
+            for ref in re.findall(r'(?<!!)\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)',file.read_text(encoding='utf-8')):
                 if '://' in ref or ref.startswith('#'):continue
                 target=ref.split('#')[0]
                 self.assertTrue((file.parent/target).exists(),(file,ref));checked+=1

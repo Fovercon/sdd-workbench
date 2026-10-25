@@ -219,9 +219,9 @@ def main(argv=None):
             if args.command=='snapshot':result=current
             elif args.command=='new':result=new_report(current,args.id,args.reviewer,args.kind)
             else:result=check_reports(current,args.report)
-        print(json.dumps(result,ensure_ascii=False,indent=2));return 0
+        print(json.dumps(result,ensure_ascii=True,indent=2));return 0
     except (OSError,ValueError,KeyError,TypeError,AttributeError,RecursionError) as error:
-        print(json.dumps({'schema':1,'validation':'INVALID','error':str(error)},ensure_ascii=False));return 2
+        print(json.dumps({'schema':1,'validation':'INVALID','error':str(error)},ensure_ascii=True));return 2
 
 
 if __name__=='__main__':sys.exit(main())

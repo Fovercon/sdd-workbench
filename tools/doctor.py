@@ -182,13 +182,15 @@ def main(argv=None):
     parser.add_argument('--source',type=Path,default=ROOT,help='Exact comparison source; not an internet version lookup')
     parser.add_argument('--json',action='store_true',help='Machine-readable report')
     args = parser.parse_args(argv)
+    if not args.json and hasattr(sys.stdout,'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
     try:
         report = diagnose(args.agent,args.home,args.dest,args.state,args.source)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, RuntimeError) as error:
-        if args.json: print(json.dumps({'schema':1,'summary':'DIAGNOSTIC_FAILED','error':str(error)},ensure_ascii=False))
+        if args.json: print(json.dumps({'schema':1,'summary':'DIAGNOSTIC_FAILED','error':str(error)},ensure_ascii=True))
         else: print('无法完成只读诊断：'+str(error),file=sys.stderr)
         return 2
-    print(json.dumps(report,ensure_ascii=False,indent=2) if args.json else render(report),end='\n' if args.json else '')
+    print(json.dumps(report,ensure_ascii=True,indent=2) if args.json else render(report),end='\n' if args.json else '')
     return 1 if report['issues'] else 0
 
 
