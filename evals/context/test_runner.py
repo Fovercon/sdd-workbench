@@ -16,7 +16,7 @@ class RunnerTests(unittest.TestCase):
     def test_timeout_is_not_success_and_metadata_records_no_sandbox(self):
         with patch('run_pi.shutil.which',return_value='/synthetic/pi'),patch('run_pi.subprocess.run',side_effect=subprocess.TimeoutExpired('synthetic',1)):
             self.assertEqual(run(self.root,timeout=1)['exit_code'],'TIMEOUT')
-        self.assertEqual(json.loads((self.root/'invocation.json').read_text())['permissions'],'instruction scoped, no OS sandbox')
+        self.assertEqual(json.loads((self.root/'invocation.json').read_text(encoding='utf-8'))['permissions'],'instruction scoped, no OS sandbox')
     def test_missing_native_executable_does_not_create_logs(self):
         with patch('run_pi.shutil.which',return_value=None),self.assertRaises(ValueError):run(self.root)
         self.assertFalse((self.root/'events.jsonl').exists())

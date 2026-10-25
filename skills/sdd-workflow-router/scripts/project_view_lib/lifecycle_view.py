@@ -142,9 +142,9 @@ def render(snapshot, items, previous_href=None):
     if common:
         content.append('<details class="stage-common"><summary>项目补充记录</summary>'
                        + stage_content(None, common, items, snapshot) + '</details>')
-    css = (HERE / 'styles.css').read_text() + '\n' + (HERE / 'lifecycle.css').read_text() + '\n' + (HERE / 'workspace.css').read_text()
+    css = (HERE / 'styles.css').read_text(encoding='utf-8') + '\n' + (HERE / 'lifecycle.css').read_text(encoding='utf-8') + '\n' + (HERE / 'workspace.css').read_text(encoding='utf-8')
     if enriched:
-        css += '\n' + (HERE / 'workstream.css').read_text()
+        css += '\n' + (HERE / 'workstream.css').read_text(encoding='utf-8')
     script = board_script(items)
     script_hash = base64.b64encode(hashlib.sha256(script.encode()).digest()).decode()
     stage_title = '当前阶段需核对' if source_uncertain else '当前阶段'

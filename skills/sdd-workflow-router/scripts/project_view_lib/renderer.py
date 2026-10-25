@@ -87,14 +87,14 @@ def design_render(item, technical=False):
 
 
 def board_script(items):
-    script = (HERE / 'interaction.js').read_text()
+    script = (HERE / 'interaction.js').read_text(encoding='utf-8')
     if any(i['state'] == 'PENDING_HUMAN' or 'decision' in i for i in items):
-        script += '\n' + (HERE / 'decision_interaction.js').read_text()
-        script += '\n' + (HERE / 'live_feedback.js').read_text()
+        script += '\n' + (HERE / 'decision_interaction.js').read_text(encoding='utf-8')
+        script += '\n' + (HERE / 'live_feedback.js').read_text(encoding='utf-8')
     if any(i['view'] == 'design' for i in items):
-        script += '\n/* Mermaid 12.2.0\n' + (HERE / 'vendor/MERMAID-LICENSE').read_text() + '\n*/\n'
+        script += '\n/* Mermaid 12.2.0\n' + (HERE / 'vendor/MERMAID-LICENSE').read_text(encoding='utf-8') + '\n*/\n'
         script += '\n' + gzip.decompress((HERE / 'vendor/mermaid-12.2.0.min.js.gz').read_bytes()).decode()
-        script += '\n' + (HERE / 'design_interaction.js').read_text()
+        script += '\n' + (HERE / 'design_interaction.js').read_text(encoding='utf-8')
     # HTML parsing happens before JavaScript; contract labels cannot close a script.
     return re.sub(r'</script', r'<\\/script', script, flags=re.I)
 
@@ -299,7 +299,7 @@ def render(snapshot, items, previous_href=None):
     impact_section=f'<section class="impact"><h2>这次变更影响哪里</h2>{impact}</section>' if impacts else ''
     controls='<a href="view.md">文字版</a>' + (f'<a href="{esc(previous_href)}">上一版 ↗</a>' if previous_href else '')
     primary_button=selectable(primary,'查看详情 <span aria-hidden="true">→</span>','primary-action') if primary else ''
-    css=(HERE/'styles.css').read_text() + '\n' + (HERE/'workspace.css').read_text();script=board_script(items)
+    css=(HERE/'styles.css').read_text(encoding='utf-8') + '\n' + (HERE/'workspace.css').read_text(encoding='utf-8');script=board_script(items)
     script_hash=base64.b64encode(hashlib.sha256(script.encode()).digest()).decode()
     checked=snapshot.get('checked_at','本次生成时')
     document=f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

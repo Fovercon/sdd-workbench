@@ -1,6 +1,8 @@
 from pathlib import Path
 import hashlib,json,shutil,subprocess,sys,tempfile,unittest
+from unittest.mock import patch
 from evaluate_view import evaluate,ROOT
+from project_view_lib import renderer,evidence
 
 class EvaluatorTests(unittest.TestCase):
     def setUp(self):
@@ -21,3 +23,20 @@ class EvaluatorTests(unittest.TestCase):
     def test_changed_bundle_does_not_pass_with_rewritten_observations(self):
         out=self.render(False);(out/'index.html').write_text('changed',encoding='utf-8')
         with self.assertRaises(ValueError):evaluate(self.run)
+    def test_renderer_and_evaluator_ignore_non_utf8_host_file_default(self):
+        original=Path.read_text
+        def windows_default(path,encoding=None,errors=None):
+            return original(path,encoding=encoding or 'cp1252',errors=errors)
+        data={'checked_at':'2026-10-26','project_id':'unicode','title':'中文看板','scope':'合成输入','captured_at':'2026-10-26','items':[
+            {'id':'align','label':'需求澄清','state':'UNKNOWN','kind':'assessment','view':'progress','stage':'Align','note':'中文说明','next':'阅读来源','work':{'type':'brief','in_scope':['演示'],'out_of_scope':['批准']}}]}
+        items=evidence.inspect(self.project,data)
+        plain=renderer.render(data,items)
+        data['lifecycle']={'current_stage':'Align','stage_items':{'Align':'align'}}
+        staged=renderer.render(data,items)
+        scripts=renderer.board_script([{'state':'PENDING_HUMAN','view':'design'}])
+        self.render(True)
+        with patch.object(Path,'read_text',windows_default):
+            self.assertEqual(renderer.render(data,items),staged)
+            del data['lifecycle'];self.assertEqual(renderer.render(data,items),plain)
+            self.assertEqual(renderer.board_script([{'state':'PENDING_HUMAN','view':'design'}]),scripts)
+            self.assertEqual(evaluate(self.run)['automated_quality'],'FAIL')

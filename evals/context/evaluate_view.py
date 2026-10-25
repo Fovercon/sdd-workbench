@@ -8,7 +8,7 @@ from project_view_lib import evidence
 
 
 def evaluate(run):
-    run=Path(run).resolve();project=run/'project';original=json.loads((run/'input-receipt.json').read_text());errors=[]
+    run=Path(run).resolve();project=run/'project';original=json.loads((run/'input-receipt.json').read_text(encoding='utf-8'));errors=[]
     unchanged=all((project/p).is_file()and not(project/p).is_symlink()and hashlib.sha256((project/p).read_bytes()).hexdigest()==h for p,h in original['project'].items())
     if not unchanged:errors.append('Original input changed')
     runtime=run/'runtime/sdd-workflow-router'
@@ -18,14 +18,14 @@ def evaluate(run):
     if not versions:raise ValueError('No completed renderer output')
     parents=set();receipts={}
     for p in versions:
-        previous_version(p);r=json.loads((p/'receipt.json').read_text());receipts[p]=r
+        previous_version(p);r=json.loads((p/'receipt.json').read_text(encoding='utf-8'));receipts[p]=r
         if r['previous']:
             parent=Path(r['previous']['path']).resolve();parents.add(parent);previous_version(parent)
             if hashlib.sha256((parent/'receipt.json').read_bytes()).hexdigest()!=r['previous']['receipt_sha256']:errors.append('Previous receipt changed')
     tips=[p for p in versions if p.resolve()not in parents]
     if len(tips)!=1:errors.append('Multiple disconnected final views; manual selection required')
     latest=tips[0]if len(tips)==1 else max(versions,key=lambda p:receipts[p]['generated_at'])
-    data=json.loads((latest/'snapshot.json').read_text());validate(data);items=evidence.inspect(project,data)
+    data=json.loads((latest/'snapshot.json').read_text(encoding='utf-8'));validate(data);items=evidence.inspect(project,data)
     roles={}
     for i in items:
         if 'stage_detail'in i:roles.setdefault(i['stage_detail']['type'],[]).append(i)
