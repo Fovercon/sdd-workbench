@@ -5,8 +5,8 @@
 ```yaml
 outcome: READY_FOR_HUMAN_ACTION | NOT_READY | NEEDS_CONVERGENCE |
   HUMAN_DECISION_REQUIRED | INSUFFICIENT_EVIDENCE
-targets: [PR, MERGE, RELEASE, DEPLOY, HANDOFF, ARCHIVE, CLEANUP]
-destination: <base branch, registry, release channel, environment, or owner>
+targets: [LOCAL, PR, MERGE, RELEASE, DEPLOY, HANDOFF, ARCHIVE, CLEANUP]
+destination: <local workspace, base branch, registry, release channel, environment, or owner>
 reviewed_at: <timestamp and timezone>
 authorization: NOT_REQUIRED | PENDING | GRANTED_FOR_BASELINE |
   INVALIDATED_BY_DRIFT
@@ -33,6 +33,7 @@ Evidence limitations: ...
 
 | Target | State | Blocking gates | Human action |
 |---|---|---|---|
+| LOCAL | READY / NOT_READY / N/A | ... | verify actual local deliverables and usage evidence |
 | PR | READY / NOT_READY / N/A | ... | choose/create PR |
 | RELEASE | READY / NOT_READY / N/A | ... | authorize version/tag/publish |
 
@@ -119,8 +120,8 @@ Install/start/health evidence: ...
 
 1. Recheck exact source/artifact identity.
 2. ...
-3. Perform the explicitly authorized external action.
-4. Verify resulting PR/merge/tag/artifact/environment.
+3. Perform the authorized local delivery or target action.
+4. Verify resulting local files/usage, PR/merge/tag/artifact/environment.
 5. Preserve or clean up only according to provenance and retained data.
 
 Stop if: ...

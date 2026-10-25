@@ -23,6 +23,9 @@ class DistributionTests(unittest.TestCase):
         # Always evaluate an isolated copy; never mutate the developer's installed skills.
         for name, data in package.bundle_files(ROOT).items():
             path = self.source / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(data)
+        self.current_version = package.load(self.source / 'plugin.json')['version']
+        major, minor, patch_version = map(int, self.current_version.split('-')[0].split('.'))
+        self.upgrade_version = f'{major}.{minor}.{patch_version + 1}'
         self.dest = self.root / 'codex' / 'skills'
         self.installation = Installation(self.dest)
 
@@ -35,7 +38,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_catalog_and_compatibility_are_one_release(self):
         plugin, suite, files = package.check(self.source)
-        self.assertEqual(plugin['version'], '0.1.0')
+        self.assertEqual(plugin['version'], self.current_version)
         self.assertEqual(len(suite['skills']), 12)
         self.assertIn('skills/sdd-workflow-router/scripts/feedback_server.py', files)
         self.assertIn('skills/sdd-workflow-router/scripts/project_view_lib/vendor/mermaid-12.2.0.min.js.gz', files)
@@ -74,7 +77,7 @@ class DistributionTests(unittest.TestCase):
     def test_initial_install_and_repeat_leave_unrelated_skills_alone(self):
         other = self.dest / 'unrelated' / 'SKILL.md'; other.parent.mkdir(parents=True); other.write_text('owned by user')
         result = self.installation.install(self.source)
-        self.assertEqual(result['version'], '0.1.0')
+        self.assertEqual(result['version'], self.current_version)
         self.assertEqual(self.installation.status()['changed'], [])
         self.assertEqual(len(self.installation.receipt()['skills']), 12)
         repeat = self.installation.install(self.source)
@@ -85,13 +88,13 @@ class DistributionTests(unittest.TestCase):
     def test_upgrade_and_rollback_restore_exact_prior_content(self):
         self.installation.install(self.source)
         before = self.installed().read_bytes()
-        self.version('0.2.0')
+        self.version(self.upgrade_version)
         with (self.source / 'skills/sdd-workflow-router/SKILL.md').open('a') as stream: stream.write('\nNew version note.\n')
         self.installation.install(self.source)
         self.assertNotEqual(self.installed().read_bytes(), before)
-        self.assertEqual(self.installation.status()['version'], '0.2.0')
+        self.assertEqual(self.installation.status()['version'], self.upgrade_version)
         self.installation.rollback()
-        self.assertEqual(self.installation.status()['version'], '0.1.0')
+        self.assertEqual(self.installation.status()['version'], self.current_version)
         self.assertEqual(self.installed().read_bytes(), before)
         self.assertEqual(self.installation.status()['changed'], [])
 
@@ -110,7 +113,7 @@ class DistributionTests(unittest.TestCase):
     def test_local_edit_blocks_upgrade_and_force_still_backs_it_up(self):
         self.installation.install(self.source)
         self.installed().write_text('my custom rule')
-        self.version('0.2.0')
+        self.version(self.upgrade_version)
         with self.assertRaises(ValueError): self.installation.install(self.source)
         result = self.installation.install(self.source, force=True)
         self.assertEqual((Path(result['backup']) / 'before/sdd-workflow-router/SKILL.md').read_text(), 'my custom rule')
@@ -126,7 +129,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_removed_managed_skill_is_restored_by_rollback(self):
         self.installation.install(self.source)
-        self.version('0.2.0')
+        self.version(self.upgrade_version)
         data = package.load(self.source / 'suite.json'); data['skills'].remove('sdd-retrospective'); atomic_json(self.source / 'suite.json', data)
         shutil.rmtree(self.source / 'skills/sdd-retrospective')
         self.installation.install(self.source)
@@ -136,7 +139,7 @@ class DistributionTests(unittest.TestCase):
 
     def interrupted(self):
         self.installation.install(self.source)
-        self.version('0.2.0')
+        self.version(self.upgrade_version)
         original = shutil.copytree
         def fail(source, destination, *args, **kwargs):
             if Path(destination) == self.dest / 'sdd-context-handoff':
@@ -155,7 +158,7 @@ class DistributionTests(unittest.TestCase):
         restarted = Installation(self.dest)
         self.assertTrue(restarted.recover()['recovered'])
         self.assertFalse(restarted.status()['pending_recovery'])
-        self.assertEqual(restarted.status()['version'], '0.1.0')
+        self.assertEqual(restarted.status()['version'], self.current_version)
         self.assertEqual(restarted.status()['changed'], [])
 
     def test_recovery_preserves_unknown_edits_after_interruption(self):
@@ -167,7 +170,7 @@ class DistributionTests(unittest.TestCase):
         self.installation.recover()
 
     def test_crash_after_receipt_commit_preserves_completed_upgrade(self):
-        self.installation.install(self.source); self.version('0.2.0')
+        self.installation.install(self.source); self.version(self.upgrade_version)
         original = Path.unlink
         def interrupt(path, *args, **kwargs):
             if path == self.installation.journal_path: raise OSError('crash after commit')
@@ -175,16 +178,16 @@ class DistributionTests(unittest.TestCase):
         with patch('pathlib.Path.unlink', new=interrupt):
             with self.assertRaises(OSError): self.installation.install(self.source)
         self.assertTrue(self.installation.recover()['committed'])
-        self.assertEqual(self.installation.status()['version'], '0.2.0')
+        self.assertEqual(self.installation.status()['version'], self.upgrade_version)
 
     def test_tampered_backup_and_wrong_state_destination_are_rejected(self):
-        self.installation.install(self.source); self.version('0.2.0')
+        self.installation.install(self.source); self.version(self.upgrade_version)
         result = self.installation.install(self.source)
         backup = Path(result['backup']) / 'before/sdd-workflow-router/SKILL.md'; backup.write_text('tampered')
         with self.assertRaises(ValueError): self.installation.rollback()
         other = Installation(self.root / 'other-skills', self.installation.state)
         with self.assertRaises(ValueError): other.install(self.source)
-        self.assertEqual(self.installation.status()['version'], '0.2.0')
+        self.assertEqual(self.installation.status()['version'], self.upgrade_version)
 
     def test_install_lock_rejects_parallel_writes(self):
         other = Installation(self.dest)

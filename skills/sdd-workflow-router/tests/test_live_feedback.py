@@ -190,6 +190,83 @@ class LiveFeedbackTests(unittest.TestCase):
         self.assertEqual(self.request(server, 'GET', '/api/feedback', **{'X-SDD-Token': ''})[0], 403)
         self.assertEqual(self.count(), 0)
 
+    def source_href(self, server, suffix='plan.md', page='/'):
+        code, _, body = self.request(server, 'GET', page)
+        self.assertEqual(code, 200)
+        href = re.search(rb'href="(/sources/[^\"]+)"[^>]*>\s*<span>' + re.escape(suffix.encode()) + rb'</span>', body)
+        self.assertIsNotNone(href, 'Served source links must use the allowlisted HTTP viewer')
+        return href.group(1).decode()
+
+    def test_source_links_open_exact_text_without_mutating_the_view(self):
+        server = self.start()
+        href = self.source_href(server)
+        code, headers, body = self.request(server, 'GET', href)
+        self.assertEqual((code, body), (200, b'plan.md'))
+        self.assertEqual(headers['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(headers['X-Content-Type-Options'], 'nosniff')
+        self.assertIn('sandbox', headers['Content-Security-Policy'])
+        self.assertEqual({p.name: p.read_bytes() for p in self.view.iterdir()}, self.before)
+
+    def test_source_viewer_rejects_changed_missing_and_unlisted_files(self):
+        server = self.start()
+        href = self.source_href(server)
+        (self.root / 'unlisted.md').write_text('must not be exposed')
+        key = hashlib.sha256(b'unlisted.md').hexdigest()
+        self.assertEqual(self.request(server, 'GET', href.rsplit('/', 1)[0] + '/' + key)[0], 404)
+        self.assertEqual(self.request(server, 'GET', '/sources/' + '0'*64 + '/' + key)[0], 404)
+        (self.root / 'plan.md').write_text('unreviewed change')
+        code, _, body = self.request(server, 'GET', href)
+        self.assertEqual(code, 409)
+        self.assertNotIn(b'unreviewed change', body)
+        (self.root / 'plan.md').unlink()
+        self.assertEqual(self.request(server, 'GET', href)[0], 404)
+
+    def test_history_source_links_keep_their_original_fingerprint(self):
+        next_view = self.root / 'next-view'
+        result = subprocess.run([sys.executable, '-B', str(SCRIPTS / 'project_view.py'), 'update', '--root', str(self.root),
+                                 '--previous', str(self.view), '--output', str(next_view)], capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.store = Store(self.root, next_view, self.root / 'feedback-state')
+        server = self.start()
+        _, _, body = self.request(server, 'GET', '/')
+        history = re.search(rb'href="(/history/[0-9a-f]+/index.html)"', body).group(1).decode()
+        href = self.source_href(server, page=history)
+        self.assertEqual(self.request(server, 'GET', href)[2], b'plan.md')
+        (self.root / 'plan.md').write_text('new version')
+        self.assertEqual(self.request(server, 'GET', href)[0], 409)
+
+    def test_source_html_is_text_and_binary_is_not_previewed(self):
+        samples = {'cited.html': b'<script>window.SOURCE_EXECUTED=true</script>', 'binary.bin': b'\xff\x00'}
+        for name, data in samples.items():
+            (self.root / name).write_bytes(data)
+            self.data['items'].append({'id': name, 'label': name, 'state': 'SATISFIED', 'view': 'progress',
+                'kind': 'code_observation', 'sources': [{'path': name, 'sha256': hashlib.sha256(data).hexdigest()}]})
+        self.input.write_text(json.dumps(self.data))
+        next_view = self.root / 'preview-view'
+        result = subprocess.run([sys.executable, '-B', str(SCRIPTS / 'project_view.py'), 'update', '--root', str(self.root),
+                                 '--input', str(self.input), '--previous', str(self.view), '--output', str(next_view),
+                                 '--reason', 'Add cited preview fixtures'], capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.store = Store(self.root, next_view, self.root / 'feedback-state')
+        server = self.start()
+        code, headers, body = self.request(server, 'GET', self.source_href(server, 'cited.html'))
+        self.assertEqual((code, body), (200, samples['cited.html']))
+        self.assertEqual(headers['Content-Type'], 'text/plain; charset=utf-8')
+        self.assertEqual(self.request(server, 'GET', self.source_href(server, 'binary.bin'))[0], 415)
+
+    def test_source_viewer_rejects_symlink_escape_even_with_matching_bytes(self):
+        server = self.start()
+        href = self.source_href(server)
+        with tempfile.TemporaryDirectory() as outside:
+            target = Path(outside) / 'plan.md'; target.write_bytes(b'plan.md')
+            (self.root / 'plan.md').unlink()
+            try:
+                (self.root / 'plan.md').symlink_to(target)
+            except OSError:
+                self.skipTest('Symlinks unavailable on this platform')
+            self.assertEqual(self.request(server, 'GET', href)[0], 404)
+            self.assertEqual(target.read_bytes(), b'plan.md')
+
     def test_http_bounds_and_bad_json_never_claim_saved(self):
         server = self.start()
         self.assertEqual(self.request(server, 'POST', '/api/feedback', self.payload(), **{'Content-Type': 'text/plain'})[0], 415)

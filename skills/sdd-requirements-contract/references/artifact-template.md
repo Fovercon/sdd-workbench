@@ -7,7 +7,7 @@ Use the repository's established format when it preserves the same semantics. Re
 ```markdown
 # <Feature or Change> Requirements Contract
 
-Status: NEEDS_INPUT | READY_FOR_APPROVAL | APPROVED | SUPERSEDED
+Status: NEEDS_INPUT | READY_FOR_APPROVAL | APPROVED | AUTHORIZED_DERIVATION | SUPERSEDED
 Version: <stable version or content hash>
 Operating route: SYNTHESIZE | TARGETED_CLARIFY | DISCOVERY | REVISION
 Owner / approver: <human role or name if known>
@@ -133,19 +133,27 @@ representative sample strategy, and passing rule where applicable.
 - [ ] Internal design has not leaked into the product contract
 - [ ] Applicable Agent constraints are referenced without conflict
 
-## Approval record
+## Authority record
 
+- Basis: PENDING | USER_APPROVED | AUTHORIZED_DERIVATION
 - Exact version/hash: ...
-- Reviewer: ...
-- Decision: pending | approved | changes requested
+- Authority source: <actual human decision or explicit RUN derivation permission>
+- Reviewer and decision: <actual human review, or not human-approved>
 - Date: ...
-- Approved assumptions/exceptions: ...
+- Quality-gate result: ...
+- Obligation-to-source mapping: <FR/AC IDs to explicit decisions; required for derivation>
+- Reserved approval gates: <none, or unresolved gates that prohibit derivation>
+- Accepted assumptions/exceptions: <actual owner decisions only>
 
 ## Revision history
 
-| Version | Status | Summary | Approved by/date | Supersedes |
+| Version | Status | Summary | Authority source/date | Supersedes |
 |---|---|---|---|---|
 ```
+
+`AUTHORIZED_DERIVATION` is available only under the contract model's RUN
+conditions; it is never human approval. Keep the final file hash in a separate
+frozen receipt when embedding it here would change the bytes being hashed.
 
 ## Decision-frontier question
 
@@ -171,7 +179,7 @@ Ask only questions whose prerequisites are already resolved. Wait for the curren
 ```markdown
 # Requirements Contract Delta — <old version> to <proposed version>
 
-Proposed status: READY_FOR_APPROVAL
+Proposed status: READY_FOR_APPROVAL | AUTHORIZED_DERIVATION
 Reason and source: ...
 
 ## Changes
@@ -187,19 +195,22 @@ Reason and source: ...
 | Artifact / evidence | Affected links | Required action | Current validity |
 |---|---|---|---|
 
-## Approval
+## Authority
 
-- Reviewer: ...
-- Decision: pending | approved | rejected
+- Basis: PENDING | USER_APPROVED | AUTHORIZED_DERIVATION
+- Source and decision: <actual approval/change decision or explicit RUN derivation permission>
+- Obligation-to-source mapping and quality gate: <required for derivation>
+- Reserved approval gates: ...
 - Effective version/date: ...
 ```
 
 ## Handoff summary
 
 ```markdown
-Status: NEEDS_INPUT | READY_FOR_APPROVAL | APPROVED | SUPERSEDED
+Status: NEEDS_INPUT | READY_FOR_APPROVAL | APPROVED | AUTHORIZED_DERIVATION | SUPERSEDED
 Route: <route and rationale>
 Contract version: ...
+Authority basis/source and exact hash receipt: ...
 Authoritative sources: ...
 Resolved decisions: ...
 Blocking questions: ...

@@ -136,6 +136,12 @@ only on a browser selection, draft generation or localStorage.
    `http.server` or a file URL keeps offline copy behavior. Preserve the state
    directory across restarts; restart with the same arguments to recover feedback.
    The service is local to this machine and must remain running for new saves.
+   Source links on served current/history pages open a read-only UTF-8 text
+   viewer on the same service. It exposes only files cited by that exact bundle,
+   checks the original fingerprints on every read, rejects changed/missing or
+   binary sources, and never executes source HTML/scripts. Arbitrary project
+   paths and the feedback database are not exposed. Static files retain their
+   original local file links; immutable board files are never patched.
 3. The user explicitly chooses an option and clicks **提交反馈**. The server checks
    immutable receipt identity, exact snapshot/question/option, required explanation,
    current gate and linked sources, and the last seen feedback revision. It writes

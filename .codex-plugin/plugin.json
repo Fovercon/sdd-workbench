@@ -1,11 +1,19 @@
 {
   "name": "sdd-workbench",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Specification-driven engineering skills, from requirements and design to implementation, verification, and delivery.",
-  "author": {"name": "Fovercon", "url": "https://github.com/Fovercon"},
+  "author": {
+    "name": "Fovercon",
+    "url": "https://github.com/Fovercon"
+  },
   "homepage": "https://github.com/Fovercon/sdd-workbench",
   "repository": "https://github.com/Fovercon/sdd-workbench",
-  "keywords": ["sdd", "skills", "engineering", "codex"],
+  "keywords": [
+    "sdd",
+    "skills",
+    "engineering",
+    "codex"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "SDD Workbench",
@@ -13,6 +21,9 @@
     "longDescription": "一次安装 12 个 SDD skills，按需使用需求、设计、实现、验证与交付流程，内置设计图看板和本机反馈入口。",
     "developerName": "Fovercon",
     "category": "Productivity",
-    "capabilities": ["Read", "Write"]
+    "capabilities": [
+      "Read",
+      "Write"
+    ]
   }
 }

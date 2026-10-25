@@ -115,7 +115,7 @@ Apply these rules before walking the linear lifecycle:
 1. **Identity or context cannot be trusted**: use `sdd-context-handoff` in `RECEIVE` or `RECOVER` when a real context boundary exists; otherwise request the smallest missing identity evidence.
 2. **Approved baselines may be invalidated by a proposed change, discovery, or drift**: use `sdd-change-impact` before revising downstream artifacts when propagation matters.
 3. **A human decision or approval is the actual next gate**: route to that human gate; do not send the problem to a downstream Skill to invent the answer.
-4. **The request is specifically to evaluate a governance-content Skill**: use `governance-skill-eval`; do not confuse semantic Skill evaluation with product verification.
+4. **The request is specifically to evaluate a governance-content Skill**: use `governance-skill-eval` only when it is available and applicable. If absent, recommend one bounded project action to prepare an evaluation protocol from the supplied domain decisions, representative samples, rubric/oracles and execution permissions. Missing business meaning goes to its concrete human-input gate. Do not invent the extension, install it, claim an evaluation ran, or substitute product verification for semantic Skill evaluation.
 5. **No exception applies**: select the earliest unsatisfied lifecycle gate using the routing model.
 
 Dirty or untracked files do not automatically change the SDD stage. Make them routing blockers only when ownership, identity, overlap, or evidence validity cannot be established safely.

@@ -20,6 +20,7 @@ Finish readiness consumes convergence evidence. It does not recreate or weaken i
 
 | Target | Minimum focus | Common conditional gates |
 |---|---|---|
+| `LOCAL` | exact workspace/deliverable identity, convergence, usage instructions, known limitations and actual local receipt | packaging, installation or recovery only when required by the local deliverable |
 | `PR` | source identity, scope, evidence summary, template, reviewability | screenshots, migration notes, security reviewers |
 | `MERGE` | PR gates, confirmed base, reviews/checks, integration strategy | merge queue, merged-result verification |
 | `RELEASE` | version/history, package identity, release notes, tag plan | signatures, SBOM, multi-platform packages |
@@ -167,6 +168,7 @@ Do not force-remove a refused worktree or force-delete a branch merely to comple
 Readiness is incomplete without defining how the result will be checked:
 
 - PR URL and base/head identities;
+- local deliverable paths/hashes, destination and actual usage/smoke evidence;
 - merged commit and required tests/checks;
 - tag content/version and immutability;
 - published artifact checksum/version/install smoke;

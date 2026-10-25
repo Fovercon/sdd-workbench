@@ -29,10 +29,10 @@ not replace file hashes or authorize refreshing stale evidence.
 ```markdown
 # <Change> Technical Plan
 
-Status: READY_FOR_DESIGN_REVIEW | NEEDS_DECISION | APPROVED
+Status: READY_FOR_DESIGN_REVIEW | NEEDS_DECISION | APPROVED | DELEGATED_TECHNICAL
 Planning mode: LIGHT | STANDARD | DETAILED
 Mode rationale: <risk/uncertainty/dependency/handoff reason>
-Spec source: <artifact and version>
+Spec source: <artifact, version, APPROVED or valid RUN AUTHORIZED_DERIVATION basis>
 Project constraints: <relevant AGENTS.md, Agent.md, or equivalent rules>
 
 ## Scope and Spec mapping
@@ -105,18 +105,27 @@ or operational evidence as appropriate.
 
 ## Design review record
 
-- Reviewer/date: ...
-- Result: approved | changes requested
+- Authority basis: PENDING | USER_APPROVED | DELEGATED_TECHNICAL
+- Exact Plan version/hash receipt: ...
+- Authority source/date: <actual approval or explicit delegation of named choice classes>
+- Delegated scope and choice rationale: <choices covered; consequential or reserved choices remain pending>
+- Consistency review result: pass | fail, with evidence
+- Human reviewer/result: <actual approval/changes requested, or not human-approved>
 - Design views reviewed: <which of context / business flow / structure / data-state / module designs, and at what depth>
 - Approved exceptions: ...
 ```
+
+`DELEGATED_TECHNICAL` is executable only in authorized RUN after the design
+consistency review and only for explicitly delegated choice classes. It does
+not satisfy reserved human gates. Keep a final whole-file hash in a separate
+frozen receipt; do not embed a self-invalidating hash in the Plan.
 
 ## `tasks.md`
 
 ```markdown
 # <Change> Behavior Slices
 
-Plan source: <artifact and approved version>
+Plan source: <artifact, exact version/hash, APPROVED or valid RUN DELEGATED_TECHNICAL basis>
 Status: DRAFT | READY_FOR_IMPLEMENTATION
 
 ## Dependency overview
@@ -153,7 +162,7 @@ Only approved deferrals, each with owner and rationale.
 ```markdown
 # Execution Card — <slice ID and title>
 
-Contract sources: <approved Spec and Plan versions>
+Contract sources: <exact Spec/Plan versions/hashes, authority bases and source records>
 Authorization: planning only | implementation authorized
 
 ## Objective and stop condition
@@ -201,6 +210,7 @@ Authorization: planning only | implementation authorized
 Status: READY_FOR_DESIGN_REVIEW | READY_FOR_IMPLEMENTATION |
         NEEDS_SPEC | NEEDS_DECISION
 Mode: <mode and rationale>
+Contract authority: <Spec/Plan basis, scope and exact hash receipts; distinguish from human approval>
 Ready slices: ...
 Blocked slices: <slice -> blocker>
 Decisions awaiting approval: ...

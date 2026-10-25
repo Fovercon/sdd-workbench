@@ -12,7 +12,7 @@
 支持下列命令的 CLI 可执行：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.1.0
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.1.1
 codex plugin add sdd-workbench@sdd-workbench
 ```
 
@@ -23,10 +23,10 @@ codex plugin add sdd-workbench@sdd-workbench
 ### Python 整套安装
 
 需要 Python 3.10+ 和 Git；安装器本身无第三方依赖。可在 macOS、Linux 和
-Windows 的终端使用。下面以首个版本为例：
+Windows 的终端使用。下面以当前补丁版本为例：
 
 ```sh
-git clone --branch v0.1.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
 python3 tools/install.py install
 ```
@@ -84,7 +84,7 @@ python3 tools/install.py install --adopt
 
 ```sh
 git fetch --tags origin
-git checkout v0.1.0
+git checkout v0.1.1
 python3 tools/install.py install
 python3 tools/install.py status
 ```

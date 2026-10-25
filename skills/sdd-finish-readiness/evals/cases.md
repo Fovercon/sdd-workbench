@@ -1,5 +1,15 @@
 # Behavioral Evaluation Cases
 
+## Local workspace delivery
+
+Given a current converged baseline and a mission targeting `LOCAL`, assess the
+actual source/artifact paths, destination, usage evidence and limitations. Keep
+`LOCAL` in readiness and delivery records; do not silently relabel it HANDOFF or
+require a PR, formal version/tag or deployment. A missing promised local artifact
+is `NOT_READY`. The readiness actor does not execute delivery; an authorized
+controller subsequently verifies the actual files and usage before recording a
+local receipt. Use the Router's [contract-handoff forward protocol](../../sdd-workflow-router/evals/forward/contract-handoff.md).
+
 Evaluate readiness decisions and evidence handling, not exact wording or heading order.
 
 ## Case 1: Development PR with Unreleased changes

@@ -128,7 +128,33 @@ class Store:
             if 'artifact_href' in item:
                 document = document.replace('href="' + html.escape(item['artifact_href'], quote=True) + '"',
                     f'href="/artifacts/{key}/' + quote(item['id'], safe='') + '"')
+            for ref in item.get('sources', []):
+                source_id = sha(ref['path'].encode('utf-8'))
+                document = document.replace('href="' + html.escape(ref['href'], quote=True) + '"',
+                                            f'href="/sources/{key}/{source_id}"')
         return document.encode()
+
+    def source(self, key, source_id):
+        """Read only a cited, unchanged UTF-8 source; never accept a client path."""
+        _path, snapshot, receipt = self.bundle(key)
+        refs = [ref for item in snapshot['items'] for ref in item.get('sources', [])
+                if sha(ref['path'].encode('utf-8')) == source_id]
+        if not refs:
+            raise FeedbackError(404, '来源文件不在本版看板的引用范围内。')
+        try:
+            path = evidence.source_path(Path(receipt['source_root']).resolve(), refs[0]['path'])
+            data = path.read_bytes()
+        except (ValueError, OSError) as error:
+            raise FeedbackError(404, '来源文件不存在或已离开项目范围。') from error
+        if any(ref.get('sha256') != sha(data) for ref in refs):
+            raise FeedbackError(409, '来源文件已变化，请重新核对并生成新版看板。')
+        try:
+            data.decode('utf-8')
+            if b'\x00' in data:
+                raise ValueError('Binary source')
+        except (UnicodeError, ValueError) as error:
+            raise FeedbackError(415, '此来源不是 UTF-8 文本，请在项目中打开原文件。') from error
+        return data
 
     def submit(self, payload):
         if not isinstance(payload, dict):
@@ -256,6 +282,12 @@ class Handler(BaseHTTPRequestHandler):
                     raise FeedbackError(404, '图示不存在或来源已变化。')
                 self.respond(200, evidence.source_path(root, item['artifact']).read_bytes(),
                              'text/html; charset=utf-8', sandbox=True)
+            elif self.path.startswith('/sources/'):
+                parts = self.path.split('/')
+                if len(parts) != 4:
+                    raise FeedbackError(404, '来源文件入口不存在。')
+                self.respond(200, store.source(parts[2], parts[3]),
+                             'text/plain; charset=utf-8', sandbox=True)
             else:
                 raise FeedbackError(404, '页面不存在。')
         except (FeedbackError, ValueError, KeyError, TypeError, OSError, sqlite3.Error) as error:

@@ -183,7 +183,11 @@ The user asks whether a revision to the MML governance Skill reduced unsupported
 
 Expected behavior:
 
-- Routes to `governance-skill-eval`.
+- Routes to `governance-skill-eval` only when the extension is available and applicable.
+- With only the bundled suite, returns a bounded `PROJECT_ACTION` for preparing
+  the evaluation protocol from the actual samples, rubric and authority. Missing
+  business meaning leads to a concrete input gate instead of an invented oracle.
+- Does not install a missing extension, claim it ran, or perform unapproved model calls.
 - Does not route to `sdd-verification-design` or convergence review for the prototype application.
 
 ## Case 21: Deployment requested without Finish evidence

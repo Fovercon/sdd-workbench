@@ -25,6 +25,7 @@ Read [references/readiness-model.md](references/readiness-model.md) before assig
 
 Choose one or more targets and evaluate each separately:
 
+- `LOCAL`: deliver the working source or named artifacts, usage instructions and evidence in the confirmed local workspace.
 - `PR`: submit a reviewable change without claiming it is merged or released.
 - `MERGE`: integrate into the confirmed base branch or merge queue.
 - `RELEASE`: create a versioned source/package release, tag, or release record.
@@ -34,6 +35,14 @@ Choose one or more targets and evaluate each separately:
 - `CLEANUP`: remove a branch, worktree, temporary release state, or other finish workspace.
 
 Do not collapse these into one “done” state. A change can be PR-ready but not release-ready, release-ready but not deployment-ready, or integrated while cleanup remains unsafe.
+
+`LOCAL` uses source identity, scope, current convergence, usable deliverables,
+instructions and known limitations. Assess package/install/recovery gates only
+when the local deliverable needs them; PR, version/tag, publish and deployment
+gates do not apply merely because development finished. Preserve `LOCAL` and its
+exact destination in the readiness report and delivery receipt. Readiness still
+does not execute delivery: the authorized controller checks the actual local
+files and usage evidence before recording a verified receipt.
 
 ## Workflow
 

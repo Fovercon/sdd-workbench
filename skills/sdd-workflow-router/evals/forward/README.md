@@ -1,5 +1,8 @@
 # Forward behavior regression
 
+For cross-template authority, `LOCAL` delivery and an unavailable domain extension,
+also run [contract-handoff.md](contract-handoff.md).
+
 Run these requests with an actual Agent, in temporary workspaces. Do not test by asking an Agent to describe what it would do.
 
 1. Copy inputs/clear and inputs/decision to isolated project directories. Copy the chosen Skill snapshot into a sibling skills directory. Freeze request, rules, source and Skill hashes before starting.

@@ -17,7 +17,8 @@ new/changed intent ------+           +-> verification -----+
                                                 ^
 change/discovery/drift -> change-impact
 
-governance Skill quality -> governance-skill-eval   (separate evaluation line)
+governance Skill quality -> available governance-skill-eval, else bounded evaluation preparation
+                            (separate evaluation line)
 ```
 
 The router observes and recommends. Each routed workflow retains its own gates, outcomes, mutation boundaries, and authorization requirements.
@@ -50,7 +51,7 @@ Classify the routing subject before selecting a stage.
 | `REVIEW` | User asks whether implementation matches contracts | convergence review |
 | `FINISH_TARGET` | User names PR, merge, release, deploy, handoff, archive, or cleanup | convergence identity, then Finish readiness |
 | `CONTEXT_BOUNDARY` | Work must resume or move across a context boundary | context handoff |
-| `SKILL_EVALUATION` | A governance Skill's output quality is being measured | governance Skill eval |
+| `SKILL_EVALUATION` | A governance Skill's output quality is being measured | available domain eval Skill, otherwise bounded project action |
 | `DIRECT_TASK` | Requested action is already bounded and prerequisites are clear | no routing needed |
 
 Feature size is not a trigger. A one-line request may need Spec work; a large mechanical update may not.
@@ -131,7 +132,18 @@ Stop at a human gate when the next fact depends on product intent, design approv
 
 When the exact artifact, owner, and approval action are known, the router can return `NEXT_STEP_READY` with a `HUMAN_GATE` route. Return `HUMAN_DECISION_REQUIRED` when the choice itself is still too undefined to select one downstream route.
 
-### 7.4 Workspace state
+### 7.4 Unavailable domain evaluation extension
+
+Check the available Skill inventory before routing a `SKILL_EVALUATION` request
+to a domain extension. If `governance-skill-eval` is absent, use `PROJECT_ACTION`
+for a bounded evaluation-preparation step: identify the supplied domain sources,
+case set, rubric/oracles, comparison baseline, execution permissions and missing
+evidence. Give one concrete objective and stop condition; do not fabricate a
+Skill invocation, install an extension or claim quality results. A missing
+business decision takes the earlier human-input route. This fallback does not
+turn semantic Skill evaluation into product verification or authorize model calls.
+
+### 7.5 Workspace state
 
 Dirty state becomes `RECONCILIATION_REQUIRED` when it:
 

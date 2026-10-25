@@ -8,7 +8,8 @@ const scripts=path.resolve(__dirname,'../scripts'),py=process.env.SDD_PYTHON||'p
 const results=[],errors=[],remote=[];
 function ok(name,value){assert.ok(value,name);results.push(name)}
 function save(name,value){fs.writeFileSync(path.join(root,name),value)}
-save('plan.md','Plan baseline');save('module.md','Module baseline');
+const planText='Plan baseline\n<script>window.SOURCE_EXECUTED=true</script>';
+save('plan.md',planText);save('module.md','Module baseline');
 function ref(name){return {path:name,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,name))).digest('hex')}}
 const feedback={id:'feedback',label:'设计图的阅读体验',state:'GAP',view:'progress',kind:'assessment',stage:'Plan',sources:[ref('plan.md')],
  decision:{id:'D-F',kind:'feedback',subject:'设计图的阅读体验',owner:'测试使用者',scope:'只反馈图示表达、排版和操作体验。',prompt:'这版图示还有哪里需要调整？',options:[
@@ -44,6 +45,18 @@ async function start(state,port=0){
   ok(`${width}: no preselected feedback`,await form.locator('input:checked').count()===0);
   await page.waitForFunction(()=>document.querySelector('.design-figure svg'));
   ok(`${width}: diagram still renders offline`,await page.locator('.design-figure svg').count()===1);
+  await page.goto(server.url+'/#item-feedback');
+  await page.locator('#item-feedback .evidence > summary').click();
+  const sourceLink=page.locator('#item-feedback .source-link');
+  ok(`${width}: served source link uses local HTTP`,(await sourceLink.getAttribute('href')).startsWith('/sources/'));
+  const opened=context.waitForEvent('page');await sourceLink.click();const source=await opened;
+  await source.waitForLoadState();
+  ok(`${width}: source opens in real browser as exact text`,await source.locator('body').innerText()===planText);
+  ok(`${width}: source markup never executes`,!(await source.evaluate(()=>window.SOURCE_EXECUTED))&&await source.locator('script').count()===0);
+  const sourceUrl=source.url();await source.reload();
+  ok(`${width}: source reload remains readable`,await source.locator('body').innerText()===planText);
+  await source.close();await page.goto(server.url+'/#feedback-Plan');
+  await page.waitForFunction(()=>!document.querySelector('[data-decision-action="submit"]').disabled);
   await form.locator('input[value="changes"]').check();await button.click();
   ok(`${width}: required explanation blocks submit`,await card.locator('.live-feedback-receipt').isHidden());
   const note='时序图中的失败分支再清楚一点。\n<script>window.INJECTED=true</script>';
@@ -77,6 +90,10 @@ async function start(state,port=0){
   const port=Number(new URL(server.url).port);await server.stop();server=await start('state-'+width,port);
   await page.reload();await card.locator('.live-feedback-receipt').waitFor({state:'visible'});
   ok(`${width}: server restart restores persistent record`,(await card.locator('.live-feedback-receipt').textContent()).includes('已暂缓反馈'));
+  save('plan.md','Changed source after viewing');
+  const changed=await context.newPage();const rejected=await changed.goto(sourceUrl);
+  ok(`${width}: changed source is rejected instead of silently shown`,rejected.status()===409&&!(await changed.locator('body').innerText()).includes('Changed source after viewing'));
+  await changed.close();save('plan.md',planText);
   save('module.md','Module source changed');await page.reload();await card.locator('.live-feedback-receipt').waitFor({state:'visible'});
   ok(`${width}: stale linked source labels saved feedback as historical`,(await card.locator('.decision-heading .badge').textContent()).includes('待核对')&&await card.locator('.live-feedback-receipt button').isDisabled());
   ok(`${width}: no page overflow`,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));

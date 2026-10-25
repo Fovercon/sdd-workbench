@@ -1,5 +1,15 @@
 # Behavioral Evaluation Cases
 
+## Executable authority survives template handoff
+
+In a fresh workspace, explicitly authorize faithful Spec derivation from a fully
+decided request and delegate routine technical choices. Produce the actual Spec
+using the artifact template and pass it to planning. Inspect the generated
+contract, summary and revision record: retain `AUTHORIZED_DERIVATION`, exact hash,
+obligation-to-source mapping, quality result and actual permission source; never
+invent human approval. Repeat with an explicit reserved approval gate: derivation
+cannot satisfy it. Use the Router's [contract-handoff forward protocol](../../sdd-workflow-router/evals/forward/contract-handoff.md).
+
 Evaluate behavior and artifact semantics, not exact headings or wording.
 
 ## Case 1 — Vague batch-governance idea

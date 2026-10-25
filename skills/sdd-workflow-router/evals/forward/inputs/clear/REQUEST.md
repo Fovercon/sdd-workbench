@@ -6,3 +6,5 @@ The exact required behavior:
 - progress(records) returns integer floor(100 * terminal_count / total_count). Terminal means succeeded, failed or cancelled. Empty input returns 0. It must never return 100 while queued or running records remain. Input is preserved.
 
 Implement the retry behavior and progress behavior as two separately evidenced vertical slices, then verify and review the combined contract. Existing notes.txt is unrelated user work. Use the available SDD suite; stop only for a material unresolved decision, authority gap or actual blocker. Record actual actions and the final status in trace.md.
+
+You may faithfully derive the specification from these exact requirements. Deliver locally in this workspace. No extra human approval is reserved for the generated Spec or routine technical Plan.
