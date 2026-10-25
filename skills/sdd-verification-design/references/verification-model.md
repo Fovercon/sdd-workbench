@@ -1,5 +1,24 @@
 # Verification Design Model
 
+
+## Contents
+
+- [1. Verification owns proof, not intent](#1-verification-owns-proof-not-intent)
+- [2. Proof-obligation record](#2-proof-obligation-record)
+- [3. Evidence lines](#3-evidence-lines)
+- [4. Verification layers](#4-verification-layers)
+- [5. Risk-guided portfolio](#5-risk-guided-portfolio)
+- [6. Oracle selection](#6-oracle-selection)
+- [7. Test-double rule](#7-test-double-rule)
+- [8. Stateful system rule](#8-stateful-system-rule)
+- [9. Refactoring safety net](#9-refactoring-safety-net)
+- [10. Bug regression rule](#10-bug-regression-rule)
+- [11. Test data classes](#11-test-data-classes)
+- [12. Evidence strength and currency](#12-evidence-strength-and-currency)
+- [13. Coverage model](#13-coverage-model)
+- [14. Failure triage](#14-failure-triage)
+
+
 Use this model to build evidence around risk and contracts instead of accumulating tests without a proof strategy.
 
 ## 1. Verification owns proof, not intent

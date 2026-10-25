@@ -12,7 +12,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = re.compile(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?')
 ROOT_FILES = ('plugin.json', 'suite.json', 'README.md', 'CHANGELOG.md', 'AGENTS.md', 'THIRD_PARTY_NOTICES.md',
-              'package.json', 'package-lock.json')
+              'package.json', 'package-lock.json', 'CONTRIBUTING.md', 'SECURITY.md')
 MULTI_FILES = ('agent-targets.json', 'marketplace.json', 'cordis.patch.yml', '.npmignore')
 TREES = ('skills', 'tools', 'tests', 'docs', 'adapters', '.codex-plugin', '.agents/plugins', '.zcode-plugin')
 
@@ -54,6 +54,9 @@ def bundle_files(root=ROOT):
         paths += sorted(base.rglob('*'))
     result = {}
     for path in paths:
+        relative = path.relative_to(root)
+        if relative.parts[:2] in (('docs', 'optimization'), ('docs', 'releases')):
+            continue
         if any(part in ('__pycache__', 'node_modules', '.git') for part in path.parts) or path.suffix in ('.pyc', '.pyo') or path.name == '.DS_Store':
             continue
         if path.is_symlink():
@@ -70,7 +73,7 @@ def bundle_files(root=ROOT):
             except (ValueError, UnicodeError, RecursionError): value = None
             if isinstance(value, dict) and value.get('kind') in ('sdd-review-report', 'sdd-review-candidate'):
                 raise ValueError(f'Runtime review data in package: {path}')
-            result[path.relative_to(root).as_posix()] = data
+            result[relative.as_posix()] = data
     for name in ROOT_FILES:
         if name not in result:
             raise ValueError(f'Missing package file: {name}')

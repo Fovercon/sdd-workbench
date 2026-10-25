@@ -18,11 +18,12 @@ jobs:
           - {os: windows-latest, python: '3.12'}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: ${{ matrix.python }}
       - run: python tools/package.py check
+      - run: python tools/docs.py check
       - run: python -B -m unittest discover -s tests -v
       - if: runner.os != 'Windows'
         run: python -B -m unittest discover -s skills/sdd-workflow-router/tests -v
@@ -30,8 +31,8 @@ jobs:
   native-agents:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
       - name: Install pinned upstream discovery runtimes in isolation
@@ -45,16 +46,17 @@ jobs:
   browser:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: npm
       - run: npm ci
       - run: npm run test:adapters
+      - run: npm run test:package
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
         env:

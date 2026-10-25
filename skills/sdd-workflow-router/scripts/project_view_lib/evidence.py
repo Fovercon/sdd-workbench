@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 import sys
 from urllib.parse import quote
-from . import lifecycle, decisions
+from . import lifecycle, decisions, workstream
 
 STATES = {'SATISFIED': '已有对应证据', 'GAP': '尚有缺口', 'STALE': '来源已变化',
           'UNKNOWN': '尚不能确认', 'PENDING_HUMAN': '待确认/审批', 'CONFLICT': '来源冲突',
@@ -132,6 +132,9 @@ def inspect(root, snapshot):
         item['freshness'] = ('UNKNOWN' if 'UNKNOWN' in freshness else
                              'STALE' if 'STALE' in freshness else 'CURRENT')
         item['effective_state'] = item['state'] if item['freshness'] == 'CURRENT' else item['freshness']
+    from . import stage_details
+    stage_details.inspect(root, result)
+    workstream.propagate(result)
     return result
 
 
@@ -194,6 +197,34 @@ def markdown(snapshot, items):
                     lines.append(f'- 配对视图：{markdown_data(by_id[rid]["label"])}（{by_id[rid]["id"]}）')
             for owner in item.get('implementation_ids', []):
                 lines.append(f'- 实现位置：{markdown_data(by_id[owner]["file"])}')
+            if 'work' in item:
+                work = item['work']
+                lines.append(f'- 主线记录类型：{work["type"]}')
+                for field in ('status', 'result'):
+                    if field in work:
+                        lines.append(f'- {field}（原记录，非批准）：{work[field]}')
+                for field in ('in_scope', 'out_of_scope', 'acceptance', 'requirement_ids', 'depends_on', 'slice_ids'):
+                    for value in work.get(field, []):
+                        lines.append(f'- {field}：{markdown_data(value)}')
+                if work.get('blocker'):
+                    lines.append(f'- 阻塞原因：{markdown_data(work["blocker"])}')
+                for key, indexes in work.get('acceptance_refs', {}).items():
+                    lines.append(f'- 对应验项：{markdown_data(key)} / {indexes}')
+            if 'stage_detail' in item:
+                from .stage_details import SECTIONS, RESULTS, DELIVERY
+                detail = item['stage_detail']
+                lines.append('- 记录分类：' + SECTIONS[item['stage']][detail['type']])
+                if 'result' in detail:
+                    lines.append('- 原记录运行结果：' + RESULTS[detail['result']])
+                if 'delivery_status' in detail:
+                    lines.append('- 原记录交付状态：' + DELIVERY[detail['delivery_status']])
+                for key in ('cwd', 'path', 'delivery_receipt', 'owner'):
+                    if key in detail: lines.append(f'- {key}：{markdown_data(detail[key])}')
+                for value in detail.get('steps', []): lines.append('- 步骤：' + markdown_data(value))
+                for key in detail.get('record_ids', []): lines.append('- 相关记录：' + markdown_data(by_id[key]['label']))
+                if 'command' in detail:
+                    lines.append('- 命令原文（仅供阅读，不执行）：')
+                    lines.extend('    ' + line for line in detail['command'].splitlines())
             for ref in item.get('sources', []):
                 lines.append(f'- 来源：{markdown_data(ref["path"])}，行 {ref.get("line", 1)}；SHA256 {markdown_data(ref.get("sha256", "未知"))}；{ref["freshness"]}')
             lines.append('')

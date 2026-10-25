@@ -60,3 +60,11 @@ Python 安装器对每次成功操作保存 suite version、skill 文件指纹�
 首版提取自 AI-Native-SDD，精确提交见 [UPSTREAM.json](UPSTREAM.json)。
 后续通用套件优化以本仓库为发布来源。上游实验和业务案例按原链接留存；本包
 不复制实际项目、历史 PPT、个人路径或用户反馈数据库。
+
+## v0.4.0 起的构建证明
+
+Release的发布任务在完整CI成功后，用固定提交的 `actions/attest` 为发行ZIP、外部manifest和SHA256SUMS生成Sigstore来源证明，并保留 `provenance.sigstore.json`。只有标签发布任务具有 `id-token: write` 和 `attestations: write`；普通CI保持只读。校验失败必须停止发布，不跳过证明步骤。
+
+下载后按 [SECURITY.md](../SECURITY.md) 的仓库、工作流和标签约束验证。证明不代替逐文件校验、浏览器回归、模型评测或真人试用，也不授予软件许可。官方机制见 [GitHub构建证明说明](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)。
+
+ZIP与Node包不附带 `docs/optimization/`、`docs/releases/` 中的项目过程资料；这些文件保留在仓库，发行说明中的链接固定到对应版本。可复用的技能、工具、测试、维护指南与第三方声明仍随包提供。包内链接由 `python3 tools/docs.py check` 校验；Node清单另用 `npm run test:package` 验证。

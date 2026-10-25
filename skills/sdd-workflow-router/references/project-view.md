@@ -1,5 +1,15 @@
 # Project view: generate and update
 
+
+## Contents
+
+- [Select the smallest operation](#select-the-smallest-operation)
+- [Establish observations](#establish-observations)
+- [Run the bundled renderer](#run-the-bundled-renderer)
+- [Update without erasing history](#update-without-erasing-history)
+- [Verify and deliver](#verify-and-deliver)
+
+
 Use for a requested visual project overview or maintenance of an existing one.
 The output is a derived, offline view: current progress, readable module responsibilities
 and next action first, selectable details alongside. The complete connection diagram,
@@ -67,6 +77,18 @@ ready technical work merely because it awaits a person. Make the headline,
 `next_id` and the selected item's `next` agree. Source identity problems still
 come first and override this selection; without a selection the first unresolved
 progress record is shown in input order.
+
+For an engineer-facing overview and the requirement → slice → implementation →
+verification reading path, use the optional typed `work` extension in
+[project-view-mainline.md](project-view-mainline.md). It provides goal/scope,
+acceptance conditions, execution columns with dependencies/blockers and a coverage
+matrix. Author individual source-bound records; missing relationships remain gaps.
+Keep execution status, recorded test result and evidence/approval state distinct.
+
+For stage-specific rules, clarification, implementation/test records and delivery,
+read [project-view-stage-details.md](project-view-stage-details.md). Its optional
+`stage_detail` records organize constraints, commands, context, test runs, outputs,
+usage and follow-up without inventing missing progress or delivery facts.
 
 Optional snapshot `context`, `headline`, `summary`, `map_note` control display text.
 Use the user's language and familiar project terms. Defaults are Chinese. Empty

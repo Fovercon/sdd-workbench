@@ -2,7 +2,7 @@
 
 本工具服务于多人、跨会话或跨版本的正式审查记录。普通小改动仍可直接反馈，不要求所有
 研发任务填写 JSON。自 v0.3.0 提供，v0.2.1 及更早版本不包含；使用 v0.3.0 及以后完整源码/发行 ZIP，
-原生 skill/package 安装不一定包含 tools。先按[审查包](optimization/REVIEW-KIT.md)独立使用，
+原生 skill/package 安装不一定包含 tools。先按[审查包](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/REVIEW-KIT.md)独立使用，
 再汇总；没有新的公司审批规则、身份认证、在线收集或自动发布功能。
 方法前向评测的 actor 仍只拿 runtime skills 和原始任务输入；由维护者在 actor 之外固定
 候选和整理报告，不为了填表把 rubric、准备器或作者的旧结论发给 actor。

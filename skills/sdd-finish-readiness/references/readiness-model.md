@@ -1,5 +1,23 @@
 # Finish Readiness Model
 
+
+## Contents
+
+- [1. Finish position in SDD](#1-finish-position-in-sdd)
+- [2. Target profiles](#2-target-profiles)
+- [3. Gate states](#3-gate-states)
+- [4. Readiness versus authorization](#4-readiness-versus-authorization)
+- [5. Drift model](#5-drift-model)
+- [6. Source and artifact identity](#6-source-and-artifact-identity)
+- [7. Version and changelog rules](#7-version-and-changelog-rules)
+- [8. Package integrity](#8-package-integrity)
+- [9. Deployment and rollback](#9-deployment-and-rollback)
+- [10. PR and merge readiness](#10-pr-and-merge-readiness)
+- [11. Cleanup safety](#11-cleanup-safety)
+- [12. Post-action verification](#12-post-action-verification)
+- [13. Common category errors](#13-common-category-errors)
+
+
 Use this model to distinguish converged implementation from a deliverable that is ready for a particular Finish action.
 
 ## 1. Finish position in SDD

@@ -1,5 +1,16 @@
 # Planning Depth and Slice Quality
 
+
+## Contents
+
+- [Select planning depth](#select-planning-depth)
+- [Design view floor by depth](#design-view-floor-by-depth)
+- [Separate the three levels](#separate-the-three-levels)
+- [Vertical slice test](#vertical-slice-test)
+- [Common slicing failures](#common-slicing-failures)
+- [Example: governance batch execution](#example-governance-batch-execution)
+
+
 ## Select planning depth
 
 Use the lightest mode that still makes the work safe to review and execute.

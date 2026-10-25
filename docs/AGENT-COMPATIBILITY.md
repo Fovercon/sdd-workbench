@@ -1,16 +1,20 @@
 # 多平台安装兼容
 
+2026-10-26 补充：[Codex/Pi 实际任务试点](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/P0-COMPANY-TRIAL.md)已执行原生CLI、
+隔离冻结runtime与真实业务背景的从零原型；记录具体版本/模型、权限、反馈轮次和当前交付。
+这条证据覆盖该本地加载路径和任务范围，其余客户端、商店入口和版本沿用下文各自的实测状态。
+
 自 v0.2.0 起维护一份 `skills/`，包含 12 个 skills 及所有相对引用、模板、脚本和离线 Mermaid。
 v0.2.0 的适配只改变发现、安装和包元数据。v0.2.1 另澄清 Code Review 的授权交接并补充独立评测输入，阶段职责保持不变。
 v0.3.0 增加任务入口分流、产物约定与异常合同审查修正，以及诊断/安装预览/审查反馈工具；
 安装布局和 12 个技能名称保持兼容。新增工具见[维护指南](OPERATIONS.md)，当前验证范围见
-[0.3.0 发布准备记录](releases/0.3.0.md)。
+[0.3.0 发布准备记录](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/releases/0.3.0.md)。
 这里的多平台支持不提供跨客户端会话同步或调度：每个 agent 仍使用自己的工具、权限和模型。
 
 ## 共享安装
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 Vercel CLI 将 `~/.agents/skills` 作为公共存储。Codex、OpenCode、Pi 使用公共入口，

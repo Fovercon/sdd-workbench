@@ -24,7 +24,7 @@ Python 版本要求与[安装器](../README.md#python-整套安装)一致。
 | `DUPLICATE_PHYSICAL_COPIES` / `CONFLICTING_COPIES` | 同名技能有多个物理副本；后者字节不同。核对宿主优先级和安装方式，先保留个人修改。多个链接指向同一真实目录不会算成独立副本。 |
 | `MANAGED_CONTENT_CHANGED` | 文件与 Python 安装回执不同，可能是编辑、缺失或损坏；先看差异和备份，不直接强制覆盖。 |
 | `CONTENT_DIFFERS_FROM_SOURCE` / `VERSION_DIFFERS_FROM_SOURCE` | 与这次检查源不同；正常旧版本或个人修改也会出现。核对准确来源再决定更新。没有回执不会猜测版本或安装所有权。 |
-| `PENDING_RECOVERY` | 存在未恢复事务。保留新编辑后，按[恢复说明](../README.md#更新回退与恢复)使用同一 destination/state 恢复；诊断不会代为恢复。 |
+| `PENDING_RECOVERY` | 存在未恢复事务。保留新编辑后，按[恢复说明](../README.md#更新与故障处理)使用同一 destination/state 恢复；诊断不会代为恢复。 |
 | `INVALID_OR_UNREADABLE_RECEIPT` / `EXTRA_RECORDED_SKILL` | 回执不可读、归属不符或记录了当前源未包含的技能；保留原记录、目录与备份，核对迁移来源。 |
 | `BROKEN_SKILL_LINK` / `UNREADABLE_OR_INVALID_SKILL` / `INVALID_SKILL_ROOT` | 链接、文件、元数据或根目录不可用。核对路径、权限、来源；只支持技能目录整体链接，资源内部链接不在支持布局内。 |
 

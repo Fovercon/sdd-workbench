@@ -1,26 +1,49 @@
 # SDD Workbench
 
-面向 AI 编程代理的规格驱动工程工作台。一次安装 12 个 skills，覆盖需求、设计、逐片实现、验证与交付；内置中文设计图看板与本机反馈入口。
+**让 AI 编程任务的需求、设计、实现和验证有据可查。**
 
-安装整套后，代理仍按当前工作选择主要 skill，无需一次加载全部流程。
+[![CI](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Fovercon/sdd-workbench?color=526675)](https://github.com/Fovercon/sdd-workbench/releases/latest)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-526675)](CONTRIBUTING.md)
+[![License pending](https://img.shields.io/badge/License-pending-lightgrey)](THIRD_PARTY_NOTICES.md)
 
-## 先从一个真实任务开始
+面向研发工程师的规格驱动工程技能套件。12 个 skills 共用一套内容，提供 Codex、Hermes、Z.ai ZCode、DeepSeek Harness、OpenCode 和 Pi 的安装入口。代理按任务加载所需技能，小改动可直接处理，复杂任务保留需求、设计、实现、验证与交付之间的对应关系。
 
-你可以直接在项目对话里说：
+Specification-driven engineering skills for coding agents, with traceable work, an offline project board, and guarded installation and recovery. See [compatibility](docs/AGENT-COMPATIBILITY.md) for what has actually been tested.
 
-> 用 SDD Workbench 修复这个局部问题：<现象>。正确行为依据是 <来源>。
-> 请实际完成修复和相应验证，保留我的其他修改，不要提交或发布。
+[快速开始](docs/QUICKSTART.md) · [安装](#安装) · [项目看板](#项目看板) · [维护指南](docs/OPERATIONS.md) · [参与维护](CONTRIBUTING.md) · [安全与构建验证](SECURITY.md)
 
-清楚的小改动不应强制生成整套文档；业务含义不明、数据/安全风险或你保留的审批仍需先处理。
-只想问进度就明确说“只报告，不修改”；要新功能则先提供使用者、目标和已知约束。
-[第一次使用](docs/QUICKSTART.md)包含常见任务、预期结果和卡住时的处理方式。
+## 能解决什么
 
-安装异常时，在完整源码或 Release ZIP 目录运行 `python3 -B tools/doctor.py --agent all`。
-这条只读命令检查技能副本、内容差异和安装回执；[诊断说明](docs/DOCTOR.md)解释结果与自定义入口。
+| 实际问题 | 提供的机制 |
+|---|---|
+| 聊天里的需求变了，实现和旧测试还在沿用 | 明确需求与验收条件，追踪变更影响；保留旧证据并标记来源变化 |
+| 只看到“完成”或一串文档，难以判断做到哪一步 | 看板串起需求、任务、实现文件与验证记录，分别显示未完成、未执行和失败 |
+| 换代理、换会话或升级安装时丢上下文、覆盖本地修改 | 使用有来源的交接记录；Python安装器保护用户编辑、备份与中断恢复 |
 
-**推广状态**：当前是有明确验证边界的套件，不是六平台业务认证或公司全面推广批准。
-[不足清单与框架对比](docs/optimization/BASELINE-REVIEW.md)、[优化计划](docs/optimization/PLAN.md)
-和[独立 agents / 专家审查包](docs/optimization/REVIEW-KIT.md)公开记录待解决问题与验证方法。
+这些是已实现的工程机制。尚无同条件框架对比或真人试用数据支持效率排名；安装/发现支持也不等于六个平台均已完成业务验证。验证范围见 [平台说明](docs/AGENT-COMPATIBILITY.md)，后续工作见 [优化记录](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/V0.4.0-PLAN.md)。
+
+## 从一个任务开始
+
+安装后，在当前项目对话中直接说明目标：
+
+- **修复问题**：“用 SDD Workbench 修复这个问题：〈现象〉。正确行为依据是〈来源〉。实际完成修复与回归，保留其他修改。”
+- **开发功能**：“把〈使用者与目标〉整理为可评审的需求，再做设计和任务拆分。已知约束是〈内容〉。”
+- **了解进展**：“只报告当前进展和下一步，不修改文件。”
+- **查看项目**：“生成中文项目看板，展示需求、任务、实现文件和验证记录。”
+
+你保留的审批、实际业务含义和宿主权限仍然有效。安装整套不要求一次加载全部技能；完整示例和卡住时的处理见 [第一次使用](docs/QUICKSTART.md)。
+
+## 项目看板
+
+先看目标和范围，再沿“需求 → 任务 → 实现文件 → 验证”检查具体进展。
+项目规则、需求澄清、开发与测试、交付收尾采用统一层次；缺少资料显示“未记录”，测试结果和交付事实均可查看原始来源。
+
+![项目看板：合成样例，非真实项目验收](docs/images/project-overview.png)
+
+上图为独立合成样例。看板从你自己的项目材料生成，不附带业务数据；支持离线设计图、桌面与窄屏阅读。静态HTML可以阅读，保存反馈需启动仅绑定本机回环地址的服务。
+
+[生成与更新](skills/sdd-workflow-router/references/project-view.md) · [需求到验收](skills/sdd-workflow-router/references/project-view-mainline.md) · [四阶段内容](skills/sdd-workflow-router/references/project-view-stage-details.md) · [本机反馈](skills/sdd-workflow-router/references/human-decisions.md)
 
 ## 安装
 
@@ -29,7 +52,7 @@
 推荐在终端执行这一行（需要 Node.js 20+ 和 Git）：
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 此命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)，将全部 12 个 skills
@@ -42,12 +65,12 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 
 | 平台 | 一行安装命令 |
 |---|---|
-| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a codex -y` |
-| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a hermes-agent -y` |
-| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a zcode -y` |
-| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.3.0'` |
-| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.3.0 -g -a opencode -y` |
-| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.3.0` |
+| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a codex -y` |
+| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a hermes-agent -y` |
+| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a zcode -y` |
+| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.4.0'` |
+| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a opencode -y` |
+| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.4.0` |
 
 原生插件仍读取仓库中的同一个 `skills/`，不维护平台专用指令副本。DeepSeek 命令中的
 `cli` 是 profile 名，可换成实际使用的 profile；需要 Harness 0.2.1-rc.2。
@@ -59,7 +82,7 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 支持插件命令的 Codex 客户端也可执行：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.3.0 && codex plugin add sdd-workbench@sdd-workbench
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.4.0 && codex plugin add sdd-workbench@sdd-workbench
 ```
 
 ZCode 可在 Settings → Plugins → Create marketplace 中填写
@@ -72,14 +95,14 @@ ZCode 可在 Settings → Plugins → Create marketplace 中填写
 需要 Python 3.10+ 和 Git；安装器无第三方依赖，支持 macOS、Linux、Windows：
 
 ```sh
-git clone --branch v0.3.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.4.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
 python3 tools/install.py install --agent all
 ```
 
 `all` 为六个平台各安装一份受回执管理的完整副本；若希望只有一个公共目录，使用
 `--agent shared`，并按兼容说明配置 Hermes、ZCode 的入口。也可以下载
-[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.3.0)，解压后运行安装器。
+[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.4.0)，解压后运行安装器。
 Windows 可将 `python3` 替换为 `python`。
 
 可指定 `--agent codex hermes zcode deepseek opencode pi` 中的一个或多个。
@@ -97,17 +120,13 @@ v0.3.0 起提供写入前预览：`python3 -B tools/install.py install --agent a
 需要多名 agents/专家跨版本审查时，可用 v0.3.0 新增的[反馈校验工具](docs/REVIEW-FEEDBACK.md)
 固定来源、关联复验并保留争议；普通任务无需额外填写报告。
 
-## 开始使用
+## 更新与故障处理
 
-在项目对话中直接说明工作目标，例如：
+Python安装用户从目标版本运行 `install`，先用 `--dry-run` 查看变化；用户编辑会阻止覆盖，显式覆盖仍保留备份。
+`rollback` 回退最近一次操作，`recover` 恢复中断事务，`tools/doctor.py --agent all` 只读检查安装状态。
+使用与安装时相同的目标参数；其他管理方式遵循各自的更新入口。
 
-- “用 SDD Workbench 看看这个项目目前在哪个阶段，下一步做什么。”
-- “把这个需求整理成可评审的规格，再做技术设计和任务拆分。”
-- “按当前执行卡完成这一片功能，验证后报告结果。”
-- “生成项目看板，显示设计图，并允许在本机提交反馈。”
-
-也可显式调用 `sdd-workflow-router` 或具体阶段 skill；插件客户端可能为名称
-加上套件前缀。项目规则、当前合同与用户授权始终有效。
+具体命令、跨版本注意事项及交接步骤见 [安装维护指南](docs/OPERATIONS.md) 和 [诊断说明](docs/DOCTOR.md)。
 
 ## 套件内容
 
@@ -129,60 +148,11 @@ v0.3.0 起提供写入前预览：`python3 -B tools/install.py install --agent a
 详细边界见 [能力目录](skills/CATALOG.md)，方法维护规则见
 [套件政策](skills/SUITE-POLICY.md)。
 
-## 更新、回退与恢复
+## 维护与信任
 
-插件用户可切换插件源到目标版本后重新安装整套插件。Python 用户可在 Git
-检出新版本后再次执行 `install`，或从目标版本 ZIP 中运行安装器：
+- [贡献说明](CONTRIBUTING.md)：复现输入、回归、真实浏览器和方法评测要求。
+- [安全说明](SECURITY.md)：私密报告入口、发行包校验和构建来源证明。
+- [发布流程](docs/RELEASING.md)：唯一版本真源、完整CI、不可变标签与资产。
+- [证据与验证边界](docs/VALIDATION.md)：区分结构测试、模型演练、历史报告与实际使用。
 
-```sh
-git fetch --tags origin
-git checkout v0.3.0
-python3 tools/install.py install --agent all
-python3 tools/install.py status --agent all
-```
-
-上面的版本号是示例，升级时替换为实际发布的目标标签。每个版本作为一个整体安装，
-版本和每个 skill 的文件指纹一并记录。本地修改会阻止覆盖；确需覆盖时可加
-`--force`，安装器仍会先保存当前内容。回退最近一次安装/更新：
-
-```sh
-python3 tools/install.py rollback --agent all
-```
-
-安装中断时，安装器保留恢复记录并阻止下一次写入。先保留新产生的本地修改，
-然后执行：
-
-```sh
-python3 tools/install.py recover --agent all
-```
-
-后续命令应选择与安装时相同的 `--agent`、`--dest` 或 `--home`。每个目标独立提交事务；
-多目标操作先检查已知冲突，但运行时故障可能只完成前几个目标。失败输出会列出
-`completed` 和 `failed_agent`，先恢复失败目标，再重跑安装；已完成且无变化的目标不会重复替换。
-恢复会保留已完整提交的安装，或恢复到操作前的内容。多目录替换期间不要启动新的
-代理会话；安装完成后再开始使用该版本。
-
-## 项目看板
-
-看板由项目真实材料生成，不自带某个业务项目的数据。Mermaid 引擎已随包携带，
-支持流程图、时序图、状态图、类图和实体关系图的离线图形渲染。
-
-静态 HTML 支持阅读和复制反馈；直接保存反馈需要启动随包的本机服务。
-详见 [看板生成说明](skills/sdd-workflow-router/references/project-view.md) 和
-[本机反馈说明](skills/sdd-workflow-router/references/human-decisions.md)。
-反馈提交更新的是反馈回执状态，具体调整仍需代理或维护者后续处理。
-
-## 开发与发布
-
-```sh
-python3 tools/package.py check
-python3 -B -m unittest discover -s tests
-python3 -B -m unittest discover -s skills/sdd-workflow-router/tests
-npm run test:adapters
-npm run test:forward-browser
-python3 tools/package.py build
-```
-
-发行包默认写入 `dist/`，包含完整插件、Python 安装器、逐文件指纹和
-`SHA256SUMS`。版本发布流程见 [RELEASING.md](docs/RELEASING.md)，变更见
-[CHANGELOG.md](CHANGELOG.md)，第三方组件见 [版权声明](THIRD_PARTY_NOTICES.md)。
+**许可证待定。** 当前未选择项目级开源许可证；构建证明不授予使用或再分发许可。Mermaid 的独立许可及来源见 [第三方声明](THIRD_PARTY_NOTICES.md)；套件原始来源见 [UPSTREAM.json](docs/UPSTREAM.json)。

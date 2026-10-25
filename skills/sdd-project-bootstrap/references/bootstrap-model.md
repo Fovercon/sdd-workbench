@@ -1,5 +1,23 @@
 # SDD Project Bootstrap Model
 
+
+## Contents
+
+- [1. Stage 0 contract](#1-stage-0-contract)
+- [2. Statement evidence](#2-statement-evidence)
+- [3. Command evidence](#3-command-evidence)
+- [4. Source-of-truth ownership](#4-source-of-truth-ownership)
+- [5. Durability filter for Agent instructions](#5-durability-filter-for-agent-instructions)
+- [6. Instruction quality](#6-instruction-quality)
+- [7. Instruction layering](#7-instruction-layering)
+- [8. Minimal SDD convention](#8-minimal-sdd-convention)
+- [9. Safety and data boundary discovery](#9-safety-and-data-boundary-discovery)
+- [10. Audit finding classes](#10-audit-finding-classes)
+- [11. Refresh and change control](#11-refresh-and-change-control)
+- [12. Approval model](#12-approval-model)
+- [13. Bootstrap quality gate](#13-bootstrap-quality-gate)
+
+
 Use this model to create project instructions that are accurate enough to act on, concise enough to load repeatedly, and stable enough to govern more than one feature.
 
 ## 1. Stage 0 contract

@@ -295,9 +295,18 @@ Record which cases actually ran, raw outputs, evaluator decisions and limits. Pa
 
 ## Optional VIEW operation
 
+Four-stage authoring evaluation: [forward/stage-reading.md](forward/stage-reading.md)
+with its portable synthetic inputs. Preserve real pending questions, unexecuted
+commands, run results and prepared-versus-delivered evidence separately.
+
 Use [project-view.md](project-view.md) for portable generation/update, provenance,
 next-action dependency ordering and status-only non-trigger cases. This evaluates
 a derived view, not approval, project completion or live architecture discovery.
+
+For the engineer-facing overview/requirement/slice/verification extension, execute
+[forward/mainline.md](forward/mainline.md) in a fresh native actor context and retain
+its source-bound observations, tool reads, reported model and usage separately from
+the deterministic renderer/browser evidence.
 
 ## Entry proportionality regression
 
@@ -307,6 +316,7 @@ lifecycle; a status-only request stays read-only; missing core domain semantics
 and a reserved Plan gate remain real stops even for small changes. Compare against
 the frozen old entry on identical bounded input, and do not infer benefit if both
 already behave correctly. Deterministic fixture checks do not establish this behavior.
+
 ## R&D pilot task matrix
 
 Maintainer protocol: [forward/pilot.md](forward/pilot.md). Five synthetic tasks

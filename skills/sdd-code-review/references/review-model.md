@@ -1,5 +1,18 @@
 # Baseline-less Code Review Model
 
+
+## Contents
+
+- [1. Relationship to convergence review](#1-relationship-to-convergence-review)
+- [2. Evidence Types](#2-evidence-types)
+- [3. Declared Intent](#3-declared-intent)
+- [4. Finding Severity](#4-finding-severity)
+- [5. Finding Record](#5-finding-record)
+- [6. OPEN_PRODUCT_QUESTION](#6-open_product_question)
+- [7. Routing Rules](#7-routing-rules)
+- [8. Gate Rules](#8-gate-rules)
+
+
 Use this model to keep reviews consistent across projects. Project-specific severity or review policies take precedence when they are stricter. This model deliberately reuses the vocabulary of `sdd-converge-review`'s review model (evidence labels, severity scale) so findings can travel between the two skills without translation.
 
 ## 1. Relationship to convergence review

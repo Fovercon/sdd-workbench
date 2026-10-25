@@ -44,6 +44,16 @@ class DistributionTests(unittest.TestCase):
         self.assertIn('skills/sdd-workflow-router/scripts/project_view_lib/vendor/mermaid-12.2.0.min.js.gz', files)
         self.assertTrue(all('05-notes' not in name and 'PPT' not in name for name in files))
 
+    def test_project_process_records_never_enter_a_release(self):
+        for folder in ('optimization', 'releases'):
+            path=self.source/'docs'/folder/'private-trial.md'
+            path.parent.mkdir(parents=True,exist_ok=True)
+            path.write_text('Local experiment: /Users/private/work, not a reusable skill.')
+        files=package.bundle_files(self.source)
+        self.assertFalse(any(name.startswith(('docs/optimization/','docs/releases/')) for name in files))
+        self.assertIn('CONTRIBUTING.md',files)
+        self.assertIn('SECURITY.md',files)
+
     def test_active_installation_examples_use_the_current_release(self):
         version=package.load(ROOT/'plugin.json')['version']
         for file in (ROOT/'README.md',ROOT/'docs/AGENT-COMPATIBILITY.md'):

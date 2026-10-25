@@ -1,5 +1,20 @@
 # Context Handoff Model
 
+
+## Contents
+
+- [1. Handoff is a pointer layer](#1-handoff-is-a-pointer-layer)
+- [2. Information authority](#2-information-authority)
+- [3. What belongs in the package](#3-what-belongs-in-the-package)
+- [4. Handoff versus adjacent artifacts](#4-handoff-versus-adjacent-artifacts)
+- [5. Boundary decision](#5-boundary-decision)
+- [6. Identity tuple](#6-identity-tuple)
+- [7. Freshness and drift](#7-freshness-and-drift)
+- [8. Resume gate](#8-resume-gate)
+- [9. Negative knowledge](#9-negative-knowledge)
+- [10. Minimum viable handoff](#10-minimum-viable-handoff)
+
+
 Use this model to decide what belongs in a handoff, how much to trust it, and whether continuation is safe.
 
 ## 1. Handoff is a pointer layer

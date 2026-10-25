@@ -220,6 +220,7 @@ def design_section(items):
 
 
 def panel(item, items):
+    from . import workstream_view, stage_reading
     by_id = {i['id']: i for i in items}
     refs=[]
     for ref in item.get('sources', []):
@@ -248,6 +249,8 @@ def panel(item, items):
             +pair_links(item, items, build_pairs(items))
             +decision_link(item, items)
             +mapping
+            +workstream_view.detail(item, items)
+            +stage_reading.detail_content(item, items)
             +(f'<div class="detail-next"><h3>接下来</h3><p>{esc(item["next"])}</p></div>' if item.get('next') else '')
             +(f'<details class="related"><summary>查看相关连接 · {len(connected)}</summary>{related}</details>' if related else '')
             +f'<details class="evidence"><summary>查看相关文件 · {len(refs)}</summary><ul>{"".join(refs) or "<li>尚无可核验来源</li>"}</ul>'

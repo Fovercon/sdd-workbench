@@ -7,3 +7,5 @@
 **/.env
 node_modules/
 dist/
+docs/optimization/
+docs/releases/

@@ -20,5 +20,9 @@ suite does not require loading every skill into a project conversation.
   UI or local feedback changes also need the relevant real browser regressions.
 - A green structural or deterministic suite does not establish model behavior.
   Method changes require the affected forward evaluation described in the skills.
+- For future Pi runs, use the user's preferred DeepSeek Flash model. Resolve the
+  registered ID before execution (currently `deepseek/deepseek-flash`), specify it
+  explicitly, and record the reported identity; the alias alone does not establish
+  a backend revision. Keep historical runs under their actual recorded models.
 - Release with the tagged workflow after checks pass. Publishing or pushing requires
   the user's existing authorization; do not infer it from a status inquiry.

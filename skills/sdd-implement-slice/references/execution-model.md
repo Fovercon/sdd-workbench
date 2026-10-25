@@ -1,5 +1,22 @@
 # Slice Execution Model
 
+
+## Contents
+
+- [1. Authority chain](#1-authority-chain)
+- [2. What makes a slice executable](#2-what-makes-a-slice-executable)
+- [3. Execution modes](#3-execution-modes)
+- [4. Slice scope model](#4-slice-scope-model)
+- [5. Upstream routing](#5-upstream-routing)
+- [6. RED truth table](#6-red-truth-table)
+- [7. GREEN and regression truth](#7-green-and-regression-truth)
+- [8. Workspace safety](#8-workspace-safety)
+- [9. Failure classification](#9-failure-classification)
+- [10. Completion evidence receipt](#10-completion-evidence-receipt)
+- [11. Progress and context loss](#11-progress-and-context-loss)
+- [12. Closure rule](#12-closure-rule)
+
+
 Use this model to keep implementation bounded, evidence-backed, and correctly routed.
 
 ## 1. Authority chain

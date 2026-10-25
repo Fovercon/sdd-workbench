@@ -87,4 +87,4 @@ backup/transaction_id；预期下一步与尚未验证的客户端/模型行为�
 提交到公司指定位置前由提供者审阅。本文不会自动采集业务代码、凭据或发送报告。
 
 公司仍需指定安装维护者、升级批准范围、备份保管和支持入口。这些是待决定项，本文不为
-公司指派负责人或新增强制政策。工程演练与证据限制见[第三步结果](optimization/STEP-3-RESULTS.md)。
+公司指派负责人或新增强制政策。工程演练与证据限制见[第三步结果](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/STEP-3-RESULTS.md)。

@@ -12,17 +12,32 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.12'
       - name: Verify tag identity
         run: python -c 'import json,os; v=json.load(open("plugin.json"))["version"]; assert os.environ["GITHUB_REF_NAME"] == "v"+v, "Tag must match plugin.json"'
       - run: python tools/package.py build
       - run: python tools/package.py notes --output dist/release-notes.md
+      - name: Attest release build provenance
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: |
+            dist/sdd-workbench-*.zip
+            dist/sdd-workbench-*.manifest.json
+            dist/SHA256SUMS
+          create-storage-record: false
+      - name: Retain portable attestation bundle
+        env:
+          BUNDLE_PATH: ${{ steps.provenance.outputs.bundle-path }}
+        run: cp "$BUNDLE_PATH" dist/provenance.sigstore.json
       - name: Publish immutable release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --verify-tag --title "SDD Workbench $GITHUB_REF_NAME" --notes-file dist/release-notes.md dist/sdd-workbench-*.zip dist/sdd-workbench-*.manifest.json dist/SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "SDD Workbench $GITHUB_REF_NAME" --notes-file dist/release-notes.md dist/sdd-workbench-*.zip dist/sdd-workbench-*.manifest.json dist/SHA256SUMS dist/provenance.sigstore.json

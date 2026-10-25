@@ -1,5 +1,21 @@
 # SDD Workflow Routing Model
 
+
+## Contents
+
+- [1. The router's position](#1-the-routers-position)
+- [2. Evidence and authority order](#2-evidence-and-authority-order)
+- [3. Trigger classification](#3-trigger-classification)
+- [4. Gate states](#4-gate-states)
+- [5. Lifecycle gate matrix](#5-lifecycle-gate-matrix)
+- [6. Normal route selection](#6-normal-route-selection)
+- [7. Exception precedence](#7-exception-precedence)
+- [8. Stage-outcome translation](#8-stage-outcome-translation)
+- [9. Route quality checks](#9-route-quality-checks)
+- [10. Diagnostic procedure and result meanings](#10-diagnostic-procedure-and-result-meanings)
+- [11. Detailed diagnostic record](#11-detailed-diagnostic-record)
+
+
 Use this model to select a next workflow from evidence rather than from filenames, optimism, or the apparent age of a project.
 
 For `RUN`, apply [closed-loop-model.md](closed-loop-model.md) to authority, continuous invocation and completion. The diagnostic model below selects one route; its no-execution restrictions do not terminate an authorized RUN mission.

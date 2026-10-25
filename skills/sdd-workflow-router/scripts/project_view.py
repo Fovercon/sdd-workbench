@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import sys
 from urllib.parse import quote
-from project_view_lib import evidence, renderer, lifecycle, decisions
+from project_view_lib import evidence, renderer, lifecycle, decisions, workstream, stage_details
 
 HERE=Path(__file__).resolve().parent
 FILES={'index.html','view.md','snapshot.json'}
@@ -40,6 +40,8 @@ def validate(snapshot):
             raise ValueError('next_id must identify an existing item with a concrete next action')
     lifecycle.validate(snapshot)
     decisions.validate(snapshot)
+    workstream.validate(snapshot)
+    stage_details.validate(snapshot)
     return snapshot
 
 

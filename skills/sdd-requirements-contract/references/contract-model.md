@@ -1,5 +1,19 @@
 # Requirements Contract Model
 
+
+## Contents
+
+- [1. Artifact states](#1-artifact-states)
+- [2. Statement classes](#2-statement-classes)
+- [3. Product decision versus discoverable fact](#3-product-decision-versus-discoverable-fact)
+- [4. What belongs in the requirements contract](#4-what-belongs-in-the-requirements-contract)
+- [5. Requirement and acceptance rules](#5-requirement-and-acceptance-rules)
+- [6. Blocking questions](#6-blocking-questions)
+- [7. Readiness gate](#7-readiness-gate)
+- [8. Downstream contract chain](#8-downstream-contract-chain)
+- [9. Small revisions without parallel records](#9-small-revisions-without-parallel-records)
+
+
 ## 1. Artifact states
 
 | State | Meaning | Permitted next step |

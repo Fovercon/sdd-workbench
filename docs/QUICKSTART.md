@@ -45,7 +45,7 @@
 - **小任务生成大量文档**：先让 agent 说明哪项风险、项目规则或合同要求这些产物，再按
   事实缩小流程；有真实高后果风险时不删除必要检查。
 - **需要交给其他 agent/专家**：先保存当前任务、版本和实际证据；使用
-  [审查包](optimization/REVIEW-KIT.md) 给出可复现记录。不要把整段聊天当唯一依据。
+  [审查包](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/REVIEW-KIT.md) 给出可复现记录。不要把整段聊天当唯一依据。
 
 本指南是入口，不是公司政策或可靠性认证。当前优势假设、未解决的推广条件和优化顺序见
-[基线审视](optimization/BASELINE-REVIEW.md)与[计划](optimization/PLAN.md)。
+[基线审视](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/BASELINE-REVIEW.md)与[计划](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/PLAN.md)。

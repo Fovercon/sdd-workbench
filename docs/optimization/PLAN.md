@@ -9,6 +9,12 @@
 可复跑的研发任务和剩余覆盖见[试点矩阵](PILOT-MATRIX.md)。
 第三步的工程范围与结果见 [STEP-3-PLAN.md](STEP-3-PLAN.md)、[STEP-3-RESULTS.md](STEP-3-RESULTS.md)。
 多人审查入口的工程补充见 [REVIEW-INTAKE-PLAN.md](REVIEW-INTAKE-PLAN.md)、[REVIEW-INTAKE-RESULTS.md](REVIEW-INTAKE-RESULTS.md)。
+用户选择先做 P0，实际双宿主公开源码样本、失败和指定业务试点进展见
+[P0 真实仓库与宿主验证](P0-FIELD-RESULTS.md)。
+随后指定业务场景的范围、授权和执行记录见
+[P0 双宿主从零实现](P0-COMPANY-TRIAL.md)。
+
+2026-10-26：用户另授权累计候选整理为v0.4.0并推送发布。新增工程审视、范围与保留项见 [v0.4.0计划](V0.4.0-PLAN.md)，发布核对见 [v0.4.0候选记录](../releases/0.4.0.md)。既有0.3.0和早期“不推送”限制属于当时执行卡，保留其历史，不覆盖本次明确授权。
 
 ## 本轮需求边界
 

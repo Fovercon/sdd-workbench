@@ -1,5 +1,15 @@
 # Human decisions: question, response and continuation
 
+
+## Contents
+
+- [Establish the question](#establish-the-question)
+- [Conversation route](#conversation-route)
+- [Offline board route](#offline-board-route)
+- [Keep feedback lighter than approval](#keep-feedback-lighter-than-approval)
+- [Direct feedback on a local board](#direct-feedback-on-a-local-board)
+
+
 Use for an actual unresolved human gate in RUN, routing or VIEW. Distinguish
 approval, a product/design choice, and missing information. Design review is not
 automatically a business decision. Do not ask again for authority already given.

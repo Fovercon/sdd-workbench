@@ -2,7 +2,7 @@
 
 Maintainer-only synthetic tasks. No private application archives or network required.
 This is task behavior evidence, not host discovery, model-wide reliability or human
-usability certification. See the [pilot matrix](../../../../docs/optimization/PILOT-MATRIX.md)
+usability certification. See the [pilot matrix](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/PILOT-MATRIX.md)
 in the repository for evidence levels and remaining coverage.
 
 Prepare each task in a new root, keeping evaluator receipts outside actor inputs:

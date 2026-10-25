@@ -1,6 +1,6 @@
 {
   "name": "sdd-workbench",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "One SDD skill suite for Codex, Hermes, ZCode, DeepSeek Harness, OpenCode and Pi.",
   "main": "./adapters/deepseek.mjs",
@@ -46,12 +46,17 @@
     "!**/__pycache__/**",
     "!**/*.pyc",
     "!**/*.pyo",
-    ".npmignore"
+    ".npmignore",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "!docs/optimization/**",
+    "!docs/releases/**"
   ],
   "scripts": {
-    "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs",
+    "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs && node skills/sdd-workflow-router/tests/browser_workstream.cjs && node skills/sdd-workflow-router/tests/browser_stage_reading.cjs",
     "test:adapters": "node --test tests/test_deepseek_adapter.mjs",
-    "test:forward-browser": "node tests/browser_recovery.cjs"
+    "test:forward-browser": "node tests/browser_recovery.cjs",
+    "test:package": "node --test tests/test_package_contents.mjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

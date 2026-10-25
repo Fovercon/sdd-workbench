@@ -1,5 +1,15 @@
 # Authorized closed-loop execution
 
+
+## Contents
+
+- [1. Establish a mission](#1-establish-a-mission)
+- [2. Controller loop](#2-controller-loop)
+- [3. Failure, progress, and recovery](#3-failure-progress-and-recovery)
+- [4. Completion and method maintenance](#4-completion-and-method-maintenance)
+- [5. Optional checkpoint helper](#5-optional-checkpoint-helper)
+
+
 Read this reference only for `RUN`. The diagnostic operations remain read-only. RUN is an Agent execution protocol, not a separate model service: the current Agent acts as controller and loads one stage Skill at a time. The optional Python helper checks checkpoint gates; it does not perform the engineering work.
 
 ## 1. Establish a mission

@@ -9,6 +9,23 @@
   const stagePanels = Array.from(document.querySelectorAll('[data-stage-panel]'));
   const stageLinks = Array.from(document.querySelectorAll('[data-stage-nav]'));
   const designCards = Array.from(document.querySelectorAll('[data-design-card]'));
+  const enriched = document.body.classList.contains('workstream-enabled');
+  if (enriched) document.body.dataset.inspectorOpen = 'false';
+  const summaryControl = document.querySelector('[data-summary-toggle]');
+  summaryControl?.addEventListener('click', () => {
+    const expanded = summaryControl.getAttribute('aria-expanded') !== 'true';
+    summaryControl.setAttribute('aria-expanded', String(expanded));
+    summaryControl.textContent = expanded ? '收起说明' : '展开项目说明';
+    document.getElementById('project-description').classList.toggle('is-expanded', expanded);
+  });
+  const alignStageNavigation = () => {
+    if (!enriched || !matchMedia('(max-width: 900px)').matches) return;
+    const rail = document.querySelector('.lifecycle-section');
+    const active = rail?.querySelector('[data-stage-nav].is-active');
+    if (!active) return;
+    const left = active.getBoundingClientRect().left - rail.getBoundingClientRect().left;
+    rail.scrollLeft += left - (rail.clientWidth - active.offsetWidth) / 2;
+  };
   const showDesign = id => {
     const card = designCards.find(el => el.dataset.designCard === id);
     if (!card) return;
@@ -27,18 +44,21 @@
   };
   const showStage = name => {
     if (!stagePanels.some(el => el.dataset.stagePanel === name)) return false;
+    document.body.dataset.readingStage = name;
     stagePanels.forEach(el => { el.hidden = el.dataset.stagePanel !== name; });
     stageLinks.forEach(el => {
       const active = el.dataset.stageNav === name;
       el.classList.toggle('is-active', active);
       if (active) el.setAttribute('aria-current', 'step'); else el.removeAttribute('aria-current');
     });
+    alignStageNavigation();
     return true;
   };
   const select = (id, focus = false) => {
     const record = recordById.get(id);
     if (!record) return false;
     if (record.dataset.recordStage) showStage(record.dataset.recordStage);
+    if (enriched) document.body.dataset.inspectorOpen = String(focus || location.hash.startsWith('#item-'));
     showDesign(id);
     records.forEach(el => { el.hidden = el !== record; });
     placeholder.hidden = true;
@@ -99,8 +119,12 @@
   };
   document.documentElement.classList.add('interactive');
   document.querySelectorAll('.design-gallery').forEach(el => showDesign(el.querySelector('[data-design-card]')?.dataset.designCard));
-  showStage(document.body.dataset.currentStage);
-  if (!fromHash()) select(pane.dataset.default);
+  showStage(document.body.dataset.initialStage || document.body.dataset.currentStage);
+  if (!fromHash() && document.body.dataset.initialStage !== 'Overview') select(pane.dataset.default);
+  else if (!location.hash && document.body.dataset.initialStage === 'Overview') {
+    records.forEach(el => { el.hidden = true; });
+    placeholder.hidden = false;
+  }
   triggers.forEach(el => el.addEventListener('click', event => {
     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
@@ -108,6 +132,7 @@
     if (!pane.contains(el)) lastTrigger = el;
     if (select(el.dataset.select, true)) {
       history.pushState(null, '', el.getAttribute('href'));
+      handledHash = location.hash;
     }
   }));
   stageLinks.forEach(el => el.addEventListener('click', event => {
@@ -122,10 +147,29 @@
     history.pushState(null, '', el.getAttribute('href'));
     fromHash(true);
   }));
-  window.addEventListener('hashchange', () => { if (!fromHash()) select(pane.dataset.default); });
-  window.addEventListener('popstate', () => { if (!fromHash()) select(pane.dataset.default); });
+  const restore = () => {
+    if (fromHash()) return;
+    if (!location.hash && document.body.dataset.initialStage === 'Overview') {
+      showStage('Overview');
+      records.forEach(el => { el.hidden = true; });
+      placeholder.hidden = false;
+    } else select(pane.dataset.default);
+  };
+  window.addEventListener('hashchange', restore);
+  window.addEventListener('popstate', restore);
+  window.addEventListener('resize', alignStageNavigation);
+  const closeInspector = () => {
+    document.body.dataset.inspectorOpen = 'false';
+    const visible = el => el && el.isConnected && el.getClientRects().length > 0;
+    const fallback = triggers.find(el => !pane.contains(el) &&
+      el.dataset.select === records.find(record => !record.hidden)?.dataset.id && visible(el));
+    const target = visible(lastTrigger) ? lastTrigger : fallback || stageLinks.find(el => el.classList.contains('is-active') && visible(el));
+    target?.focus();
+  };
+  pane.querySelector('[data-close-inspector]')?.addEventListener('click', closeInspector);
   pane.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
+      if (enriched) { event.preventDefault(); closeInspector(); return; }
       const visible = el => el && el.isConnected && el.getClientRects().length > 0;
       const fallback = triggers.find(el => !pane.contains(el) &&
         el.dataset.select === records.find(record => !record.hidden)?.dataset.id && visible(el));

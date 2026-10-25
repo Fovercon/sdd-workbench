@@ -1,5 +1,19 @@
 # Change Impact Model
 
+
+## Contents
+
+- [1. Separate five things](#1-separate-five-things)
+- [2. Primary route decision table](#2-primary-route-decision-table)
+- [3. Common traps](#3-common-traps)
+- [4. Propagation models](#4-propagation-models)
+- [5. Impact statuses](#5-impact-statuses)
+- [6. Invalidation rules by owning layer](#6-invalidation-rules-by-owning-layer)
+- [7. Impact dimensions](#7-impact-dimensions)
+- [8. Minimal propagation principle](#8-minimal-propagation-principle)
+- [9. Facts and assessments](#9-facts-and-assessments)
+
+
 ## 1. Separate five things
 
 | Item | Question |
