@@ -68,6 +68,15 @@ Tests passing do not substitute for requirement coverage, semantic judgment, ind
 
 ## 3. Failure, progress, and recovery
 
+Keep the active working set at the current slice: obligations, shared constraints,
+changed code and current verification. Reuse still-visible, unchanged method and
+contract content; use file/section pointers for closed slices and full logs. Do not
+append whole ledgers or receipts to each turn. When context is no longer usable,
+preserve a bounded continuation record and use the host's available, authorized
+handoff/recovery mechanism; do not pretend that a phase transition cleared history.
+No automatic clearing or delegation is implied. A fresh receiver must read current
+authority and load-bearing semantics, even when the cited fingerprints still match.
+
 Keep a bounded retry policy in the mission. Count no progress when repeating an action without new evidence, a changed hypothesis, or closing an obligation; command count alone is not progress. Three consecutive no-progress rounds is a reasonable initial local default, not a universal threshold. Keep the user informed during long runs. Budget exhaustion means `STOP_BUDGET`, not success.
 
 Environment failures: attempt reasonable authorized repairs or alternate faithful evidence; do not replace required evidence with a weaker mock. Record the missing prerequisite if it remains unavailable. Workspace conflicts: preserve files and resolve attribution, never reset or stash merely to proceed.

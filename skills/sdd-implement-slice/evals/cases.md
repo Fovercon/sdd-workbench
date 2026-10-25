@@ -255,3 +255,7 @@ The Skill fails if it:
 - silently fixes an out-of-scope issue or discards it without recording;
 - marks `SLICE_COMPLETE` with a mandatory failing gate, unresolved contract discovery, or overlapping workspace conflict;
 - reports whole-feature convergence, merge readiness, or release readiness from one completed slice.
+
+## Current-card context guard
+
+Use the implement case in the source-checkout [context protocol](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md). Verify native RED before the production edit, GREEN after, exact behavior and unchanged protected contracts. Reading less must not omit cross-cutting obligations. This is a guard case, not proof of lower implementation cost.

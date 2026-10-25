@@ -25,6 +25,13 @@ An authorized Router RUN may call this Skill repeatedly, once per current card. 
 
 ## Required inputs
 
+Load the current card's requirements, acceptance conditions and relevant Plan
+invariants, including shared constraints that affect this slice. Reuse applicable
+content still visible from the same verified baseline; do not reload all completed
+slices or historical reports. Expand to the primary contract when scope or meaning
+is uncertain. After context loss, read the current load-bearing clauses again;
+a matching hash or prior summary does not restore their meaning or authorization.
+
 Inspect and identify exact versions of:
 
 1. applicable Agent instructions;

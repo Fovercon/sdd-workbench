@@ -38,6 +38,15 @@ concrete input question; do not invent it to make the direct path available.
 
 ## Load only the selected operation's detail
 
+Reuse instructions and contract clauses already visible in the current context
+while their identity and applicability remain current; do not reread them merely
+because another slice starts. Retrieve the current card's obligations and relevant
+cross-cutting constraints, expanding scope when dependencies or uncertainty require
+it. Keep large results in files and retrieve bounded fields. After compaction or a
+real handoff, re-establish authority and meaning from primary sources: hashes alone
+cannot restore forgotten content. Changing the active Skill does not unload prior
+messages, reset a host context window or establish lower total token use.
+
 - **Diagnostics — `ENTRY`, `STATUS`, `AFTER_OUTCOME`, `REROUTE`:** read
   [references/routing-model.md](references/routing-model.md) before assigning stages,
   applying exception precedence, interpreting outcomes or creating a state map.
@@ -50,7 +59,8 @@ concrete input question; do not invent it to make the direct path available.
   reference requires; preserve already-recorded authority and reserved human gates.
   A stage return hands control back to the controller, not automatically to the user.
 - **`VIEW`:** read [references/project-view.md](references/project-view.md) and the
-  relevant project sources. Produce a source-bound derived snapshot; a new lifecycle,
+  relevant project sources. Use the public `describe` and `check --summary` commands before diagnosing internals.
+  Produce a source-bound derived snapshot; a new lifecycle,
   approved Spec or Archify install is not a prerequisite. Keep business flows distinct
   from code/data structure. Explain a requested Archify option only when available.
 - **A real human gate or explicitly requested in-board feedback:** read

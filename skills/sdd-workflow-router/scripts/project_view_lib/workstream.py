@@ -4,6 +4,12 @@ from . import lifecycle
 ROLES = {'brief', 'requirement', 'slice', 'check'}
 EXECUTION = {'TODO': '待开始', 'DOING': '进行中', 'BLOCKED': '受阻', 'DONE': '已完成'}
 RESULTS = {'PASS': '通过', 'FAIL': '失败', 'NOT_RUN': '未执行', 'UNKNOWN': '结果未知'}
+FIELDS = {'brief': {'in_scope', 'out_of_scope'}, 'requirement': {'acceptance'},
+          'slice': {'requirement_ids', 'depends_on', 'status', 'blocker'},
+          'check': {'requirement_ids', 'slice_ids', 'result', 'acceptance_refs'}}
+REQUIRED_LISTS = {'brief': ('in_scope', 'out_of_scope'), 'requirement': ('acceptance',),
+                  'slice': ('requirement_ids',), 'check': ('requirement_ids', 'slice_ids')}
+OWNING_STAGE = {'requirement': 'Spec', 'slice': 'Tasks', 'check': 'Converge'}
 
 
 def references(item):
@@ -25,20 +31,17 @@ def validate(snapshot):
         if not isinstance(work, dict) or work.get('type') not in ROLES:
             raise ValueError('work.type must be brief, requirement, slice or check')
         role = work['type']
-        fields = {'brief': {'in_scope', 'out_of_scope'}, 'requirement': {'acceptance'},
-                  'slice': {'requirement_ids', 'depends_on', 'status', 'blocker'},
-                  'check': {'requirement_ids', 'slice_ids', 'result', 'acceptance_refs'}}[role]
+        fields = FIELDS[role]
         if set(work) - fields - {'type'}:
             raise ValueError('Unknown work field for ' + role)
         if not item.get('sources'):
             raise ValueError('work records must cite their own sources')
-        expected = {'requirement': 'Spec', 'slice': 'Tasks', 'check': 'Converge'}
+        expected = OWNING_STAGE
         if role in expected and (item.get('stage') != expected[role] or item['view'] != 'capability'):
             raise ValueError('work role needs its owning stage and capability view')
         if role == 'brief' and (not item.get('stage') or item['view'] != 'progress'):
             raise ValueError('brief needs a stage-bound progress record')
-        required = {'brief': ('in_scope', 'out_of_scope'), 'requirement': ('acceptance',),
-                    'slice': ('requirement_ids',), 'check': ('requirement_ids', 'slice_ids')}[role]
+        required = REQUIRED_LISTS[role]
         for key in (*required, *(['depends_on'] if 'depends_on' in work else [])):
             value = work.get(key)
             if (not isinstance(value, list) or any(not isinstance(v, str) or not v.strip() for v in value)

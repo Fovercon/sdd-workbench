@@ -11,6 +11,16 @@ RESULTS = {'PASS': '通过', 'FAIL': '失败', 'NOT_RUN': '未执行', 'UNKNOWN'
 DELIVERY = {'PLANNED': '计划交付', 'PREPARED': '已准备，待交付', 'DELIVERED': '有交付记录'}
 
 
+def allowed_fields(role):
+    fields = {'type', 'record_ids'}
+    if role in ('command', 'test_run', 'usage', 'recovery'): fields |= {'command', 'cwd'}
+    if role in ('command', 'test_run'): fields.add('result')
+    if role in ('usage', 'recovery', 'handoff'): fields.add('steps')
+    if role == 'handoff': fields.add('owner')
+    if role == 'deliverable': fields |= {'path', 'delivery_status', 'delivery_receipt'}
+    return fields
+
+
 def validate(snapshot):
     from .workstream import references
     nodes = {i['id']: i for i in snapshot['items']}
@@ -25,12 +35,7 @@ def validate(snapshot):
                 or 'work' in item or not item.get('sources') or not item.get('note', '').strip()):
             raise ValueError('stage_detail needs a stage, sources, explanation and progress/capability view; work stays separate')
         role = detail['type']
-        fields = {'type', 'record_ids'}
-        if role in ('command', 'test_run', 'usage', 'recovery'): fields |= {'command', 'cwd'}
-        if role in ('command', 'test_run'): fields.add('result')
-        if role in ('usage', 'recovery', 'handoff'): fields.add('steps')
-        if role == 'handoff': fields.add('owner')
-        if role == 'deliverable': fields |= {'path', 'delivery_status', 'delivery_receipt'}
+        fields = allowed_fields(role)
         if set(detail) - fields:
             raise ValueError('Unknown stage_detail field for ' + role)
         for key in ('command', 'cwd', 'path', 'owner', 'delivery_receipt'):

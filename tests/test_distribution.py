@@ -54,14 +54,26 @@ class DistributionTests(unittest.TestCase):
         self.assertIn('CONTRIBUTING.md',files)
         self.assertIn('SECURITY.md',files)
 
-    def test_active_installation_examples_use_the_current_release(self):
-        version=package.load(ROOT/'plugin.json')['version']
+    def test_active_installation_examples_use_the_latest_dated_release(self):
+        # Development metadata may be ahead while a user explicitly withholds release.
+        notes=(ROOT/'CHANGELOG.md').read_text(encoding='utf-8')
+        version=re.search(r'^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}$',notes,re.M)[1]
+        target=package.load(ROOT/'plugin.json')['version'].split('-')[0]
+        self.assertLessEqual(tuple(map(int,version.split('.'))),tuple(map(int,target.split('.'))))
         for file in (ROOT/'README.md',ROOT/'docs/AGENT-COMPATIBILITY.md'):
             text=file.read_text(encoding='utf-8')
             pins=re.findall(r'sdd-workbench(?:/tree/|/releases/tag/|#|@)v(\d+\.\d+\.\d+)',text)
             pins+=re.findall(r'(?:--ref|--branch|git checkout) v(\d+\.\d+\.\d+)',text)
             self.assertTrue(pins,file)
             self.assertEqual(set(pins),{version},file)
+
+    def test_undated_draft_notes_cannot_be_used_for_tag_publication(self):
+        self.version(self.upgrade_version)
+        path=self.source/'CHANGELOG.md';before=path.read_text(encoding='utf-8')
+        path.write_text('# 更新记录\n\n'+f'## [{self.upgrade_version}]\n\nDraft only.\n\n'+before.partition('\n')[2],encoding='utf-8')
+        with self.assertRaises(ValueError):package.release_notes(self.source)
+        path.write_text('# 更新记录\n\n'+f'## [{self.upgrade_version}] - 2026-10-26\n\nReady notes.\n\n'+before.partition('\n')[2],encoding='utf-8')
+        self.assertEqual(package.release_notes(self.source),'Ready notes.\n')
 
     def test_all_adapter_projections_and_complete_resources_are_packaged(self):
         _, _, files = package.check(self.source)

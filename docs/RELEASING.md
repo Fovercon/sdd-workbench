@@ -68,3 +68,10 @@ Release的发布任务在完整CI成功后，用固定提交的 `actions/attest`
 下载后按 [SECURITY.md](../SECURITY.md) 的仓库、工作流和标签约束验证。证明不代替逐文件校验、浏览器回归、模型评测或真人试用，也不授予软件许可。官方机制见 [GitHub构建证明说明](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)。
 
 ZIP与Node包不附带 `docs/optimization/`、`docs/releases/` 中的项目过程资料；这些文件保留在仓库，发行说明中的链接固定到对应版本。可复用的技能、工具、测试、维护指南与第三方声明仍随包提供。包内链接由 `python3 tools/docs.py check` 校验；Node清单另用 `npm run test:package` 验证。
+
+## 开发候选与稳定安装入口
+
+未发布候选可在 `plugin.json` 提前记目标版本，行为与限制写入 `Unreleased`。
+安装命令仍固定到CHANGELOG中最新已有日期的稳定版本；不能把开发主线版本当成已存在的标签或Release。
+正式发布前再补目标版本的日期/说明并同步安装示例。`notes` 命令拒绝无日期的草稿，
+标签流程仍需实际CI及发布授权。0.4.1当前只准备提交推送，不创建标签或发布资产。

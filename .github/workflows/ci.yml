@@ -25,6 +25,7 @@ jobs:
       - run: python tools/package.py check
       - run: python tools/docs.py check
       - run: python -B -m unittest discover -s tests -v
+      - run: python -B -m unittest discover -s evals/context -p "test_*.py" -v
       - if: runner.os != 'Windows'
         run: python -B -m unittest discover -s skills/sdd-workflow-router/tests -v
       - run: python tools/package.py build

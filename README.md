@@ -2,6 +2,8 @@
 
 **让 AI 编程任务的需求、设计、实现和验证有据可查。**
 
+开发状态：main 正在准备 **0.4.1 候选，尚未发布**。下方安装命令固定到已发布的 v0.4.0；新增诊断命令需要当前源码。稳定版说明见 [v0.4.0](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/README.md)。
+
 [![CI](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Fovercon/sdd-workbench?color=526675)](https://github.com/Fovercon/sdd-workbench/releases/latest)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-526675)](CONTRIBUTING.md)
@@ -22,6 +24,14 @@ Specification-driven engineering skills for coding agents, with traceable work, 
 | 换代理、换会话或升级安装时丢上下文、覆盖本地修改 | 使用有来源的交接记录；Python安装器保护用户编辑、备份与中断恢复 |
 
 这些是已实现的工程机制。尚无同条件框架对比或真人试用数据支持效率排名；安装/发现支持也不等于六个平台均已完成业务验证。验证范围见 [平台说明](docs/AGENT-COMPATIBILITY.md)，后续工作见 [优化记录](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/V0.4.0-PLAN.md)。
+
+## 上下文管理的边界
+
+套件指导代理按任务选技能、复用当前仍有效的内容，并在真实交接后核对来源；它不能自动卸载宿主已有消息或重置上下文窗口。累计输入、单次输入峰值、缓存与输出是不同指标，按需加载本身不证明总Token或费用低于其他框架。
+
+0.4.1候选增加公开字段描述 `describe`、只读检查摘要 `check --summary` 和原生事件测量，减少为确认格式而翻内部代码、反复回传整份生成结果的需要。是否减少实际用量，以同输入、同模型及完整质量检查后的记录为准；不由文档字节数换算Token。
+
+[本轮审视与实验](https://github.com/Fovercon/sdd-workbench/blob/main/docs/optimization/V0.4.1-CONTEXT-REVIEW.md) · [复测协议](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md)
 
 ## 从一个任务开始
 

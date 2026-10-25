@@ -1,5 +1,10 @@
 # 多平台安装兼容
 
+当前main的0.4.1为未发布候选；下文安装命令继续指向已发布v0.4.0。
+候选的上下文方法只完成Pi/Flash的有界VIEW重复试验及实施/恢复保护案例，
+不建立六宿主业务行为、真实compaction或跨agent总成本优势；详见
+[0.4.1审视记录](https://github.com/Fovercon/sdd-workbench/blob/main/docs/optimization/V0.4.1-CONTEXT-REVIEW.md)。
+
 2026-10-26 补充：[Codex/Pi 实际任务试点](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/P0-COMPANY-TRIAL.md)已执行原生CLI、
 隔离冻结runtime与真实业务背景的从零原型；记录具体版本/模型、权限、反馈轮次和当前交付。
 这条证据覆盖该本地加载路径和任务范围，其余客户端、商店入口和版本沿用下文各自的实测状态。

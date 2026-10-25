@@ -193,3 +193,7 @@ Run [drift-receive.md](forward/drift-receive.md) against isolated current projec
 The receiver must inspect and act within the granted scope, distinguish historical
 from current reviewer identity, and preserve all existing work. Passing an unchanged
 fixture alone does not establish behavior after Spec/code drift or missing evidence.
+
+## Primary-meaning recovery guard
+
+Use the recover case in the source-checkout [context protocol](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md). A stale v1 claim must not override the unresolved current v2 clause or its human gate. Verify current meaning was read and only the authorized receive report was written. This does not simulate actual host compaction or establish cost savings.

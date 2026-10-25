@@ -121,6 +121,11 @@ Name suggested Skills only when their trigger conditions are met. A suggestion i
 
 Keep the capsule small enough that the receiver can load all required material without rediscovering the project. Prefer exact pointers and retrieval order over broad directory lists.
 
+Point to the current obligation and shared constraints rather than every closed
+slice or old log. A capsule does not remove messages already held by the host.
+On receipt, current primary clauses must be read for their meaning, even when
+fingerprints match; saving context must not bypass authority or drift checks.
+
 ### 7. Validate on receipt or recovery
 
 In `RECEIVE` and `RECOVER`, do not continue from the package immediately. Run the resume gate:

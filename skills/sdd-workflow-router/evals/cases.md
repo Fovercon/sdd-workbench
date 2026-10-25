@@ -323,3 +323,7 @@ Maintainer protocol: [forward/pilot.md](forward/pilot.md). Five synthetic tasks
 cover bounded repair, two-slice feature, explicit requirements revision, read-only
 review and stale-evidence resume. Inputs and evaluator-only probes are bundled;
 deterministic checks do not establish actor behavior or cross-host readiness.
+
+## Context working-set forward checks
+
+Run the source-checkout [context protocol](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md) with matched VIEW inputs and frozen before/candidate runtimes. Check all retained versions, source facts, unknown/unrun states and real browser behavior before comparing usage. Retain intermediate regressions and individual runs; a smaller payload alone is not success. This maintainer protocol is outside installation package inputs.

@@ -80,7 +80,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__); parser.add_argument('command', choices=['check']); args = parser.parse_args()
     import package
     result = check(package.bundle_files(ROOT))
-    print(json.dumps(result, ensure_ascii=False, indent=2)); return bool(result['errors'])
+    print(json.dumps(result, ensure_ascii=True, indent=2)); return bool(result['errors'])
 
 
 if __name__ == '__main__': sys.exit(main())

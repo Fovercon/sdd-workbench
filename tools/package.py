@@ -247,9 +247,9 @@ def verify(archive):
 def release_notes(root=ROOT):
     version = load(root / 'plugin.json')['version']
     text = (root / 'CHANGELOG.md').read_text(encoding='utf-8')
-    match = re.search(r'^## \[' + re.escape(version) + r'\][^\n]*\n(.*?)(?=^## |\Z)', text, re.M | re.S)
+    match = re.search(r'^## \[' + re.escape(version) + r'\] - \d{4}-\d{2}-\d{2}\n(.*?)(?=^## |\Z)', text, re.M | re.S)
     if not match or not match[1].strip():
-        raise ValueError(f'Write CHANGELOG.md notes for {version} first')
+        raise ValueError(f'Write dated CHANGELOG.md notes for {version} first; an undated draft is not releasable')
     return match[1].strip() + '\n'
 
 

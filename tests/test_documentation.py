@@ -22,3 +22,10 @@ class DocumentationTests(unittest.TestCase):
         self.assertTrue(docs.check({key:text.encode()})['errors'])
         data={'README.md':'[说明](guide.md#中文标题)'.encode(), 'guide.md':'# 中文标题'.encode()}
         self.assertEqual(docs.check(data)['errors'],[])
+
+    def test_unicode_failure_is_parseable_in_a_legacy_windows_pipe(self):
+        import os,json,subprocess
+        program="import sys;sys.path.insert(0,'tools');import package,docs;package.bundle_files=lambda root:{'README.md':'[bad](缺失.md)'.encode()};sys.argv=['docs.py','check'];sys.exit(docs.main())"
+        run=subprocess.run([sys.executable,'-c',program],cwd=ROOT,env={**os.environ,'PYTHONIOENCODING':'cp1252'},capture_output=True)
+        self.assertEqual(run.returncode,1)
+        self.assertIn('缺失.md',json.loads(run.stdout)['errors'][0]);self.assertEqual(run.stderr,b'')
