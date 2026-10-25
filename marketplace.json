@@ -1,0 +1,12 @@
+{
+  "name": "sdd-workbench",
+  "description": "SDD Workbench skill suite",
+  "plugins": [
+    {
+      "name": "sdd-workbench",
+      "source": "./",
+      "version": "0.2.0",
+      "description": "Requirements, design, implementation, verification and delivery skills"
+    }
+  ]
+}

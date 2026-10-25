@@ -91,3 +91,30 @@ Windows 或其他 Python 版本；发布流程另行核对该版本的远端 CI�
 解压和检查。在临时安装目的地完成 `0.1.0 -> 0.1.1 -> 回退 0.1.0 -> 0.1.1`，
 确认旧版文件精确恢复、升级备份保留、非托管 skill 未变、新版安装无本地指纹差异；
 同时验证候选包中的看板和反馈服务入口可调用。未使用维护者的 live skills 目录。
+
+## v0.2.0 多平台安装验证
+
+日期：2026-10-25。范围为安装、发现、包元数据和发布流程；12 个技能目录与 v0.1.1
+字节一致，不新增或改变方法语义。平台接口及实测边界见
+[AGENT-COMPATIBILITY.md](AGENT-COMPATIBILITY.md)。
+
+- 包与安装器：Python 3.11.14，32 项通过，新增六目标路径/别名、环境覆盖与隔离 home、
+  完整安装、备份回退、多目标预检、真实部分复制失败后的恢复和旧 CLI 兼容回归。
+- Router：112 项通过；浏览器 Chrome/Playwright 1.62.1，49 + 91 + 46 = 186 项通过。
+- DeepSeek adapter 单元检查：Node 24，4 项通过，覆盖完整目录、正文、资源定位、伪造 locator 拒绝和取消。
+- 原生回归：Skills CLI 1.7.4 在隔离目录安装五个已登记 agent，12 个公共目录及所有资源字节
+  与源一致，Hermes/ZCode 链接指向相同目录；npm pack 排除 Python 缓存并保留全部资源。
+- DeepSeek 0.2.1-rc.2：真实 Cordis/SkillRegistry 加载 bundle，真实 filesystem provider
+  加载共享目录，各发现 12 个技能并校验正文；`dsh plugin` 安装后 dump-config 含套件注册。
+- Pi 0.86.1：原生 package 安装/资源加载器与公共目录自动发现均为 12 项，零 diagnostics。
+- Hermes 官方源码扫描器发现 12 个链接 skills；OpenCode 1.19.4 的 `debug skill`
+  发现并加载安装目录下的 12 个 skills。
+- Codex 本次验证安装布局和原生元数据；ZCode 验证通用 CLI 入口和官方插件布局，
+  未运行两者的完整客户端插件安装。以上均不是模型行为评测。
+
+所有安装、升级和恢复测试使用临时目录。CI 新增固定上游版本的原生发现任务，
+远端 Linux/Windows 与标签发布结果以 GitHub Actions 对实际提交的运行记录为准。
+
+实际候选 ZIP 已验证可重复构建和逐文件 manifest；解压后六目标全新安装通过，
+六目标均完成实际已发布 v0.1.1 → v0.2.0 → 回退 v0.1.1 → 再安装 v0.2.0，
+保留各目标无关 skills。解压包中的原生发现回归同样通过。

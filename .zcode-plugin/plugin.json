@@ -1,0 +1,11 @@
+{
+  "name": "sdd-workbench",
+  "version": "0.2.0",
+  "description": "Specification-driven engineering skills, from requirements and design to implementation, verification, and delivery.",
+  "author": {
+    "name": "Fovercon",
+    "url": "https://github.com/Fovercon"
+  },
+  "repository": "https://github.com/Fovercon/sdd-workbench",
+  "skills": "./skills/"
+}

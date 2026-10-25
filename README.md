@@ -6,44 +6,72 @@
 
 ## 安装
 
-### Codex 插件
+### 六平台代理共用一套 skills
 
-支持插件的 Codex 客户端可以添加本仓库作为插件源，安装 **SDD Workbench**。
-支持下列命令的 CLI 可执行：
+推荐在终端执行这一行（需要 Node.js 20+ 和 Git）：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.1.1
-codex plugin add sdd-workbench@sdd-workbench
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
-插件包含全部 12 个 skills 及其脚本和资源。不同客户端的插件入口可能不同；
-可在插件目录中选择 SDD Workbench 源后安装。安装后新开一轮对话使用。
-格式依据 [OpenAI 插件打包说明](https://developers.openai.com/plugins/build/plugins)。
+此命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)，将全部 12 个 skills
+及资源放在 `~/.agents/skills`。Codex、OpenCode、Pi 和 DeepSeek Harness
+0.2.1-rc.2 的文件系统 provider 可直接发现此目录；Hermes、ZCode 通过链接使用同一份内容。
+DeepSeek 尚无该 CLI 的 agent ID，因此命令没有虚构 `--agent deepseek`。
+Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可改用下面的 Python 安装。
+
+只给某个平台安装，或使用平台原生插件入口：
+
+| 平台 | 一行安装命令 |
+|---|---|
+| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a codex -y` |
+| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a hermes-agent -y` |
+| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a zcode -y` |
+| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.2.0'` |
+| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a opencode -y` |
+| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.2.0` |
+
+原生插件仍读取仓库中的同一个 `skills/`，不维护平台专用指令副本。DeepSeek 命令中的
+`cli` 是 profile 名，可换成实际使用的 profile；需要 Harness 0.2.1-rc.2。
+如已通过共享目录安装，无需再装同一套原生插件。安装后重启客户端或重新加载 skills。
+路径、版本和实测边界见 [平台兼容与验证](docs/AGENT-COMPATIBILITY.md)。
+
+### 原生插件源
+
+支持插件命令的 Codex 客户端也可执行：
+
+```sh
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.2.0 && codex plugin add sdd-workbench@sdd-workbench
+```
+
+ZCode 可在 Settings → Plugins → Create marketplace 中填写
+`https://github.com/Fovercon/sdd-workbench`，然后安装 SDD Workbench。
+仓库提供 `.codex-plugin/`、`.agents/plugins/`、`.zcode-plugin/`、根 marketplace、Pi package
+和 DeepSeek bundle 元数据。ZCode 官方入口为界面操作，终端一行安装使用上面的 Skills CLI。
 
 ### Python 整套安装
 
-需要 Python 3.10+ 和 Git；安装器本身无第三方依赖。可在 macOS、Linux 和
-Windows 的终端使用。下面以当前补丁版本为例：
+需要 Python 3.10+ 和 Git；安装器无第三方依赖，支持 macOS、Linux、Windows：
 
 ```sh
-git clone --branch v0.1.1 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.2.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
-python3 tools/install.py install
+python3 tools/install.py install --agent all
 ```
 
-最后一条命令安装整套 skills，默认位置为 `$CODEX_HOME/skills`，未设置时使用
-`~/.codex/skills`。Windows 如使用 `python` 命令，可将上面的 `python3` 替换为 `python`。
-也可以下载 [Release ZIP](https://github.com/Fovercon/sdd-workbench/releases)，解压后执行同一安装命令。
+`all` 为六个平台各安装一份受回执管理的完整副本；若希望只有一个公共目录，使用
+`--agent shared`，并按兼容说明配置 Hermes、ZCode 的入口。也可以下载
+[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.2.0)，解压后运行安装器。
+Windows 可将 `python3` 替换为 `python`。
 
-已有同名且内容不同的 skills 时，安装器会停止；希望迁移旧安装时，显式执行：
+可指定 `--agent codex hermes zcode deepseek opencode pi` 中的一个或多个。
+不传 `--agent` 保留旧行为：安装到 `$CODEX_HOME/skills` 或 `~/.codex/skills`。
+`--dest /path/to/skills` 和 `--state /path/to/state` 只接受单目标。
+`--home /temporary/base` 可指定隔离基目录，并忽略平台环境变量，适合测试。
 
-```sh
-python3 tools/install.py install --adopt
-```
-
-旧内容会先备份；无关 skills 不受影响。安装状态和备份默认放在安装目录旁的
-`.sdd-workbench/` 中，请保留此目录。自定义安装位置使用 `--dest /path/to/skills`，
-后续操作也要使用同一位置。插件安装与 Python 安装二选一，避免重复发现同名能力。
+安装器会保护无关 skills 和用户编辑。旧的同名内容不同时停止；显式使用 `--adopt`
+可先备份再迁移。回执和备份位于各目标旁的 `.sdd-workbench/`，请保留。
+同一目录选择一种安装管理方式；Vercel CLI 与原生插件不使用 Python 的回执和备份。
 
 ## 开始使用
 
@@ -84,9 +112,9 @@ python3 tools/install.py install --adopt
 
 ```sh
 git fetch --tags origin
-git checkout v0.1.1
-python3 tools/install.py install
-python3 tools/install.py status
+git checkout v0.2.0
+python3 tools/install.py install --agent all
+python3 tools/install.py status --agent all
 ```
 
 上面的版本号是示例，升级时替换为实际发布的目标标签。每个版本作为一个整体安装，
@@ -94,16 +122,19 @@ python3 tools/install.py status
 `--force`，安装器仍会先保存当前内容。回退最近一次安装/更新：
 
 ```sh
-python3 tools/install.py rollback
+python3 tools/install.py rollback --agent all
 ```
 
 安装中断时，安装器保留恢复记录并阻止下一次写入。先保留新产生的本地修改，
 然后执行：
 
 ```sh
-python3 tools/install.py recover
+python3 tools/install.py recover --agent all
 ```
 
+后续命令应选择与安装时相同的 `--agent`、`--dest` 或 `--home`。每个目标独立提交事务；
+多目标操作先检查已知冲突，但运行时故障可能只完成前几个目标。失败输出会列出
+`completed` 和 `failed_agent`，先恢复失败目标，再重跑安装；已完成且无变化的目标不会重复替换。
 恢复会保留已完整提交的安装，或恢复到操作前的内容。多目录替换期间不要启动新的
 代理会话；安装完成后再开始使用该版本。
 
@@ -123,6 +154,7 @@ python3 tools/install.py recover
 python3 tools/package.py check
 python3 -B -m unittest discover -s tests
 python3 -B -m unittest discover -s skills/sdd-workflow-router/tests
+npm run test:adapters
 python3 tools/package.py build
 ```
 

@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = re.compile(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?')
 ROOT_FILES = ('plugin.json', 'suite.json', 'README.md', 'CHANGELOG.md', 'AGENTS.md', 'THIRD_PARTY_NOTICES.md',
               'package.json', 'package-lock.json')
-TREES = ('skills', 'tools', 'tests', 'docs', '.codex-plugin', '.agents/plugins')
+MULTI_FILES = ('agent-targets.json', 'marketplace.json', 'cordis.patch.yml', '.npmignore')
+TREES = ('skills', 'tools', 'tests', 'docs', 'adapters', '.codex-plugin', '.agents/plugins', '.zcode-plugin')
 
 
 def digest(data):
@@ -47,6 +48,7 @@ def tree_hashes(root):
 
 def bundle_files(root=ROOT):
     paths = [root / name for name in ROOT_FILES]
+    paths += [root / name for name in MULTI_FILES if (root / name).exists()]
     for name in TREES:
         base = root / name
         paths += sorted(base.rglob('*'))
@@ -66,6 +68,77 @@ def bundle_files(root=ROOT):
     return dict(sorted(result.items()))
 
 
+def check_adapters(root, plugin):
+    """Adapter metadata projects the same suite; no platform owns a skill copy."""
+    zcode = load(root / '.zcode-plugin/plugin.json')
+    for field in ('name', 'version', 'description', 'author', 'repository'):
+        if zcode.get(field) != plugin.get(field):
+            raise ValueError(f'ZCode manifest drift: {field}')
+    if zcode.get('skills') != './skills/':
+        raise ValueError('ZCode must load the shared skills tree')
+    marketplace = load(root / 'marketplace.json')
+    if marketplace != load(root / '.zcode-plugin/marketplace.json'):
+        raise ValueError('ZCode marketplace projections differ')
+    entries = marketplace.get('plugins', [])
+    if (marketplace.get('name') != plugin['name'] or len(entries) != 1
+            or entries[0].get('name') != plugin['name'] or entries[0].get('source') != './'
+            or entries[0].get('version') != plugin['version']):
+        raise ValueError('Marketplace must identify this complete versioned suite')
+    node, lock = load(root / 'package.json'), load(root / 'package-lock.json')
+    if (node.get('name') != plugin['name'] or node.get('version') != plugin['version']
+            or lock.get('name') != node['name'] or lock.get('version') != node['version']
+            or lock.get('packages', {}).get('', {}).get('version') != node['version']):
+        raise ValueError('Node package version/name projection drift')
+    if node.get('pi', {}).get('skills') != ['./skills']:
+        raise ValueError('Pi must load the shared skills tree')
+    if (node.get('main') != './adapters/deepseek.mjs'
+            or node.get('exports', {}).get('.') != './adapters/deepseek.mjs'
+            or node.get('dsh', {}).get('bundle', {}).get('patch') != './cordis.patch.yml'
+            or not (root / 'adapters/deepseek.mjs').is_file()
+            or (root / 'cordis.patch.yml').read_text(encoding='utf-8') !=
+                '- insert:\n    - id: sdd-workbench-skills\n      name: sdd-workbench\n'):
+        raise ValueError('DeepSeek bundle/entrypoint drift')
+    registry = load(root / 'agent-targets.json')
+    if registry.get('schema') != 1 or set(registry.get('targets', {})) != {
+            'codex', 'hermes', 'zcode', 'deepseek', 'opencode', 'pi', 'shared'}:
+        raise ValueError('Expected six agent targets and the shared target')
+    aliases = set(registry['targets']) | {'all'}
+    for target in registry['targets'].values():
+        if 'path' not in target or ('env' in target) != ('env_path' in target):
+            raise ValueError('Agent target needs a path and paired environment override')
+        for key in ('path', 'env_path'):
+            if key in target:
+                value = target[key]
+                if not isinstance(value, str) or '\\' in value or ':' in value:
+                    raise ValueError('Agent skill paths must use home-relative POSIX syntax')
+                path = PurePosixPath(value)
+                if path.is_absolute() or '..' in path.parts or not path.parts:
+                    raise ValueError('Agent skill paths must be safe home-relative paths')
+        for alias in target.get('aliases', []):
+            if alias in aliases:
+                raise ValueError('Duplicate agent target alias')
+            aliases.add(alias)
+
+
+def bump_version(version, root=ROOT):
+    if not VERSION.fullmatch(version):
+        raise ValueError('Invalid semantic version')
+    root = Path(root)
+    for name in ('plugin.json', '.codex-plugin/plugin.json', '.zcode-plugin/plugin.json', 'package.json'):
+        path = root / name
+        if path.exists():
+            value = load(path); value['version'] = version
+            path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    path = root / 'package-lock.json'
+    value = load(path); value['version'] = version; value['packages']['']['version'] = version
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    for name in ('marketplace.json', '.zcode-plugin/marketplace.json'):
+        path = root / name
+        if path.exists():
+            value = load(path); value['plugins'][0]['version'] = version
+            path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
 def check(root=ROOT):
     root = Path(root).resolve()
     plugin, suite = load(root / 'plugin.json'), load(root / 'suite.json')
@@ -79,6 +152,8 @@ def check(root=ROOT):
             raise ValueError(f'Compatibility manifest drift: {field}')
     if compatibility.get('skills') != './skills/' or compatibility.get('interface') != plugin['extensions']['com.openai']['interface']:
         raise ValueError('Compatibility components or presentation drift')
+    if tuple(map(int, plugin['version'].split('-')[0].split('.'))) >= (0, 2, 0):
+        check_adapters(root, plugin)
     names = suite['skills']
     if not isinstance(names, list) or not names or any(not valid_name(name) for name in names) or len(names) != len(set(names)):
         raise ValueError('Suite needs unique, safe skill names')
@@ -172,11 +247,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'bump':
-            if not VERSION.fullmatch(args.version):
-                raise ValueError('Invalid semantic version')
-            for name in ('plugin.json', '.codex-plugin/plugin.json'):
-                value = load(ROOT / name); value['version'] = args.version
-                (ROOT / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+            bump_version(args.version)
             print(args.version)
         elif args.command == 'notes':
             notes = release_notes()

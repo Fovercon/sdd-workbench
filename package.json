@@ -1,9 +1,58 @@
 {
-  "name": "sdd-workbench-browser-tests",
+  "name": "sdd-workbench",
+  "version": "0.2.0",
   "private": true,
-  "description": "Development-only browser regressions; the installed suite has no Node dependency.",
-  "scripts": {
-    "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs"
+  "description": "One SDD skill suite for Codex, Hermes, ZCode, DeepSeek Harness, OpenCode and Pi.",
+  "main": "./adapters/deepseek.mjs",
+  "exports": {
+    ".": "./adapters/deepseek.mjs"
   },
-  "devDependencies": {"playwright": "1.62.1"}
+  "keywords": [
+    "agent-skills",
+    "pi-package",
+    "dsh-plugin",
+    "sdd"
+  ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "files": [
+    "skills",
+    "adapters",
+    "suite.json",
+    "plugin.json",
+    "agent-targets.json",
+    "cordis.patch.yml",
+    ".codex-plugin",
+    ".agents/plugins",
+    ".zcode-plugin",
+    "marketplace.json",
+    "docs",
+    "README.md",
+    "CHANGELOG.md",
+    "AGENTS.md",
+    "THIRD_PARTY_NOTICES.md",
+    "!**/__pycache__/**",
+    "!**/*.pyc",
+    "!**/*.pyo",
+    ".npmignore"
+  ],
+  "scripts": {
+    "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs",
+    "test:adapters": "node --test tests/test_deepseek_adapter.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }

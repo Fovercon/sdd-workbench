@@ -15,18 +15,19 @@
 
 1. 完成所需改动。方法语义变化按相应 skill 的 forward 协议验证；结构与单测
    不替代真实模型行为演练。包装变化验证包身份、安装、升级、回退与恢复即可。
-2. 执行 `python3 tools/package.py bump X.Y.Z`，同步通用清单与 Codex 兼容投影。
+2. 执行 `python3 tools/package.py bump X.Y.Z`，同步通用清单、Codex/ZCode 清单与市场版本、Node package 和 lock 投影。
    更新 `CHANGELOG.md` 中对应版本的日期、行为变化、兼容性和已知限制。
 3. 运行 README 中的检查，再运行相关浏览器检查：
 
    ```sh
    npm ci
+   npm run test:adapters
    npx playwright install --with-deps chromium
    SDD_BROWSER_CHANNEL=chromium npm run test:browser
    ```
 
    本机也可用 `SDD_BROWSER_CHANNEL=chrome` 测试已安装的 Chrome。浏览器仅用于
-   维护验证，安装或使用 skills 不要求 Node.js。
+   维护验证，Python 安装不要求 Node.js；通用 Skills CLI、Pi 和 DeepSeek 原生入口需要各自运行时。
 4. 执行 `python3 tools/package.py build`。相同源文件产生相同 ZIP，包内
    `package-manifest.json` 绑定逐文件 SHA256 和套件版本；发行目录同时产生外部
    manifest 和 `SHA256SUMS`。`python3 tools/package.py verify dist/包名.zip`

@@ -13,6 +13,27 @@ import uuid
 from package import ROOT, check, load, tree_hashes, valid_name
 
 
+def target_directories(selected=None, home=None, environ=None):
+    """Resolve named targets without touching the user's configuration files."""
+    registry = load(ROOT / 'agent-targets.json')['targets']
+    aliases = {alias: name for name, entry in registry.items() for alias in entry.get('aliases', [])}
+    names = list(dict.fromkeys(aliases.get(name, name) for name in (selected or ['codex'])))
+    unknown = set(names) - set(registry) - {'all'}
+    if unknown:
+        raise ValueError('Unknown agent target: ' + ', '.join(sorted(unknown)))
+    if 'all' in names:
+        names = [name for name in registry if name != 'shared' or 'shared' in names]
+    base = Path(home).expanduser() if home is not None else Path.home()
+    env = {} if home is not None else (os.environ if environ is None else environ)
+    targets = {}
+    for name in names:
+        entry = registry[name]
+        override = env.get(entry.get('env', ''), '').strip()
+        targets[name] = ((Path(override).expanduser() / entry['env_path']) if override
+                         else base / entry['path']).resolve()
+    return targets
+
+
 def atomic_json(path, value):
     path = Path(path); temporary = path.with_name(path.name + '.tmp')
     with temporary.open('w', encoding='utf-8') as stream:
@@ -160,27 +181,31 @@ class Installation:
                 'backup': str(tx), 'transaction_id': tx_id}
 
     def install(self, source=ROOT, adopt=False, force=False):
-        plugin, suite, _files = check(Path(source))
-        source = Path(source).resolve()
-        if self.dest.is_relative_to(source) or self.state.is_relative_to(source):
-            raise ValueError('Keep installation/state outside the release source')
         with self.locked():
-            self.ensure_idle(); before = self.receipt(); self.clean(before, force)
-            expected = {name: tree_hashes(source / 'skills' / name) for name in suite['skills']}
+            plugin, source, before, expected = self.preflight(source, adopt, force)
             if before and before['version'] == plugin['version']:
-                if before['skills'] != expected:
-                    raise ValueError('This version already identifies different contents; publish a new version')
                 if not self.status()['changed']: return dict(self.status(), unchanged=True)
-            unmanaged = [name for name in expected if exists(self.dest / name) and (not before or name not in before['skills'])
-                         and fingerprints(self.dest / name) != expected[name]]
-            if unmanaged and not adopt:
-                raise ValueError('Existing skills differ; use --adopt to back up and migrate them: ' + ', '.join(unmanaged))
             names = sorted(set(expected) | set(before['skills'] if before else []))
             targets = {name: source / 'skills' / name if name in expected else None for name in names}
             receipt = {'schema': 1, 'destination': str(self.dest), 'name': plugin['name'],
                        'version': plugin['version'], 'skills': expected,
                        'installed_at': datetime.now(timezone.utc).isoformat(timespec='seconds')}
             return self.transaction(targets, receipt, before, {name: expected.get(name) for name in names})
+
+    def preflight(self, source=ROOT, adopt=False, force=False):
+        plugin, suite, _files = check(Path(source))
+        source = Path(source).resolve()
+        if self.dest.is_relative_to(source) or self.state.is_relative_to(source):
+            raise ValueError('Keep installation/state outside the release source')
+        self.ensure_idle(); before = self.receipt(); self.clean(before, force)
+        expected = {name: tree_hashes(source / 'skills' / name) for name in suite['skills']}
+        if before and before['version'] == plugin['version'] and before['skills'] != expected:
+            raise ValueError('This version already identifies different contents; publish a new version')
+        unmanaged = [name for name in expected if exists(self.dest / name) and (not before or name not in before['skills'])
+                     and fingerprints(self.dest / name) != expected[name]]
+        if unmanaged and not adopt:
+            raise ValueError('Existing skills differ; use --adopt to back up and migrate them: ' + ', '.join(unmanaged))
+        return plugin, source, before, expected
 
     def recover(self):
         with self.locked():
@@ -227,10 +252,11 @@ class Installation:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
-    default = Path(os.environ.get('CODEX_HOME', Path.home() / '.codex')) / 'skills'
     for command in ('install', 'status', 'rollback', 'recover'):
         p = sub.add_parser(command)
-        p.add_argument('--dest', type=Path, default=default, help='Skill directory; defaults to $CODEX_HOME/skills or ~/.codex/skills')
+        p.add_argument('--agent', nargs='+', help='codex (default), hermes, zcode, deepseek, opencode, pi, shared, or all')
+        p.add_argument('--home', type=Path, help='Explicit home/profile base; ignores agent environment overrides')
+        p.add_argument('--dest', type=Path, help='Explicit skill directory (one target only)')
         p.add_argument('--state', type=Path, help='Persistent ownership/backup directory; defaults to a sibling .sdd-workbench')
         if command == 'install':
             p.add_argument('--source', type=Path, default=ROOT)
@@ -239,11 +265,28 @@ def main():
             p.add_argument('--force', action='store_true', help='Back up and replace locally modified managed skills')
     args = parser.parse_args()
     try:
-        installation = Installation(args.dest, args.state)
-        if args.command == 'install': result = installation.install(args.source, args.adopt, args.force)
-        elif args.command == 'rollback': result = installation.rollback(args.force)
-        elif args.command == 'recover': result = installation.recover()
-        else: result = installation.status()
+        targets = target_directories(args.agent, args.home)
+        if (args.dest or args.state) and len(targets) != 1:
+            raise ValueError('--dest/--state requires exactly one agent target')
+        installations = [(name, Installation(args.dest or dest, args.state)) for name, dest in targets.items()]
+        if args.command == 'install':
+            # Detect known conflicts across all selected targets before the first
+            # write. Each destination still has its own recoverable transaction.
+            for _name, installation in installations:
+                installation.preflight(args.source, args.adopt, args.force)
+        completed = {}
+        for name, installation in installations:
+            try:
+                if args.command == 'install': value = installation.install(args.source, args.adopt, args.force)
+                elif args.command == 'rollback': value = installation.rollback(args.force)
+                elif args.command == 'recover': value = installation.recover()
+                else: value = installation.status()
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                if completed:
+                    print(json.dumps({'completed': completed, 'failed_agent': name, 'error': str(error)}, ensure_ascii=False))
+                raise
+            completed[name] = value
+        result = next(iter(completed.values())) if args.agent is None else {'agents': completed}
         print(json.dumps(result, ensure_ascii=False, indent=2)); return 0
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(str(error), file=sys.stderr); return 1

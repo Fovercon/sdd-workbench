@@ -30,8 +30,7 @@ class DistributionTests(unittest.TestCase):
         self.installation = Installation(self.dest)
 
     def version(self, value):
-        for name in ('plugin.json', '.codex-plugin/plugin.json'):
-            path = self.source / name; data = package.load(path); data['version'] = value; atomic_json(path, data)
+        package.bump_version(value, self.source)
 
     def installed(self, name='sdd-workflow-router'):
         return self.dest / name / 'SKILL.md'
@@ -43,6 +42,33 @@ class DistributionTests(unittest.TestCase):
         self.assertIn('skills/sdd-workflow-router/scripts/feedback_server.py', files)
         self.assertIn('skills/sdd-workflow-router/scripts/project_view_lib/vendor/mermaid-12.2.0.min.js.gz', files)
         self.assertTrue(all('05-notes' not in name and 'PPT' not in name for name in files))
+
+    def test_all_adapter_projections_and_complete_resources_are_packaged(self):
+        _, _, files = package.check(self.source)
+        for name in ('adapters/deepseek.mjs', 'agent-targets.json', 'cordis.patch.yml',
+                     'marketplace.json', '.zcode-plugin/plugin.json', '.zcode-plugin/marketplace.json'):
+            self.assertIn(name, files)
+        self.version(self.upgrade_version)
+        package.check(self.source)
+        for name in ('plugin.json', '.codex-plugin/plugin.json', '.zcode-plugin/plugin.json',
+                     'package.json', 'package-lock.json'):
+            self.assertEqual(package.load(self.source / name)['version'], self.upgrade_version)
+
+    def test_adapter_drift_and_unsafe_target_paths_are_rejected(self):
+        mutations = [('.zcode-plugin/plugin.json', lambda v: v.update(version='9.0.0')),
+                     ('package.json', lambda v: v.update(pi={'skills': ['./copies']})),
+                     ('package.json', lambda v: v.update(dsh={'bundle': {'patch': './missing.yml'}})),
+                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='../outside')),
+                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='C:/outside')),
+                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(path='..\\outside')),
+                     ('agent-targets.json', lambda v: v['targets']['zcode'].update(aliases=['codex']))]
+        for name, mutate in mutations:
+            path = self.source / name; original = path.read_bytes()
+            data = package.load(path); mutate(data); atomic_json(path, data)
+            with self.subTest(name=name), self.assertRaises(ValueError): package.check(self.source)
+            path.write_bytes(original)
+        (self.source / 'cordis.patch.yml').write_text('- insert: []\n')
+        with self.assertRaises(ValueError): package.check(self.source)
 
     def test_manifest_drift_missing_skill_and_symlink_are_rejected(self):
         path = self.source / '.codex-plugin/plugin.json'; old = path.read_bytes()

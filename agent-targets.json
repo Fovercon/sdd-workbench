@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "targets": {
+    "codex": {"path": ".codex/skills", "env": "CODEX_HOME", "env_path": "skills", "aliases": []},
+    "hermes": {"path": ".hermes/skills", "env": "HERMES_HOME", "env_path": "skills", "aliases": ["hermes-agent"]},
+    "zcode": {"path": ".zcode/skills", "aliases": []},
+    "deepseek": {"path": ".dsh/skills", "env": "DSH_HOME", "env_path": "skills", "aliases": ["deepseek-harness", "dsh"]},
+    "opencode": {"path": ".config/opencode/skills", "env": "XDG_CONFIG_HOME", "env_path": "opencode/skills", "aliases": ["open-code"]},
+    "pi": {"path": ".pi/agent/skills", "env": "PI_CODING_AGENT_DIR", "env_path": "skills", "aliases": ["pi-agent"]},
+    "shared": {"path": ".agents/skills", "aliases": []}
+  }
+}
