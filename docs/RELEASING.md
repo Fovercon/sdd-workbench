@@ -24,6 +24,7 @@
    npm run test:adapters
    npx playwright install --with-deps chromium
    SDD_BROWSER_CHANNEL=chromium npm run test:browser
+   SDD_BROWSER_CHANNEL=chromium npm run test:forward-browser
    ```
 
    本机也可用 `SDD_BROWSER_CHANNEL=chrome` 测试已安装的 Chrome。浏览器仅用于
@@ -39,8 +40,9 @@
 
 ## 验证范围
 
-CI 覆盖 Python 3.10/3.12/3.13 下的包与安装器测试、随包 router 测试，以及
-独立的浏览器图形/反馈回归。Release 只有在这些任务通过后才获得上传资产权限。
+CI 覆盖 Python 3.10/3.12/3.13 和 Windows 下的包与安装器测试、随包 router 测试、
+浏览器图形/反馈回归、合成恢复输入的真实浏览器敏感性回归，以及固定版本的
+共享安装和 DSH/Pi 原生发现任务。Release 只有在这些任务通过后才获得上传资产权限。
 CI 不运行模型行为 actor，不构成所有工程场景有效的声明。
 
 ## 安装状态保护

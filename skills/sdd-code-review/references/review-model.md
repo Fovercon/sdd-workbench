@@ -93,7 +93,7 @@ Route it to the requirements workflow when the user chooses to formalize the wor
 | An approved Spec/convergence baseline governs the subject | `SPEC_BASELINE_FOUND` → `sdd-converge-review` |
 | Unresolved product behavior that matters | `OPEN_PRODUCT_QUESTION` → requirements workflow (user decides) |
 | Structural problem that local patches will worsen | Note in finding; suggest planning route instead of recommending another patch |
-| Fixes wanted | User authorizes separately; this skill does not edit |
+| Fixes wanted | Recognize an existing explicit repair request; conclude this read-only review, then hand off to the authorized implementation workflow without requesting the same permission again. If no repair authorization exists, stop after the findings. |
 | Adjacent out-of-scope issues | List; do not expand the review |
 
 ## 8. Gate Rules

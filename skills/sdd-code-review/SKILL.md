@@ -12,7 +12,7 @@ Read [references/review-model.md](references/review-model.md) before assigning s
 ## Boundaries
 
 - Locate and obey applicable `AGENTS.md`, `Agent.md`, and scoped repository rules before reviewing.
-- This is a review workflow. Do not modify code, tests, configuration, specifications, or external systems; fixing findings is a separately authorized action.
+- This is a review workflow. Do not modify code, tests, configuration, specifications, or external systems as part of the review; fixing findings requires user authorization.
 - Do not invent requirements. Judge against engineering correctness, repository rules, and declared intent (tests, documentation, commit messages, linked issues), each labeled as intent evidence rather than authority.
 - If an approved specification or convergence baseline governs the review subject, stop and route to `sdd-converge-review`; do not perform a weaker review of contracted work.
 - Do not claim convergence, requirement coverage, or release readiness, and do not approve, merge, publish, or deploy.
@@ -21,6 +21,17 @@ Read [references/review-model.md](references/review-model.md) before assigning s
 - Do not paste secrets, credentials, or private data found in the reviewed code into the report; reference their location.
 - Report findings about code and risk, not about authors. No blame attribution.
 - Respect workspace boundaries: do not stash, reset, checkout, or clean anything to obtain a reviewable state.
+
+### Handoff to authorized repairs
+
+When the user already asks to fix identified findings, that request supplies repair
+authorization within its stated scope. Finish the read-only review, preserve its
+findings, then leave this skill and continue through the applicable implementation
+workflow. Do not ask for the same authorization again solely because the review
+ended. A new question is needed only for a missing decision or action outside the
+existing authorization, such as unresolved product meaning or an external release.
+Without repair authorization, return the findings and stop; do not infer permission
+from a status inquiry or an expression of interest.
 
 ## Select a mode
 

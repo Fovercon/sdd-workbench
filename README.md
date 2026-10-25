@@ -11,7 +11,7 @@
 推荐在终端执行这一行（需要 Node.js 20+ 和 Git）：
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 此命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)，将全部 12 个 skills
@@ -24,12 +24,12 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 
 | 平台 | 一行安装命令 |
 |---|---|
-| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a codex -y` |
-| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a hermes-agent -y` |
-| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a zcode -y` |
-| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.2.0'` |
-| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a opencode -y` |
-| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.2.0` |
+| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a codex -y` |
+| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a hermes-agent -y` |
+| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a zcode -y` |
+| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.2.1'` |
+| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a opencode -y` |
+| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.2.1` |
 
 原生插件仍读取仓库中的同一个 `skills/`，不维护平台专用指令副本。DeepSeek 命令中的
 `cli` 是 profile 名，可换成实际使用的 profile；需要 Harness 0.2.1-rc.2。
@@ -41,7 +41,7 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 支持插件命令的 Codex 客户端也可执行：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.2.0 && codex plugin add sdd-workbench@sdd-workbench
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.2.1 && codex plugin add sdd-workbench@sdd-workbench
 ```
 
 ZCode 可在 Settings → Plugins → Create marketplace 中填写
@@ -54,14 +54,14 @@ ZCode 可在 Settings → Plugins → Create marketplace 中填写
 需要 Python 3.10+ 和 Git；安装器无第三方依赖，支持 macOS、Linux、Windows：
 
 ```sh
-git clone --branch v0.2.0 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.2.1 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
 python3 tools/install.py install --agent all
 ```
 
 `all` 为六个平台各安装一份受回执管理的完整副本；若希望只有一个公共目录，使用
 `--agent shared`，并按兼容说明配置 Hermes、ZCode 的入口。也可以下载
-[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.2.0)，解压后运行安装器。
+[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.2.1)，解压后运行安装器。
 Windows 可将 `python3` 替换为 `python`。
 
 可指定 `--agent codex hermes zcode deepseek opencode pi` 中的一个或多个。
@@ -112,7 +112,7 @@ Windows 可将 `python3` 替换为 `python`。
 
 ```sh
 git fetch --tags origin
-git checkout v0.2.0
+git checkout v0.2.1
 python3 tools/install.py install --agent all
 python3 tools/install.py status --agent all
 ```
@@ -155,6 +155,7 @@ python3 tools/package.py check
 python3 -B -m unittest discover -s tests
 python3 -B -m unittest discover -s skills/sdd-workflow-router/tests
 npm run test:adapters
+npm run test:forward-browser
 python3 tools/package.py build
 ```
 

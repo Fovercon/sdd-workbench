@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Local records</title>
+<h1>Local records</h1>
+<form id="filter"><label>Start <input id="start" type="date"></label>
+<label>End <input id="end" type="date"></label><button>Filter</button></form>
+<p id="filter-error" role="alert"></p><ul id="records"></ul>
+<script>
+const error = document.querySelector('#filter-error');
+async function refresh(event) {
+  if (event) event.preventDefault();
+  const params = new URLSearchParams({start: document.querySelector('#start').value,
+    end: document.querySelector('#end').value});
+  const response = await fetch('/api/records?' + params);
+  const result = await response.json();
+  if (!response.ok) { error.textContent = result.error; return; }
+  error.textContent = '';
+  document.querySelector('#records').replaceChildren(...result.records.map(row => {
+    const li = document.createElement('li'); li.dataset.id = row.id;
+    li.textContent = row.id + ': ' + row.date; return li;
+  }));
+}
+document.querySelector('#filter').addEventListener('submit', refresh);
+refresh();
+</script></html>

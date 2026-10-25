@@ -1,13 +1,13 @@
 # 多平台安装兼容
 
-v0.2.0 维护一份 `skills/`，包含 12 个 skills 及所有相对引用、模板、脚本和离线 Mermaid。
-适配只改变发现、安装和包元数据，不改变技能指令或各阶段授权边界。
+自 v0.2.0 起维护一份 `skills/`，包含 12 个 skills 及所有相对引用、模板、脚本和离线 Mermaid。
+v0.2.0 的适配只改变发现、安装和包元数据。v0.2.1 另澄清 Code Review 的授权交接并补充独立评测输入，阶段职责保持不变。
 这里的多平台支持不提供跨客户端会话同步或调度：每个 agent 仍使用自己的工具、权限和模型。
 
 ## 共享安装
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.0 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.2.1 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 Vercel CLI 将 `~/.agents/skills` 作为公共存储。Codex、OpenCode、Pi 使用公共入口，
@@ -56,7 +56,7 @@ Windows 无链接权限时上游会回退为复制，因此不承诺所有系统
 DeepSeek 原生 provider 针对 0.2.1-rc.2 的公开 skills API，声明支持范围为
 `>=0.2.1-rc.2 <0.3.0`；后续版本需重新验证。Pi 原生入口验证版本为 0.86.1。
 
-## 本次证据（2026-10-25）
+## v0.2.0 安装证据（2026-10-25）
 
 | 平台/入口 | 实际验证 | 边界 |
 |---|---|---|
@@ -70,7 +70,7 @@ DeepSeek 原生 provider 针对 0.2.1-rc.2 的公开 skills API，声明支持�
 | Python 安装器 | 六目标安装、升级、备份回退、编辑/冲突保护、未完成事务拦截、部分失败报告、旧 CLI 兼容 | 平台矩阵以实际 CI 结果为准 |
 
 这建立的是安装和发现兼容性，不是各平台模型执行 SDD 工作流的可靠性结论。
-本版本 `skills/` 相对 v0.1.1 没有修改，沿用已有方法证据；新增方法语义时仍需 forward 评测。
+v0.2.0 的 `skills/` 相对 v0.1.1 没有修改；v0.2.1 的内容修正与实际 forward 演练另见 [VALIDATION.md](VALIDATION.md)。后续方法语义变化仍需 forward 评测。
 脚本执行仍需本机 Python、浏览器或项目工具等相应能力，安装本身不会为客户端补充工具权限。
 
 ## 可复跑原生发现回归

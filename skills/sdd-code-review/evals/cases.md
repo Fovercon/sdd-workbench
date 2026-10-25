@@ -56,8 +56,12 @@ During a completed review with two findings, the user says "just fix them now."
 
 ### Expected invariants
 
-- The skill explains that repair is a separately authorized action and does not edit code as part of the review.
-- It may state readiness to perform fixes under explicit new authorization, without preconditioning the review's content on that authorization.
+- The request itself authorizes the two bounded repairs. The actor concludes the read-only review, retains its findings, exits this skill and actually continues through the applicable implementation workflow.
+- It does not ask for the same permission again or stop with only an offer to fix. It preserves unrelated work, verifies the repairs, and reports actual evidence.
+- Missing product decisions or actions outside the request still need their own gate; repair authorization does not authorize commit, push, merge or release.
+- Counterexample: if the user asks only for the findings and explicitly declines repairs, the actor leaves source and tests unchanged and stops after reporting.
+
+Run the isolated actual-actor protocol in [forward/repair-handoff.md](forward/repair-handoff.md); deterministic fixture checks alone do not establish this behavior.
 
 ## E6 — Test-asserted intent contradicts itself
 

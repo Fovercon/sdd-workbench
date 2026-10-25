@@ -1,6 +1,6 @@
 {
   "name": "sdd-workbench",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "One SDD skill suite for Codex, Hermes, ZCode, DeepSeek Harness, OpenCode and Pi.",
   "main": "./adapters/deepseek.mjs",
@@ -50,7 +50,8 @@
   ],
   "scripts": {
     "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs",
-    "test:adapters": "node --test tests/test_deepseek_adapter.mjs"
+    "test:adapters": "node --test tests/test_deepseek_adapter.mjs",
+    "test:forward-browser": "node tests/browser_recovery.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
