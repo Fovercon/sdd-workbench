@@ -1,0 +1,9 @@
+{
+  "name": "sdd-workbench-browser-tests",
+  "private": true,
+  "description": "Development-only browser regressions; the installed suite has no Node dependency.",
+  "scripts": {
+    "test:browser": "node skills/sdd-workflow-router/tests/browser_decisions.cjs && node skills/sdd-workflow-router/tests/browser_designs.cjs && node skills/sdd-workflow-router/tests/browser_live_feedback.cjs"
+  },
+  "devDependencies": {"playwright": "1.62.1"}
+}

@@ -1,0 +1,28 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Verify tag identity
+        run: python -c 'import json,os; v=json.load(open("plugin.json"))["version"]; assert os.environ["GITHUB_REF_NAME"] == "v"+v, "Tag must match plugin.json"'
+      - run: python tools/package.py build
+      - run: python tools/package.py notes --output dist/release-notes.md
+      - name: Publish immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "SDD Workbench $GITHUB_REF_NAME" --notes-file dist/release-notes.md dist/sdd-workbench-*.zip dist/sdd-workbench-*.manifest.json dist/SHA256SUMS

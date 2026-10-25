@@ -1,0 +1,12 @@
+{
+  "upstream_repository": "https://github.com/Fovercon/AI-Native-SDD",
+  "upstream_commit": "0dc9414de8d7081bc8c425fe3593dcf44ce3c315",
+  "extracted_on": "2026-10-25",
+  "scope": "skills/sdd-* plus suite catalog and governance policy",
+  "portability_edits": [
+    "skills/SUITE-POLICY.md: use suite semantic versions and a frozen external validation link",
+    "skills/CATALOG.md: remove an unbundled domain-skill link",
+    "skills/sdd-workflow-router/evals/forward/README.md: freeze the historical evidence link",
+    "skills/sdd-verification-design/evals/forward/recovery.md: identify external evaluation fixtures explicitly"
+  ]
+}

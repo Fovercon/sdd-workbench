@@ -1,0 +1,45 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  python:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.10'}
+          - {os: ubuntu-latest, python: '3.12'}
+          - {os: ubuntu-latest, python: '3.13'}
+          - {os: windows-latest, python: '3.12'}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python tools/package.py check
+      - run: python -B -m unittest discover -s tests -v
+      - if: runner.os != 'Windows'
+        run: python -B -m unittest discover -s skills/sdd-workflow-router/tests -v
+      - run: python tools/package.py build
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+        env:
+          SDD_BROWSER_CHANNEL: chromium

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "name": "sdd-workbench",
+  "primary_skill": "sdd-workflow-router",
+  "skills": [
+    "sdd-project-bootstrap",
+    "sdd-workflow-router",
+    "sdd-requirements-contract",
+    "sdd-plan-slices",
+    "sdd-implement-slice",
+    "sdd-converge-review",
+    "sdd-finish-readiness",
+    "sdd-verification-design",
+    "sdd-change-impact",
+    "sdd-code-review",
+    "sdd-context-handoff",
+    "sdd-retrospective"
+  ]
+}

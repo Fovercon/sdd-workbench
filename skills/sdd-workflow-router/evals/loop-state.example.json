@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "mission": {
+    "intent": "Implement the supplied requirements and deliver locally",
+    "authorization": "Replace with the actual user request/decision source",
+    "continuous": true,
+    "technical_delegation": true,
+    "delivery": {"target": "LOCAL", "destination": "workspace", "authorized": true},
+    "maintain_method": false
+  },
+  "mandatory": ["AC-1", "AC-2"],
+  "observed": true,
+  "conflicts": [],
+  "pending_decisions": [],
+  "change_pending": false,
+  "budget": {"steps": 0, "max_steps": 40, "no_progress": 0, "max_no_progress": 3},
+  "contracts": {"spec": null, "plan": null},
+  "slices": [],
+  "source_files": [],
+  "verification": null,
+  "review": null,
+  "finish": null,
+  "learning": {"record": null, "changed_assets": [], "regression": null}
+}

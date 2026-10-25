@@ -1,0 +1,50 @@
+{
+  "project_id": "replace-with-stable-project-id",
+  "title": "项目名称",
+  "scope": "本版记录需求澄清；尚未进入设计和实现。",
+  "captured_at": "REPLACE_WITH_ACTUAL_OBSERVATION_TIME",
+  "summary": "用项目自己的语言说明要解决的问题、当前已明确的范围和剩余选择。",
+  "next_id": "intent-clarification",
+  "lifecycle": {
+    "current_stage": "Align",
+    "stage_items": {
+      "Constitution": "project-rules",
+      "Align": "intent-clarification"
+    }
+  },
+  "items": [
+    {
+      "id": "project-rules",
+      "stage": "Constitution",
+      "label": "工作约束与规则",
+      "view": "progress",
+      "kind": "assessment",
+      "state": "UNKNOWN",
+      "note": "阅读实际规则后，填写明确的约束、权限来源和本阶段判断。不要仅凭文件存在标为满足。",
+      "sources": [
+        {
+          "path": "AGENTS.md",
+          "line": 1,
+          "sha256": "REPLACE_WITH_SHA256_FROM_THE_FILE_ACTUALLY_READ"
+        }
+      ]
+    },
+    {
+      "id": "intent-clarification",
+      "stage": "Align",
+      "label": "需求与待确认事项",
+      "view": "progress",
+      "kind": "assessment",
+      "state": "UNKNOWN",
+      "note": "填写实际已知需求、尚未确定的选择以及来源。不要把 AI 推导写成用户批准。",
+      "next": "替换为当前真实的下一项工作。",
+      "sources": [
+        {
+          "path": "REPLACE_WITH_ACTUAL_REQUIREMENT_SOURCE.md",
+          "line": 1,
+          "sha256": "REPLACE_WITH_SHA256_FROM_THE_FILE_ACTUALLY_READ"
+        }
+      ]
+    }
+  ]
+}
