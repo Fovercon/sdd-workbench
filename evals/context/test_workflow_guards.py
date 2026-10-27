@@ -13,3 +13,15 @@ class WorkflowGuardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory()as d:
             p=Path(d)/'service.py';p.write_text("def select(items,key):\n return [dict(x) for x in items if key == x['id']]\n",encoding='utf-8')
             with self.assertRaises(AssertionError):probe_selection(p)
+    def test_probe_rejects_replacing_input_objects_and_whitespace_normalization(self):
+        wrong = [
+            "def select(items,key):\n items[:] = [dict(x) for x in items]\n return [x for x in items if x['id']==key]\n",
+            "def select(items,key):\n return [x for x in items if x['id'].rstrip()==key]\n",
+            "def select(items,key):\n return [x for x in items if x['id']==key.strip()]\n",
+        ]
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'service.py'
+            for code in wrong:
+                with self.subTest(code=code):
+                    p.write_text(code)
+                    with self.assertRaises(AssertionError):probe_selection(p)

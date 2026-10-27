@@ -90,6 +90,44 @@ inputs and report reconciliation, not implement from the old summary or substitu
 These are guard cases, not a before/after implementation cost comparison or actual host
 compaction test. Review raw interactions; automated field/string checks are insufficient.
 
+## Local repair and visible-primary controls
+
+`prepare_workflow.py` also supports `direct`, `visible` and `risk`, and `--ref REF`
+freezes the requested skill runtime from an exact commit. Project fixtures and prompts
+come from the current protocol, identically for control/candidate; the ref identifies
+runtime bytes, not the new fixture's repository revision.
+
+```sh
+python3 evals/context/prepare_workflow.py --case direct --ref HEAD --output /temporary/direct-control-1
+python3 evals/context/prepare_workflow.py --case direct --output /temporary/direct-candidate-1
+python3 evals/context/run_pi.py /temporary/direct-control-1
+python3 evals/context/evaluate_workflow.py direct /temporary/direct-control-1
+```
+
+Repeat each of `direct`, `visible`, `risk`, `recover` five times per tested variant.
+Keep runtime/protocol hashes, identical per-case input/prompt maps, all raw events,
+reported model identity, failures and complete usage. `visible` supplies exact current
+primary text and full-file hashes in one request; it is not a real prior conversation
+or host compaction. `risk` asks for read-only diagnosis; `recover` asks for one new resume
+report. Guards check behavior/preservation and expected output surfaces, not the semantic
+route, missing approvals, native RED order, regression adequacy or external side effects.
+Read every tool call and final claim before assigning those judgments. An unexpected
+document is a process-review flag, not by itself proof of an unauthorized security action.
+In particular, distinguish file names/fingerprints from actual content loads: `sha256sum
+HISTORICAL.md` preserves identity without injecting historical meaning into the context.
+If controls already behave correctly, retain the rules; do not manufacture new guidance
+or cost claims. A candidate method change still needs its affected forward and standard.
+
+The recorded 1B experiment ran 20 controls, 20 first candidates and 5 refined visible
+trials. Both Implement prompt candidates were withdrawn: excluded history was loaded
+in 5/5 controls, 5/5 first candidates and 2/5 refined trials; one refined trial also
+wrote an explicitly forbidden external temporary file while claiming no external writes.
+All 45 final-state guards passed, illustrating why they are not semantic/process approval.
+The retained changes are this protocol and stronger runtime/behavior guards, with no
+skill runtime change from the first-batch commit. No new method standard was run for
+this unchanged runtime. See the [optimization ledger](../../docs/optimization/POST-0.5.0-PLAN.md#1b结果与取舍)
+for the bounded findings, review scope and unresolved host-context question.
+
 ## Explicit excerpt packet integration
 
 ```sh
