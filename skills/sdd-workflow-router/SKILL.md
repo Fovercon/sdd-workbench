@@ -47,6 +47,11 @@ real handoff, re-establish authority and meaning from primary sources: hashes al
 cannot restore forgotten content. Changing the active Skill does not unload prior
 messages, reset a host context window or establish lower total token use.
 
+For explicitly requested source-bound excerpts or a reproducible working-set
+freshness check, use the optional [context packet](references/context-packet.md).
+It copies an explicit selection; it cannot decide completeness or authority.
+Do not add a packet to an ordinary local repair or when current context suffices.
+
 - **Diagnostics — `ENTRY`, `STATUS`, `AFTER_OUTCOME`, `REROUTE`:** read
   [references/routing-model.md](references/routing-model.md) before assigning stages,
   applying exception precedence, interpreting outcomes or creating a state map.

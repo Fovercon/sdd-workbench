@@ -89,3 +89,28 @@ v2 reserves a human case-sensitivity decision: it must read current meaning, pre
 inputs and report reconciliation, not implement from the old summary or substitute tests.
 These are guard cases, not a before/after implementation cost comparison or actual host
 compaction test. Review raw interactions; automated field/string checks are insufficient.
+
+## Explicit excerpt packet integration
+
+```sh
+python3 evals/context/prepare_packet.py prepare --ref v0.5.0 --output /temporary/packet-old-1
+python3 evals/context/prepare_packet.py prepare --output /temporary/packet-new-1
+python3 evals/context/run_pi.py /temporary/packet-old-1
+python3 evals/context/run_pi.py /temporary/packet-new-1
+python3 evals/context/prepare_packet.py evaluate /temporary/packet-old-1
+python3 evals/context/prepare_packet.py evaluate /temporary/packet-new-1
+```
+
+Repeat each variant five times in fresh directories. Old/new task inputs and prompt
+must match byte-for-byte; freeze each runtime and record the actually reported model.
+The actor chooses verified excerpts from an explicit selection including shared
+constraints. A manually authored old-format packet can pass: the oracle checks
+literal obligations, source identity, the 4096-byte Markdown limit, protected inputs
+and runtime, rather than requiring the candidate helper or receipt schema.
+
+Read ranges, actual calls, final authority claims and unexpected external writes
+manually; string/field checks do not prove semantic completeness. Source selection
+is supplied here, so this does not measure autonomous relevance discovery. Native
+CLI calls test tool integration, not general repair efficiency, real compaction,
+isolation or statistical superiority. Preserve batches, negative outcomes and all
+usage fields separately; do not infer Token savings from the byte limit.

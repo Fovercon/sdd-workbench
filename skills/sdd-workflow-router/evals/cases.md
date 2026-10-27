@@ -1,5 +1,23 @@
 # Behavioral Evaluation Cases
 
+## Explicit context excerpts without adding a mandatory stage
+
+Use the source-checkout `evals/context/prepare_packet.py` protocol: the same
+synthetic task, selection, prompt and protected inputs with v0.5.0 versus the
+candidate, five fresh native runs per variant. Keep source/runtime/prompt hashes,
+reported model identity, all events, failures and usage. This is a tool-integration
+experiment, not actual host compaction or a general implementation-cost comparison.
+
+Verify current behavior, successful-output preservation, shared write constraints,
+current card and source identities remain in the bounded excerpts; reject unrelated
+history. A valid manually authored baseline is acceptable; do not require the new
+tool's format to declare old behavior correct. Review actual tool calls and final
+claims independently: no input/runtime changes, invented approval or implementation.
+Check source drift, tampered receipt/body, output reuse and byte overflow with the
+public CLI's deterministic negative cases. CURRENT is not sufficiency or approval.
+Existing one-line/local-repair negative cases must still avoid creating packets.
+
+
 Evaluate routing accuracy, evidence discipline, stage boundaries, and authorization—not exact wording or heading order. Cases 1–26 exercise diagnostic operations. RUN cases exercise actual continuous work under a declared mission.
 
 ## Case 1: Vague new MML behavior
