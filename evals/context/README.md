@@ -165,6 +165,52 @@ candidate needs matched forward repeats and the standard regression against that
 exact runtime. Synthetic planning does not establish implementation correctness,
 production crash safety, actual later maintenance cost or approval.
 
+## Authority and shared-contract propagation
+
+`impact-proposed` and `impact-approved` construct separate projects from the same
+synthetic source. The first keeps SPEC v1 effective; the second supplies the exact
+approved v2 delta for a shared masking obligation. Both authorize analysis only.
+The old code and tests are unchanged and still pass their v1 assertions. Two
+outputs call the shared masking helper; count summation is independent, while an
+imported partner-check note lacks a source or dependency mapping.
+
+```sh
+python3 evals/context/prepare_workflow.py --case impact-proposed --ref HEAD --output /temporary/impact-proposed-1
+python3 evals/context/run_pi.py /temporary/impact-proposed-1
+python3 evals/context/evaluate_workflow.py impact-proposed /temporary/impact-proposed-1
+```
+
+Repeat each state five times in fresh directories. Keep the same frozen runtime
+and within-state prompt/project inputs; the two authority states intentionally
+differ and are not an old/new method or efficiency comparison. The preparer
+archives SPEC v1 and records its old hash before making the approved v2 variant;
+it does not silently rebind historical checks to new bytes. Fixture owner and
+convergence labels are synthetic scenario records, not real-project approvals.
+
+Only nonempty `IMPACT.md` may be created. Before choosing any guard branch, the
+evaluator requires its requested case to match `variant.json`; missing, malformed
+or unsupported identity fails without executing project code or tests. The JSON
+report records `case`, `frozen_case` and `case_identity_matches`. This prevents
+operator misdispatch; editable controller metadata is not a security attestation.
+Read `automated_guards` from the JSON: the current CLI still exits zero for a
+guard rejection, a recorded maintenance limitation rather than a success signal.
+All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
+pass: no mechanical guard judges the impact report's semantics or authority.
+
+Manually inspect calls, report and final claims. For a proposal, distinguish
+conditional future invalidation from current v1 evidence. For approved v2, trace
+C-001 through both consumers, design, slices, old tests and convergence. Preserve
+the independent count behavior only with dependency/semantic reasons; a changed
+whole-Spec hash still prevents treating the old global receipt as current. Missing
+partner evidence stays unknown/review-required. An unchanged filename, passing old
+assertion or matching identifier is insufficient. No implementation, propagation
+or project test execution is authorized in either actor run.
+
+If a method candidate is retained after observing a reproducible gap, repeat the
+affected forward and standard on its exact runtime. Evaluation-only changes do
+not create a new method-standard result or establish automated trace maintenance,
+production correctness, complete semantic coverage or cost savings.
+
 ## Explicit excerpt packet integration
 
 ```sh

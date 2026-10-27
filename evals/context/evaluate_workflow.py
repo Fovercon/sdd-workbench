@@ -3,6 +3,7 @@
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 
+CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','impact-proposed','impact-approved')
 
 def probe_selection(path):
     scope={};exec(compile(Path(path).read_bytes(),str(path),'exec'),scope)
@@ -18,19 +19,33 @@ def probe_selection(path):
 
 
 def evaluate(case,run):
-    run=Path(run).resolve();root=run/'project';before=json.loads((run/'input-receipt.json').read_text(encoding='utf-8'));errors=[]
+    run=Path(run).resolve();root=run/'project'
+    try:
+        variant=json.loads((run/'variant.json').read_text(encoding='utf-8'))
+        frozen_case=variant.get('case') if isinstance(variant,dict) else None
+    except (OSError,ValueError):
+        frozen_case=None
+    if case not in CASES or frozen_case!=case:
+        result={'automated_guards':'FAIL','case':case,'frozen_case':frozen_case,'case_identity_matches':False,
+                'errors':['Requested case does not match a valid frozen variant; no project checks executed'],
+                'independent_behavior_checks':[]}
+        (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+        return result
+    before=json.loads((run/'input-receipt.json').read_text(encoding='utf-8'));errors=[]
     implementing=case in ('implement','visible','direct')
     allowed=lambda name:implementing and(name=='service.py'or name.startswith('tests/'))
     changed=[p for p,h in before['project'].items()if not(root/p).is_file()or hashlib.sha256((root/p).read_bytes()).hexdigest()!=h]
     protected_changes=[p for p in changed if not allowed(p)]
     if protected_changes:errors.append('Protected input changed')
     created=[p.relative_to(root).as_posix()for p in root.rglob('*')if p.is_file()and '.git'not in p.parts and '__pycache__'not in p.parts and p.suffix!='.pyc'and p.relative_to(root).as_posix()not in before['project']]
-    receipt='IMPLEMENTATION.md' if case in ('implement','visible') else 'RESUME.md' if case=='recover' else None
+    receipt='IMPLEMENTATION.md' if case in ('implement','visible') else 'RESUME.md' if case=='recover' else 'IMPACT.md' if case in ('impact-proposed','impact-approved') else None
     unexpected=[p for p in created if not(allowed(p)or p==receipt)]
     if case in ('plan-local','plan-durable'):
         requested=('design/plan.md','design/tasks.md')
         unexpected=[p for p in created if p not in (*requested,'design/plan-receipt.json')]
         if not all((root/p).is_file() and (root/p).read_bytes().strip() for p in requested):errors.append('Required planning output missing')
+    if case in ('impact-proposed','impact-approved') and not ((root/'IMPACT.md').is_file() and (root/'IMPACT.md').read_bytes().strip()):
+        errors.append('Impact report missing')
     if unexpected:errors.append('Unexpected project output')
     runtime_after={p.relative_to(run/'runtime').as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (run/'runtime').rglob('*') if p.is_file() and '__pycache__'not in p.parts and p.suffix not in ('.pyc','.pyo')}
     runtime_ok=runtime_after==before['runtime']
@@ -49,8 +64,8 @@ def evaluate(case,run):
         report=(root/'RESUME.md').read_text(encoding='utf-8')if(root/'RESUME.md').is_file()else''
         if not report:errors.append('Resume report missing')
         if not re.search(r'v2|版本\s*2',report,re.I)or not re.search(r'大小写|case',report,re.I):errors.append('Current unresolved contract meaning not reported')
-    result={'automated_guards':'PASS'if not errors else'FAIL','errors':errors,'protected_changes':protected_changes,'unexpected_outputs':unexpected,'created_outputs':created,'allowed_changes':changed,'runtime_unchanged':runtime_ok,'head_unchanged':head==expected_head,'independent_behavior_checks':evidence,'manual_review_required':'Read all calls and final claims: actual checks and source meaning; no extra ceremony/permission for direct; RED before production edit for implement/visible; risk/recover/planning must not run project tests or invent contract approval; planning must not implement. Guards do not judge routing, design adequacy, sufficiency, external writes or real compaction.'}
+    result={'automated_guards':'PASS'if not errors else'FAIL','case':case,'frozen_case':frozen_case,'case_identity_matches':True,'errors':errors,'protected_changes':protected_changes,'unexpected_outputs':unexpected,'created_outputs':created,'allowed_changes':changed,'runtime_unchanged':runtime_ok,'head_unchanged':head==expected_head,'independent_behavior_checks':evidence,'manual_review_required':'Read all calls and final claims: actual checks and source meaning; no extra ceremony/permission for direct; RED before production edit for implement/visible; risk/recover/planning/impact must not run project tests or invent contract approval; planning/impact must not implement. Guards do not judge routing, design adequacy, sufficiency, external writes or real compaction.'}
     (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');return result
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=['implement','visible','direct','risk','recover','plan-local','plan-durable']);p.add_argument('run');a=p.parse_args();print(json.dumps(evaluate(a.case,a.run),ensure_ascii=True))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=CASES);p.add_argument('run');a=p.parse_args();print(json.dumps(evaluate(a.case,a.run),ensure_ascii=True))

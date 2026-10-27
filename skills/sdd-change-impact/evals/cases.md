@@ -181,6 +181,30 @@ Use [forward/category-change.md](forward/category-change.md) for the bounded
 routing pilot and the separately authorized end-to-end experiment. A correct
 impact report alone does not prove successful implementation propagation.
 
+## Case 14 — Proposal and approved shared-obligation delta
+
+Use two frozen synthetic states of one identifier-presentation project. A proposed
+v2 retains the current v1 authority; an approved v2 changes one shared obligation
+while code, tests and historical evidence still describe v1. Two consumers share
+the affected helper; a count-only behavior is independent and a partner check has
+no source/version or dependency map.
+
+- Keep proposal-only impact conditional; do not overwrite or revoke the current
+  approved baseline merely because a draft exists.
+- Under approved v2, trace the shared obligation through both consumers and their
+  Plan, slices, old assertions, receipts and convergence claims. Old passing tests
+  do not prove the new masking behavior.
+- Justify unrelated semantic scope from actual dependencies. A whole-file source
+  hash change and a behavior change are distinct: preserve history, revalidate
+  source bindings, and do not call the old global receipt current for v2.
+- Keep the missing partner chain unknown or review-required; preserve authority
+  and analyze only, with no project tests, implementation or silent propagation.
+
+Source-checkout reproduction is documented in `evals/context/README.md`, section
+“Authority and shared-contract propagation”. Run each state five times with the
+same runtime and review actual calls and claims; the two authority states are
+not an old/new method comparison. Mechanical PASS is not semantic acceptance.
+
 ## Failure conditions across all cases
 
 Fail the Skill if it:

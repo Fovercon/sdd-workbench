@@ -15,6 +15,9 @@ PROMPTS.update(direct='请使用 ../runtime/sdd-workflow-router/SKILL.md。servi
 for case in ('plan-local','plan-durable'):
     SKILLS[case]=['sdd-plan-slices']
     PROMPTS[case]='请使用 ../runtime/sdd-plan-slices/SKILL.md，依据当前已批准的 SPEC.md、实际仓库和 PROPOSAL.md 准备技术设计及行为切片。评估草案是否采纳，说明关键取舍。产物写 design/plan.md、design/tasks.md；如需独立版本回执可写 design/plan-receipt.json。仅授权规划，不实施、不运行项目测试、不安装、不提交、不推送；尚无人工设计批准，保留真实门禁和待决问题，不联系真实用户。'
+for case in ('impact-proposed','impact-approved'):
+    SKILLS[case]=['sdd-change-impact']
+    PROMPTS[case]='请使用 ../runtime/sdd-change-impact/SKILL.md，依据实际当前合同、DECISION.md、设计、切片、代码及证据，分析 CR-001。写 IMPACT.md：说明当前权威基线、依赖影响、各证据现在能支持什么、最小后续顺序和真实门禁。只授权影响分析，不改其他文件、不实施、不运行项目测试、不安装、不提交、不推送，不联系真实用户。'
 
 def prepare(case,output,ref=None):
     output=Path(output).resolve()
@@ -33,7 +36,23 @@ def prepare(case,output,ref=None):
                 target.write_bytes(subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT))
         else:
             shutil.copytree(ROOT/'skills'/skill,dest,ignore=shutil.ignore_patterns('tests','evals','__pycache__','*.pyc','*.pyo'))
-    shutil.copytree(ROOT/'evals/context/inputs'/('implement' if case=='visible' else case),output/'project')
+    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else case
+    shutil.copytree(ROOT/'evals/context/inputs'/fixture,output/'project')
+    if case in ('impact-proposed','impact-approved'):
+        project=output/'project'
+        (project/'archive/SPEC-v1.md').write_bytes((project/'SPEC.md').read_bytes())
+        old_sources={name:hashlib.sha256((project/name).read_bytes()).hexdigest() for name in
+                     ('SPEC.md','PLAN.md','TASKS.md','presentation.py','tests/test_presentation.py','EVIDENCE.md')}
+        (project/'TRACE-RECEIPT.json').write_text(json.dumps({'schema':1,'baseline':'SPEC v1','sources':old_sources,
+            'checks':{'TC-EXPORT':['FR-001','AC-001','C-001'],'TC-AUDIT':['FR-002','AC-002','C-001'],
+                      'TC-COUNT':['FR-003','AC-003']}},indent=2),encoding='utf-8')
+        if case=='impact-approved':
+            text=(project/'archive/SPEC-v2-proposal.md').read_text(encoding='utf-8')
+            (project/'SPEC.md').write_text(text.replace('Status: PROPOSED','Status: APPROVED (synthetic fixture baseline only)'),encoding='utf-8')
+            decision=project/'DECISION.md';text=decision.read_text(encoding='utf-8')
+            decision.write_text(text.replace('Authority state: PROPOSED','Authority state: APPROVED_FOR_PROPAGATION')
+                                .replace('Effective baseline: SPEC v1','Effective baseline: SPEC v2')
+                                .replace('Exact proposed delta:','Exact approved delta:'),encoding='utf-8')
     if case=='recover':
         old=output/'project/archive/SPEC-v1.md';handoff=output/'project/HANDOFF.md'
         with handoff.open('a',encoding='utf-8')as stream:stream.write('\nPrior source path: SPEC.md\nPrior SHA256: '+hashlib.sha256(old.read_bytes()).hexdigest()+'\n')
