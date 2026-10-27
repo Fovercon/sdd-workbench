@@ -13,7 +13,7 @@
 
 ## 发布步骤
 
-1. 完成所需改动。方法语义变化按相应 skill 的 forward 协议验证；结构与单测
+1. 在 `codex/*` 开发分支完成所需改动，选择本次发布范围。方法语义变化按相应 skill 的 forward 协议验证；结构与单测
    不替代真实模型行为演练。包装变化验证包身份、安装、升级、回退与恢复即可。
 2. 执行 `python3 tools/package.py bump X.Y.Z`，同步通用清单、Codex/ZCode 清单与市场版本、Node package 和 lock 投影。
    更新 `CHANGELOG.md` 中对应版本的日期、行为变化、兼容性和已知限制。
@@ -33,8 +33,8 @@
    `package-manifest.json` 绑定逐文件 SHA256 和套件版本；发行目录同时产生外部
    manifest 和 `SHA256SUMS`。`python3 tools/package.py verify dist/包名.zip`
    校验实际 ZIP 的内容。校验和证明文件一致性，不是签名。
-5. 提交版本及变更说明，确认 CI 通过。在用户授权范围内创建 `vX.Y.Z` 标签并
-   推送。`Release` workflow 会再次调用完整 CI，然后按标签构建并创建 GitHub Release。
+5. 提交版本及变更说明，确认开发分支与合入检查通过。在用户授权范围内合入 `main`，
+   核对最终提交与验证来源一致，再从该提交创建 `vX.Y.Z` 标签并推送。`Release` workflow 会再次调用完整 CI，然后按标签构建并创建 GitHub Release。
 6. 核对远端标签、Release 资产和实际下载文件的哈希。不要移动发布过的标签，
    也不要给已经发布的版本替换内容；修正问题时发布新版本。
 
@@ -74,4 +74,5 @@ ZIP与Node包不附带 `docs/optimization/`、`docs/releases/` 中的项目过�
 未发布候选可在 `plugin.json` 提前记目标版本，行为与限制写入 `Unreleased`。
 安装命令仍固定到CHANGELOG中最新已有日期的稳定版本；不能把开发主线版本当成已存在的标签或Release。
 正式发布前再补目标版本的日期/说明并同步安装示例。`notes` 命令拒绝无日期的草稿，
-标签流程仍需实际CI及发布授权。0.4.1当前只准备提交推送，不创建标签或发布资产。
+标签流程仍需实际CI及发布授权。原0.4.1候选未独立发布，其已验证改动纳入0.5.0。
+未完成的评测框架与实验草稿继续保留在开发分支；实际发布状态以标签和Release资产为准。

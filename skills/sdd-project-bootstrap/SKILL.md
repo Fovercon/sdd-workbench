@@ -1,6 +1,6 @@
 ---
 name: sdd-project-bootstrap
-description: Discover, create, audit, or refresh an AI-ready SDD project baseline grounded in the current repository, including scoped AGENTS.md instructions, sources of truth, verified development commands, artifact conventions, quality gates, and safety boundaries. Use at project onboarding or when repository-level Agent rules are missing or stale. Do not use to define feature requirements, invent architecture, install tooling, or approve the generated baseline on behalf of its owner.
+description: Inspect a repository before coding, audit existing AGENTS.md against actual code and CI, or create and refresh project Agent rules. Use for repository onboarding, checking whether collaboration instructions are stale or executable, and separating verified baseline facts from unknowns. Do not use for a general code explanation, feature requirements, architecture design, tooling installation, or approving rules on the owner's behalf.
 ---
 
 # SDD Project Bootstrap

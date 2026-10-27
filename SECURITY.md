@@ -20,9 +20,9 @@ v0.4.0 起，标签发布流程为发行 ZIP、逐文件 manifest 和 SHA256SUMS
 这不表示产品获得安全审计、业务认证或公司推广批准。
 
 ```sh
-gh release download v0.4.0 --repo Fovercon/sdd-workbench --pattern 'sdd-workbench-*.zip'
-gh attestation verify sdd-workbench-v0.4.0.zip --repo Fovercon/sdd-workbench --signer-workflow Fovercon/sdd-workbench/.github/workflows/release.yml --source-ref refs/tags/v0.4.0
-python3 tools/package.py verify sdd-workbench-v0.4.0.zip
+gh release download v0.5.0 --repo Fovercon/sdd-workbench --pattern 'sdd-workbench-*.zip'
+gh attestation verify sdd-workbench-v0.5.0.zip --repo Fovercon/sdd-workbench --signer-workflow Fovercon/sdd-workbench/.github/workflows/release.yml --source-ref refs/tags/v0.5.0
+python3 tools/package.py verify sdd-workbench-v0.5.0.zip
 ```
 
 最后一条命令需要本仓库的工具；验证成功只说明包的身份及逐文件内容匹配。

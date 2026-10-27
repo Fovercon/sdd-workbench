@@ -1,9 +1,9 @@
 # 多平台安装兼容
 
-当前main的0.4.1为未发布候选；下文安装命令继续指向已发布v0.4.0。
+当前套件版本为0.5.0；下文安装命令固定到v0.5.0标签。
 候选的上下文方法只完成Pi/Flash的有界VIEW重复试验及实施/恢复保护案例，
 不建立六宿主业务行为、真实compaction或跨agent总成本优势；详见
-[0.4.1审视记录](https://github.com/Fovercon/sdd-workbench/blob/main/docs/optimization/V0.4.1-CONTEXT-REVIEW.md)。
+[上下文审视记录](https://github.com/Fovercon/sdd-workbench/blob/v0.5.0/docs/optimization/V0.4.1-CONTEXT-REVIEW.md)。
 
 2026-10-26 补充：[Codex/Pi 实际任务试点](https://github.com/Fovercon/sdd-workbench/blob/v0.4.0/docs/optimization/P0-COMPANY-TRIAL.md)已执行原生CLI、
 隔离冻结runtime与真实业务背景的从零原型；记录具体版本/模型、权限、反馈轮次和当前交付。
@@ -19,7 +19,7 @@ v0.3.0 增加任务入口分流、产物约定与异常合同审查修正，以�
 ## 共享安装
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.4.0 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.5.0 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 Vercel CLI 将 `~/.agents/skills` 作为公共存储。Codex、OpenCode、Pi 使用公共入口，
