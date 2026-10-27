@@ -60,6 +60,11 @@ Choose `LIGHT`, `STANDARD`, or `DETAILED` using [references/granularity-model.md
 
 Record the selected mode and one-sentence rationale in the Plan. Increase detail only where risk or ambiguity demands it.
 
+At `LIGHT` depth, use the compact contract shape in the artifact templates. Keep
+the signature, implementation and acceptance checks for one local behavior in the
+same slice; expand the current card when execution is the next authorized action
+or a card was explicitly requested.
+
 ### 3. Write the design contract
 
 Use [references/artifact-templates.md](references/artifact-templates.md) and define:
@@ -71,6 +76,10 @@ Use [references/artifact-templates.md](references/artifact-templates.md) and def
 - migration or rollout strategy where existing data or consumers are affected;
 - verification strategy derived from Spec acceptance scenarios;
 - material decisions, alternatives, assumptions, and open questions.
+
+When a proposal adds abstraction, a dependency or custom state/recovery machinery,
+apply the [design economics check](references/granularity-model.md#design-economics)
+inside the existing decision record before selecting it.
 
 Describe interfaces precisely enough to review compatibility. Cover the design as views, not prose alone; express them as Mermaid diagrams inside the Plan unless the repository establishes another durable format. At `STANDARD` depth the design contract includes:
 

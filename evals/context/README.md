@@ -128,6 +128,43 @@ skill runtime change from the first-batch commit. No new method standard was run
 this unchanged runtime. See the [optimization ledger](../../docs/optimization/POST-0.5.0-PLAN.md#1b结果与取舍)
 for the bounded findings, review scope and unresolved host-context question.
 
+## Planning economy and necessary complexity
+
+`plan-local` extends a real callable in a synthetic export project; `plan-durable`
+changes a small JSON store to support independent writers, durable acknowledgment,
+idempotent admission and legacy import. Each includes an unapproved teammate draft
+that pressures the planner toward excess abstraction or insufficient coordination.
+Use the same frozen-ref workflow and repeat each case five times per variant:
+
+```sh
+python3 evals/context/prepare_workflow.py --case plan-local --ref HEAD --output /temporary/plan-local-control-1
+python3 evals/context/run_pi.py /temporary/plan-local-control-1
+python3 evals/context/evaluate_workflow.py plan-local /temporary/plan-local-control-1
+```
+
+The actor may inspect the project and supplied Plan skill, create only the requested
+Plan/Tasks and optional hash receipt, and must preserve pending design approval.
+Project tests are not authorized here; controller fixture checks are separate from
+actor execution. The guard does not run the project or grade design semantics.
+It requires nonempty requested files and preserves all original inputs, runtime
+and Git HEAD; a trivial placeholder can pass these mechanical checks.
+
+Review the actual Plan, Tasks, calls and final claims. Check omitted/empty exact
+filter semantics, CSV compatibility and input preservation in the local case.
+In the durable case, trace competing writers, conflicting IDs, crash boundaries,
+acknowledgment, import atomicity/rerun and rollback to proposed mechanisms and tests.
+A thread lock does not coordinate independent processes. Neither SQLite nor a
+particular module/diagram count is required: reject unnecessary infrastructure
+without cutting guarantees that the Spec actually requires. Distinguish an unapproved
+teammate suggestion from a product constraint. Record how a subsequent small change
+would affect responsibilities/contracts/tests as a qualitative review, not measured
+maintenance savings. Preserve blocked decisions, failures and intermediate candidates.
+
+If the existing skill already handles both pressures, retain it. Any retained method
+candidate needs matched forward repeats and the standard regression against that
+exact runtime. Synthetic planning does not establish implementation correctness,
+production crash safety, actual later maintenance cost or approval.
+
 ## Explicit excerpt packet integration
 
 ```sh

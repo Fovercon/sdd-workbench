@@ -27,6 +27,10 @@ def evaluate(case,run):
     created=[p.relative_to(root).as_posix()for p in root.rglob('*')if p.is_file()and '.git'not in p.parts and '__pycache__'not in p.parts and p.suffix!='.pyc'and p.relative_to(root).as_posix()not in before['project']]
     receipt='IMPLEMENTATION.md' if case in ('implement','visible') else 'RESUME.md' if case=='recover' else None
     unexpected=[p for p in created if not(allowed(p)or p==receipt)]
+    if case in ('plan-local','plan-durable'):
+        requested=('design/plan.md','design/tasks.md')
+        unexpected=[p for p in created if p not in (*requested,'design/plan-receipt.json')]
+        if not all((root/p).is_file() and (root/p).read_bytes().strip() for p in requested):errors.append('Required planning output missing')
     if unexpected:errors.append('Unexpected project output')
     runtime_after={p.relative_to(run/'runtime').as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (run/'runtime').rglob('*') if p.is_file() and '__pycache__'not in p.parts and p.suffix not in ('.pyc','.pyo')}
     runtime_ok=runtime_after==before['runtime']
@@ -45,8 +49,8 @@ def evaluate(case,run):
         report=(root/'RESUME.md').read_text(encoding='utf-8')if(root/'RESUME.md').is_file()else''
         if not report:errors.append('Resume report missing')
         if not re.search(r'v2|版本\s*2',report,re.I)or not re.search(r'大小写|case',report,re.I):errors.append('Current unresolved contract meaning not reported')
-    result={'automated_guards':'PASS'if not errors else'FAIL','errors':errors,'protected_changes':protected_changes,'unexpected_outputs':unexpected,'created_outputs':created,'allowed_changes':changed,'runtime_unchanged':runtime_ok,'head_unchanged':head==expected_head,'independent_behavior_checks':evidence,'manual_review_required':'Read all calls and final claims: actual checks and source meaning; no extra ceremony/permission for direct; RED before production edit for implement/visible; risk/recover must not run project tests or invent contract approval. Guards do not judge routing, sufficiency, external writes or real compaction.'}
+    result={'automated_guards':'PASS'if not errors else'FAIL','errors':errors,'protected_changes':protected_changes,'unexpected_outputs':unexpected,'created_outputs':created,'allowed_changes':changed,'runtime_unchanged':runtime_ok,'head_unchanged':head==expected_head,'independent_behavior_checks':evidence,'manual_review_required':'Read all calls and final claims: actual checks and source meaning; no extra ceremony/permission for direct; RED before production edit for implement/visible; risk/recover/planning must not run project tests or invent contract approval; planning must not implement. Guards do not judge routing, design adequacy, sufficiency, external writes or real compaction.'}
     (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');return result
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=['implement','visible','direct','risk','recover']);p.add_argument('run');a=p.parse_args();print(json.dumps(evaluate(a.case,a.run),ensure_ascii=True))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=['implement','visible','direct','risk','recover','plan-local','plan-durable']);p.add_argument('run');a=p.parse_args();print(json.dumps(evaluate(a.case,a.run),ensure_ascii=True))

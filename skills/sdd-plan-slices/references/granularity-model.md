@@ -5,6 +5,7 @@
 
 - [Select planning depth](#select-planning-depth)
 - [Design view floor by depth](#design-view-floor-by-depth)
+- [Design economics](#design-economics)
 - [Separate the three levels](#separate-the-three-levels)
 - [Vertical slice test](#vertical-slice-test)
 - [Common slicing failures](#common-slicing-failures)
@@ -54,6 +55,34 @@ are appropriate for real types/protocols; procedural modules may use sequence or
 component views with interface tables. Never invent an object model to fill a slot.
 Select data, deployment and trust-boundary views from actual risks using
 [design-views.md](design-views.md); record justified omissions in the Plan.
+
+## Design economics
+
+For a material choice, make this argument in the Plan's existing decision record:
+
+1. **Current obligation and source:** which approved behavior or verified constraint
+   needs the mechanism? Preserve the source's scope: excluding an external service
+   does not exclude an in-process standard-library capability.
+2. **Smallest complete reuse path:** how would the existing implementation, standard
+   library or established dependency satisfy all relevant invariants? An alternative
+   that loses required concurrency, recovery or compatibility is not viable.
+3. **Incremental burden:** compare added contracts, state, failure/recovery paths,
+   migration, tests and later change surfaces, including the work a library already
+   owns. Fewer files or shorter happy-path code alone does not establish lower cost.
+4. **Selection and revisit condition:** explain the present benefit and what observed
+   requirement would justify a different boundary. Unmeasured cost stays qualitative;
+   a predicted future feature is not an approved requirement.
+
+For example, compare an embedded transaction facility with a custom durable file
+protocol by counting the ownership of locking, atomic publication, recovery and
+migration evidence, not by calling every database a service or every file simple.
+Either can be appropriate when its full obligations and constraints are supported.
+
+For one local behavior, the Plan records its changed contract, reuse choice, risk
+and verification once; Tasks references it and keeps all its acceptance checks in
+that behavior slice. A signature-only task or a later known-green test-only task
+does not need a separate handoff merely to make the DAG longer. Distinct behaviors
+with real dependencies still get distinct slices; this is not a fixed slice quota.
 
 ## Separate the three levels
 

@@ -168,6 +168,19 @@ keep missing data semantics explicit. A plan-only task must not claim tests ran.
 Use behavior slices and targeted failure evidence, not a fixed layer quota or a
 blanket low-risk exemption. Record concrete added complexity and its owning risk.
 
+In a source checkout, follow `evals/context/README.md`, section "Planning economy
+and necessary complexity" (`plan-local`, `plan-durable`), for native old/candidate
+trials, five repeats
+per case/variant with identical inputs and prompts. Read Plan/Tasks and raw calls:
+the local predicate's negative/compatibility checks belong with its behavior;
+the durable design retains independent writers, acknowledgment/recovery and atomic
+import evidence. Compare complete viable alternatives and their owned failure/test
+burden; do not require a particular storage library or a fixed diagram/slice count.
+Keep pending approvals, input preservation and no-test/no-implementation scope.
+Mechanical guard PASS, smaller artifacts and matching requirement strings do not
+establish semantic adequacy or measured future maintenance savings. Retained method
+changes also require the exact-candidate standard regression; keep all failed trials.
+
 ## Case 11 — Layout-only plan under a complete-sounding Spec
 
 **Prompt**
