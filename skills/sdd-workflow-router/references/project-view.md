@@ -21,6 +21,7 @@ project contracts. A new lifecycle, approved Spec or architecture tool is not a 
 | Ask status/next action without requesting a board | Diagnose read-only; do not create view files |
 | Create a view | Read bounded project sources, author observations, `render` |
 | Check changed sources | `check --summary`; no writes |
+| Follow declared downstream dependencies of selected items | `trace --changed-id ID`; no writes, no board required |
 | Refresh a view while retaining history | `update` to a fresh sibling directory |
 | Save feedback directly in a board | Use [human-decisions.md](human-decisions.md) and the bundled loopback service |
 | Implement, approve or release | Owning stage and actual authorization; VIEW grants neither |
@@ -103,6 +104,7 @@ Locate `scripts/project_view.py` relative to the selected skill, not a personal 
 ```sh
 python3 /path/to/sdd-workflow-router/scripts/project_view.py describe
 python3 /path/to/sdd-workflow-router/scripts/project_view.py check --summary --root /path/to/project --input observations.json
+python3 /path/to/sdd-workflow-router/scripts/project_view.py trace --root /path/to/project --input observations.json --changed-id R1
 python3 /path/to/sdd-workflow-router/scripts/project_view.py render --root /path/to/project --input observations.json --output /path/to/project/artifacts/view-v1
 python3 /path/to/sdd-workflow-router/scripts/project_view.py update --root /path/to/project --previous /path/to/project/artifacts/view-v1 --output /path/to/project/artifacts/view-v2
 ```
@@ -118,6 +120,30 @@ lineage error; do not claim a valid new delivery. `describe` performs no verific
 `--summary` only shortens check output: recorded states stay unchanged and omitted IDs
 are explicitly counted. Full `check` JSON remains available. Neither mode runs tests,
 checks all business obligations, grants approval or proves project completion.
+
+### Query existing dependencies
+
+When observations already exist, `trace` reuses their links rather than requiring
+another trace table. Repeat `--changed-id` for shared constraints or multiple
+selected records. It returns the input SHA256, all item IDs, direct dependencies
+and reached-via links: `CHANGED_INPUT`, `REACHED`, or `NO_RECORDED_PATH`.
+No graph or board is written. Do not create a view just to analyze a small change.
+
+Traversal follows requirement/slice/check links, slice dependencies, implementation
+IDs and stage-detail record IDs. Structure relationship records depend on both
+endpoints; a module arrow does not make the target module a contract dependent.
+`related_ids` only pairs views for navigation and is excluded. Plan decisions and
+other relationships not represented by these fields still need source inspection;
+do not coerce them into the wrong record type to obtain a complete-looking graph.
+
+The selected change is hypothetical input. Actual `freshness`, original state and
+recorded test result remain separate: a proposed change can reach a current PASS,
+and a missing source stays UNKNOWN. Exit 2 concerns sources in the entire snapshot,
+including items outside the selected paths. File hashes cover whole files, so an
+unrelated same-file record may also become STALE. Do not refresh old hashes to
+recover green status. `NO_RECORDED_PATH` does not prove independence or UNCHANGED;
+missing links require investigation. Neither reachability nor source identity
+chooses an owning stage, invalidates a contract, executes tests or grants approval.
 
 ## Preserve history
 

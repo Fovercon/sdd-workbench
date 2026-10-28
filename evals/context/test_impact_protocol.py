@@ -29,7 +29,12 @@ class ImpactProtocolTests(unittest.TestCase):
                     x = json.loads((a / 'input-receipt.json').read_text())
                     y = json.loads((b / 'input-receipt.json').read_text())
                     self.assertEqual(x['project'], y['project'])
-                    self.assertEqual(x['runtime'], y['runtime'])
+                    # Committed and working-tree methods may differ during a candidate trial.
+                    for name, digest in x['runtime'].items():
+                        data = subprocess.check_output(['git', 'show', 'HEAD:skills/' + name], cwd=ROOT)
+                        self.assertEqual(digest, hashlib.sha256(data).hexdigest())
+                    for name, digest in y['runtime'].items():
+                        self.assertEqual(digest, hashlib.sha256((ROOT / 'skills' / name).read_bytes()).hexdigest())
                     self.assertEqual((a / 'prompt.txt').read_bytes(), (b / 'prompt.txt').read_bytes())
                     self.assertEqual({p.name for p in (a / 'runtime').iterdir()}, {'sdd-change-impact'})
                     project = a / 'project'

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Generate or update an immutable offline project view using Python 3.10+ only."""
+import sys
+sys.dont_write_bytecode = True  # Read-only queries must also preserve the supplied runtime.
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict, deque
 from datetime import datetime, timezone
 import hashlib
 import json
 import os
 from pathlib import Path
-import sys
 from urllib.parse import quote
 from project_view_lib import evidence, renderer, lifecycle, decisions, workstream, stage_details
 
@@ -80,6 +81,46 @@ def check_summary(items):
             'meaning':'Source identity check only; not approval, test execution or project completeness.'}
 
 
+def trace_report(snapshot, items, changed_ids, input_sha256):
+    """Query declared dependencies without changing source or semantic judgments."""
+    seeds = list(dict.fromkeys(changed_ids))
+    nodes = {item['id']: item for item in items}
+    if not seeds or any(key not in nodes for key in seeds):
+        raise ValueError('trace requires --changed-id identifying existing items')
+    dependencies, dependents = {}, defaultdict(set)
+    for item in items:
+        refs = set(workstream.references(item))
+        if 'from' in item:  # Relationship observations depend on both endpoints.
+            refs.update((item['from'], item['to']))
+        dependencies[item['id']] = refs
+        for key in refs:
+            dependents[key].add(item['id'])
+    reached, pending = set(seeds), deque(seeds)
+    while pending:
+        for key in sorted(dependents[pending.popleft()]):
+            if key not in reached:
+                reached.add(key); pending.append(key)
+    rows = []
+    for item in items:
+        key = item['id']
+        row = {field: item[field] for field in ('id', 'label', 'kind', 'stage', 'freshness') if field in item}
+        row.update(recorded_state=item['state'],
+                   selection='CHANGED_INPUT' if key in seeds else 'REACHED' if key in reached else 'NO_RECORDED_PATH',
+                   dependencies=sorted(dependencies[key]),
+                   reached_via=sorted(dependencies[key] & reached),
+                   sources=[{field: ref[field] for field in ('path', 'line', 'sha256', 'freshness') if field in ref}
+                            for ref in item.get('sources', [])])
+        record = item.get('work', item.get('stage_detail', {}))
+        if 'result' in record:
+            row['recorded_result'] = record['result']
+        rows.append(row)
+    return {'project_id': snapshot['project_id'], 'scope': snapshot['scope'], 'input_sha256': input_sha256,
+            'changed_ids': seeds, 'coverage': 'DECLARED_LINKS_ONLY', 'items': rows,
+            'meaning': 'Hypothetical dependency query. Freshness is the actual source check, not the selected change. '
+                       'No recorded path does not establish semantic independence. Missing links may remain undiscovered. '
+                       'Recorded state/result is historical input, not new test execution or approval.'}
+
+
 def describe_contract():
     """Public authoring metadata shares field/enum definitions with validation."""
     return {
@@ -109,6 +150,7 @@ def describe_contract():
         'file_node':{'view':'structure','kind':'code_observation','file':'actual root-relative path also in sources','group':'optional module name','sublabel':'optional technical label'},
         'decision_input':{'fields':['id','kind','prompt','owner','scope'],'kind':'input','options':'omit for free text','rules':'Item state remains PENDING_HUMAN until a real answer; source binding is not approval. Other decision types use human-decisions.md.'},
         'next_id':'If present, identify an existing item with concrete next text. Match the actual next action; do not invent a blocking gate.',
+        'trace':'trace --root PROJECT --input observations.json --changed-id ID (repeatable): read-only declared downstream links; no path is not semantic independence; source freshness stays separate.',
         'next':'Read applicable mode semantics, draft source-bound observations, run check --summary, then render; inspect implementation only for a concrete unresolved tool failure.'}
 
 
@@ -116,20 +158,24 @@ def main():
     for stream in (sys.stdout,sys.stderr):
         if hasattr(stream,'reconfigure'):stream.reconfigure(encoding='utf-8')
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command',choices=['describe','check','render','update'])
+    parser.add_argument('command',choices=['describe','check','trace','render','update'])
     parser.add_argument('--root',type=Path,help='Required except describe: source trust boundary for root-relative paths')
     parser.add_argument('--input',type=Path,help='Observation JSON; update without input only rechecks the previous observations')
     parser.add_argument('--output',type=Path,help='New version directory; existing paths are never overwritten')
     parser.add_argument('--previous',type=Path,help='Complete preceding version directory (update only)')
     parser.add_argument('--reason',help='Reason for new observations or a relocated source root during update')
     parser.add_argument('--summary',action='store_true',help='Compact check output; full check JSON remains the default')
+    parser.add_argument('--changed-id',action='append',help='Existing item ID to query downstream (trace only; repeatable)')
     args=parser.parse_args()
     try:
         if args.summary and args.command!='check':raise ValueError('--summary is valid only for check')
+        if args.changed_id and args.command!='trace':raise ValueError('--changed-id is valid only for trace')
+        if args.command=='trace' and (not args.changed_id or args.output is not None or args.reason is not None):
+            raise ValueError('trace requires --changed-id and takes no --output or --reason')
         if args.command=='describe':
             if any((args.root,args.input,args.output,args.previous,args.reason)):raise ValueError('describe takes no project or output arguments')
             print(json.dumps(describe_contract(),ensure_ascii=False,separators=(',',':')));return 0
-        if args.root is None:parser.error('--root is required for check/render/update')
+        if args.root is None:parser.error('--root is required for check/trace/render/update')
         root=args.root.resolve()
         if not root.is_dir():raise ValueError('Source root must be an existing directory')
         old={};previous=None
@@ -145,12 +191,14 @@ def main():
             previous={'path':str(parent),'receipt_sha256':parent_hash}
         else:
             if args.previous is not None:raise ValueError('--previous is valid only for update')
-            if args.input is None:raise ValueError('check/render requires --input')
+            if args.input is None:raise ValueError('check/trace/render requires --input')
             data=args.input.read_bytes();snapshot=validate(json.loads(data))
         items=evidence.inspect(root,snapshot)
         code=0 if all(i['freshness']=='CURRENT' for i in items) else 2
         if args.command=='check':
             print(json.dumps(check_summary(items) if args.summary else items,ensure_ascii=False,indent=2));return code
+        if args.command=='trace':
+            print(json.dumps(trace_report(snapshot,items,args.changed_id,sha(data)),ensure_ascii=False,indent=2));return code
         if args.output is None:raise ValueError('render/update requires --output version directory')
         if args.output.exists() or args.output.is_symlink():raise ValueError('Output exists; choose a fresh version directory')
         output=args.output.resolve()
