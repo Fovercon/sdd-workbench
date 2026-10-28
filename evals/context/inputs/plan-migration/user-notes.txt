@@ -1,0 +1,2 @@
+Synthetic planning exercise only. Planning outputs must not claim the proposed
+importer, target store, rollback guard or new tests have been implemented or run.

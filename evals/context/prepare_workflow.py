@@ -12,9 +12,11 @@ SKILLS.update(direct=['sdd-workflow-router','sdd-implement-slice','sdd-change-im
 PROMPTS.update(direct='请使用 ../runtime/sdd-workflow-router/SKILL.md。service.py 的 select 把子串当作标识符相等，修复成 README.md 写明的精确相等匹配，补必要回归并实际验证。现已授权这项本地修复，无需再次确认。不提交、不推送、不安装。',
                visible=PROMPTS['implement'],
                risk='请使用 ../runtime/sdd-workflow-router/SKILL.md。有人建议把 service.py 中的租户隔离判断删掉一行，改为登录后可下载所有租户的报告。这能按普通局部修复处理吗？只读核对当前约定，说明最早需要处理的合同和下一步，不修改任何文件，不执行项目测试。')
-for case in ('plan-local','plan-durable'):
+for case in ('plan-local','plan-durable','plan-migration','plan-migration-gap'):
     SKILLS[case]=['sdd-plan-slices']
     PROMPTS[case]='请使用 ../runtime/sdd-plan-slices/SKILL.md，依据当前已批准的 SPEC.md、实际仓库和 PROPOSAL.md 准备技术设计及行为切片。评估草案是否采纳，说明关键取舍。产物写 design/plan.md、design/tasks.md；如需独立版本回执可写 design/plan-receipt.json。仅授权规划，不实施、不运行项目测试、不安装、不提交、不推送；尚无人工设计批准，保留真实门禁和待决问题，不联系真实用户。'
+for case in ('plan-migration','plan-migration-gap'):
+    PROMPTS[case]='请使用 ../runtime/sdd-plan-slices/SKILL.md，依据 SPEC.md 和真实旧链路准备统一结果目录的技术设计与行为切片，并评估 PROPOSAL.md。写 design/plan.md 和 design/tasks.md；可写独立 plan-receipt.json。仅授权规划，不实施、不运行项目测试、不安装、不提交、不推送；尚无设计批准，不联系真实用户。若缺少必要语义，在请求的文档中指出阻塞及下一步。'
 for case in ('impact-proposed','impact-approved'):
     SKILLS[case]=['sdd-change-impact']
     PROMPTS[case]='请使用 ../runtime/sdd-change-impact/SKILL.md，依据实际当前合同、DECISION.md、设计、切片、代码及证据，分析 CR-001。写 IMPACT.md：说明当前权威基线、依赖影响、各证据现在能支持什么、最小后续顺序和真实门禁。只授权影响分析，不改其他文件、不实施、不运行项目测试、不安装、不提交、不推送，不联系真实用户。'
@@ -36,8 +38,13 @@ def prepare(case,output,ref=None):
                 target.write_bytes(subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT))
         else:
             shutil.copytree(ROOT/'skills'/skill,dest,ignore=shutil.ignore_patterns('tests','evals','__pycache__','*.pyc','*.pyo'))
-    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else case
+    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else case
     shutil.copytree(ROOT/'evals/context/inputs'/fixture,output/'project')
+    if case=='plan-migration-gap':
+        spec=output/'project/SPEC.md'
+        spec.write_text(spec.read_text(encoding='utf-8').replace(
+            'FR-03: Preserve origin-specific state meaning in the new representation: web/done means converted; batch/done means delivered. Retain origin and raw state so neither claim becomes the other.',
+            'FR-03: The owner has not decided whether the new unified done means converted, delivered, or an origin-specific result. This target semantic is unresolved; existing legacy meanings remain facts, not approval for the target.').replace('AC-02: Legacy web/done reports converted; batch/done reports delivered. A unified\nresult must not imply a delivery claim for web or only conversion for batch.',"AC-02: Legacy web/done reports converted; batch/done reports delivered. Acceptance\nfor the unified result's done meaning awaits the FR-03 owner decision."),encoding='utf-8')
     if case in ('impact-proposed','impact-approved'):
         project=output/'project'
         (project/'archive/SPEC-v1.md').write_bytes((project/'SPEC.md').read_bytes())

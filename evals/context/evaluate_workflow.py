@@ -3,7 +3,7 @@
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 
-CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','impact-proposed','impact-approved')
+CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','plan-migration','plan-migration-gap','impact-proposed','impact-approved')
 
 def probe_selection(path):
     scope={};exec(compile(Path(path).read_bytes(),str(path),'exec'),scope)
@@ -40,7 +40,7 @@ def evaluate(case,run):
     created=[p.relative_to(root).as_posix()for p in root.rglob('*')if p.is_file()and '.git'not in p.parts and '__pycache__'not in p.parts and p.suffix!='.pyc'and p.relative_to(root).as_posix()not in before['project']]
     receipt='IMPLEMENTATION.md' if case in ('implement','visible') else 'RESUME.md' if case=='recover' else 'IMPACT.md' if case in ('impact-proposed','impact-approved') else None
     unexpected=[p for p in created if not(allowed(p)or p==receipt)]
-    if case in ('plan-local','plan-durable'):
+    if case in ('plan-local','plan-durable','plan-migration','plan-migration-gap'):
         requested=('design/plan.md','design/tasks.md')
         unexpected=[p for p in created if p not in (*requested,'design/plan-receipt.json')]
         if not all((root/p).is_file() and (root/p).read_bytes().strip() for p in requested):errors.append('Required planning output missing')

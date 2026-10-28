@@ -237,3 +237,55 @@ is supplied here, so this does not measure autonomous relevance discovery. Nativ
 CLI calls test tool integration, not general repair efficiency, real compaction,
 isolation or statistical superiority. Preserve batches, negative outcomes and all
 usage fields separately; do not infer Token savings from the byte limit.
+
+## Reuse and gradual migration
+
+`plan-migration` supplies two synthetic legacy result catalogs with overlapping
+local IDs, different raw/display text and different meanings for the same state
+name. Its approved target preserves these distinctions, requires all-or-nothing
+import and safe exact replay, and separates pre-admission rollback from forward
+recovery after a new acknowledged admission. `plan-migration-gap` uses the same
+code/data/draft and changes only the target state mapping and its acceptance
+statement to an unresolved owner decision. Legacy facts do not approve that target.
+
+Prepare fresh directories outside the checkout, selecting the old runtime before
+any method edit, for example:
+
+```bash
+python3 evals/context/prepare_workflow.py --case plan-migration --ref REF --output /tmp/migration-control-1
+python3 evals/context/run_pi.py /tmp/migration-control-1
+python3 evals/context/evaluate_workflow.py plan-migration /tmp/migration-control-1
+python3 evals/context/measure.py --host pi --events /tmp/migration-control-1/events.jsonl --output /tmp/migration-control-1/metrics.json
+```
+
+Resolve the registered DeepSeek Flash ID first; the native launcher explicitly
+selects `deepseek/deepseek-flash`. Report the raw identity and any missing backend
+revision. This is an instruction-scoped trial, not an OS sandbox. Never install
+into live skill destinations. Do not reuse an existing trial directory.
+
+Run five repeats for each state/runtime with identical paired project/prompt
+bytes and a frozen protocol. `--ref` freezes runtime only; project fixtures and
+prompts come from the preparer's current source, so archive those sources and
+input receipts before running a comparison. The four characterization tests
+verify the old flows only; a controller may run them in a separate temporary copy,
+not in actor projects. They do not verify a proposed target or importer.
+
+Only `design/plan.md`, `design/tasks.md` and optional `design/plan-receipt.json` may
+be added. The planning guard does not import/run project code and rejects wrong
+case, source/runtime changes and extra implementation files. Placeholder plans in
+protocol unit tests exercise that mechanical boundary only. Read every native
+call/final and the Plan/Tasks supporting sections for the case10 invariants in
+`sdd-plan-slices/evals/cases.md`; do not grade by headings, storage engine or a
+fixed reuse/adaptation/replacement label count. Keep unknowns, source identities,
+usage, incomplete trials and semantic failures. A retained runtime method change
+also needs the exact-snapshot standard profile without `--accept`; baseline-only
+coverage does not establish a method improvement or maintenance-cost saving.
+
+Precision limits: the fixture does not decide path relocation for "same-source"
+or whether a no-op retry of an imported row counts as first admission. Test replay
+using the exact original pair and rollback after an actual new identity; record
+other policies as open choices, not scorer preferences. `plan-migration` specifies
+the target state meaning but is not an oracle declaring every Spec detail ready.
+Keep full drafts under `NEEDS_SPEC`, proposed partial work, control-metadata reads,
+receipt timeline claims and repeated hash-maintenance work visible in review;
+mechanical PASS and internally matching hashes do not authenticate those claims.
