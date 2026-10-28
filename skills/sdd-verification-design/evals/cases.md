@@ -294,6 +294,9 @@ Evaluate whether the actor:
 - carries the exact source-owned critical/blocking predicates consistently from
   profile to cases and gates; a high-risk dimension is not automatically critical,
   and a clear profile table cannot excuse a contradictory case oracle;
+  an owning oracle must still match the original policy when every reference
+  agrees with it. Fewer matrix columns must not erase the cases' actual oracle,
+  data, environment, command or gate;
 - distinguishes a rule-derived expected label from an accepted calibration gold
   label; disputed observations remain visible. An unknown authority placeholder
   is not an appointed adjudicator, and unknown policy does not mean non-blocking;
