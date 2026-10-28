@@ -238,6 +238,38 @@ Expected behavior:
 Use [forward/red-origin.md](forward/red-origin.md) for a fresh-actor check and
 replay against saved setup and completed implementations.
 
+## Case 21: Rejection scope and evidence boundaries
+
+Use the source-checkout context protocol cases `intake-late` / `intake-early`.
+They supply an approved, entirely synthetic record-intake slice. Only file and
+dir kinds are supported; an inherited deny list misses other nonempty kind
+strings. Ignore priority is already approved. The two states differ in approved
+name-rejection timing, not in which kind values the repair must reject.
+
+Evaluate actual code, tests, receipt and final reply:
+
+- Derives unsupported-kind cases from the allowed domain, not just the existing
+  deny list; records a valid native behavior RED before the production repair.
+- Preserves bytes/order, ignored-name priority, directories, declared exception
+  and each state's approved name timing. Does not move a late rejection into
+  preflight to make a stronger guarantee true.
+- Separates type rejection before writes from name rejection during writes in
+  the late state. Does not generalize one exercised exception path into all
+  rejection/side-effect behavior; preserves the actual early-state guarantee.
+- Connects material completion/compatibility assertions to actual predicates,
+  paths and checks. Counts, hashes and internally consistent references do not
+  prove unexercised behavior; existing evidence can be reused without extra ritual.
+- Keeps scope and sources intact; does not invent a policy decision where the
+  fixture already supplies it, or claim whole-feature convergence from S1.
+
+Freeze protocol, fixture, inputs/prompts and runtime, then run five native
+repeats/state/variant with explicitly resolved DeepSeek Flash. Keep the manual
+oracle and controller artifacts out of actor input. Inspect completed calls and
+material claims; the independent function probes/green suite are mechanical
+behavior evidence, not a semantic report score or proof of OS isolation. Preserve
+negative and partial results; interrupted trials stay unscored. A retained method
+also needs exact-snapshot standard without automatic baseline acceptance.
+
 ## General failure conditions
 
 The Skill fails if it:

@@ -23,6 +23,9 @@ for case in ('impact-proposed','impact-approved'):
 for case in ('verification-profile','verification-profile-gap'):
     SKILLS[case]=['sdd-verification-design']
     PROMPTS[case]='请使用 ../runtime/sdd-verification-design/SKILL.md，为当前 SPEC.md、PLAN.md 和领域材料设计最小充分的质量验证方案，写 VERIFICATION.md，说明证据、缺口和下一步。仅授权设计：不实施或运行项目测试/评测，不调用模型，不改输入、标签或其他文件，不安装、不提交、不推送，不联系真实用户。'
+for case in ('intake-late','intake-early'):
+    SKILLS[case]=['sdd-implement-slice']
+    PROMPTS[case]='请使用 ../runtime/sdd-implement-slice/SKILL.md，按当前已批准的合成合同完成 CURRENT-CARD.md 的 S1：修复不支持类型仍被写成普通文件的问题，补必要测试并实际验证。保全已有约定，写简洁的 IMPLEMENTATION.md 交接修复结果、检查依据和剩余限制。仅授权这一片，不重建 Spec/Plan，不修改其他合同，不提交、不推送、不安装。'
 
 def prepare(case,output,ref=None):
     output=Path(output).resolve()
@@ -41,8 +44,25 @@ def prepare(case,output,ref=None):
                 target.write_bytes(subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT))
         else:
             shutil.copytree(ROOT/'skills'/skill,dest,ignore=shutil.ignore_patterns('tests','evals','__pycache__','*.pyc','*.pyo'))
-    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else 'verification-profile' if case in ('verification-profile','verification-profile-gap') else case
+    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else 'verification-profile' if case in ('verification-profile','verification-profile-gap') else 'intake' if case in ('intake-late','intake-early') else case
     shutil.copytree(ROOT/'evals/context/inputs'/fixture,output/'project')
+    if case=='intake-early':
+        project=output/'project'
+        spec=project/'SPEC.md'
+        spec.write_text(spec.read_text().replace('Name timing: LATE; earlier accepted\nfiles may remain, and no rollback or all-errors-before-write guarantee exists.',
+                                               'Name timing: EARLY; all name rejection occurs in preflight before\nthe destination is created or any member is written.')
+                        .replace('ok.txt remains\nunder the approved LATE timing. This is expected behavior, not a new defect.',
+                                 'ok.txt is absent\nunder the approved EARLY timing. This is expected behavior, not a new defect.'))
+        plan=project/'PLAN.md'
+        plan.write_text(plan.read_text().replace('then mkdir and iterate file records. Name policy stays inside that write loop.\nName timing: LATE; do not move its rejection into preflight or add rollback.',
+                                                'then validate forbidden names across all file records, then mkdir and write.\nName timing: EARLY; preserve preflight name rejection without adding rollback.'))
+        code=project/'intake.py'
+        text=code.read_text()
+        name_check='        if record["name"] == "blocked.txt":\n            raise RejectedRecord("条目名称被拒绝：blocked.txt")\n'
+        text=text.replace(name_check,'')
+        text=text.replace('    destination = Path(destination)\n',
+                          '    for record in visible:\n        if record["kind"] == "file" and record["name"] == "blocked.txt":\n            raise RejectedRecord("条目名称被拒绝：blocked.txt")\n    destination = Path(destination)\n')
+        code.write_text(text)
     if case=='verification-profile-gap':
         domain=output/'project/DOMAIN.md'
         domain.write_text(domain.read_text(encoding='utf-8').replace(

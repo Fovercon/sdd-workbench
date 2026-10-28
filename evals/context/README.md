@@ -90,6 +90,25 @@ inputs and report reconciliation, not implement from the old summary or substitu
 These are guard cases, not a before/after implementation cost comparison or actual host
 compaction test. Review raw interactions; automated field/string checks are insufficient.
 
+## Intake repair and completion-claim scope
+
+`prepare_workflow.py --case intake-late` and `--case intake-early` prepare the
+same unsupported-kind repair under two approved name-rejection timings. Both
+use only synthetic records, standard-library code and `sdd-implement-slice`.
+They contain no real project, vendor format, archive sample or business data.
+Use `--ref REF` for old runtime and a fresh directory per trial; run with the
+existing native launcher and `evaluate_workflow.py CASE DIRECTORY`.
+
+The independent guard checks unsupported kinds, ignore priority, normal bytes
+and order, directory handling, exception identity, and approved timing. It also
+runs the local suite and protects contracts/runtime/Git identity. This does not
+judge the semantic adequacy of IMPLEMENTATION.md: read actual calls and final
+claims against the source, including what was exercised and what remains unknown.
+Do not expose the maintainer oracle or reward keywords, test counts or report size.
+Run five repeats per state/variant with frozen protocol/input/prompt identity;
+preserve failures and unscored partials. Method retention also needs frozen standard
+without --accept. Costs are descriptive observations, not causal savings.
+
 ## Local repair and visible-primary controls
 
 `prepare_workflow.py` also supports `direct`, `visible` and `risk`, and `--ref REF`
