@@ -664,3 +664,55 @@ Task 5: complete（20次有界对照完成，方法候选撤回；未接受新�
 Task 6: complete（guard CLI RED/GREEN及完整检查、独立评审通过，本地提交身份见Git）。
 下一步仍优先把当前/提议效力问题缩成单一表示实验，降低同批引入多个字段的负担；
 这是待验证方向，不是本批已证明的根因或收益。迁移判断与更广验证网继续待办，前端共创仍排除。
+
+### 第六批：单一状态基准实验（候选撤回，仅保留评测证据）
+
+沿用[单因素计划](2026-10-28-impact-status-basis-plan.md)，BASE `fa464cc`。
+只试改Change Impact的artifact template：增加状态判断基准，并要求表格与最终答复一致；
+不改路由、状态定义、证据政策或批准边界，不增加必填矩阵列。
+
+实验 `~/.sdd-regression/experiments/impact-basis-20261028T025807Z/`：先核对全部75个当前运行时文件、
+准备/原生启动/测量脚本及原始记录身份，再复用第五批10份历史control。旧evaluator的Python函数相同，
+其已修复的CLI退出码不参与本轮函数调用。新旧项目/提示逐字节相同；历史control非同期、非随机，
+未知backend/共享负载/顺序差异不支持因果质量或成本结论。Pi1.3.0重新解析注册ID，显式选用
+`deepseek/deepseek-flash`，backend revision未报告。
+
+- 首候选完成10次（proposed/approved各5）。五份proposal矩阵区分当前v1/条件v2，最终摘要精度仍不一。
+  approved2/4承认v2已生效，却把下游状态判断挂在未来Plan/实施授权之后；approved5又把当前下游按v1评价，
+  并增加已批准v2的哈希批准仪式。不能保留。
+- 只允许一次同因素细化：明确生效delta决定当前符合性，后续编辑授权单列。细化候选完成7次
+  （proposed5、approved2），但proposed2报告头及矩阵承认v1仍有效，最终表却称CONVERGENCE-v1不能支持
+  “当前基线收敛”。这是直接的同基准矛盾；不是仅缺少某个固定字段或措辞。
+- 发现反例后停止自有launcher及其两个原生子进程；approved3/4记为控制方中断，approved5未启动。
+  已完成17、控制方中断2、未启动1分开记录；不把部分日志当完整重复，不给细化候选10次完成率或正向验收分。
+  原始事件、部分产物、退出记录、两版模板diff/75文件快照及逐次作者复核均保留，不修补actor输出。
+- 17个完成试次均exit0、机械guard PASS、usage完整；逐条原始assistant完成事件均为上述模型。
+  完成及中断试次受保护项目源/runtime仍匹配各自收据；这不认证瞬态副作用或OS隔离。
+  作者读取全部完成调用/最终回复及关键报告段，非独立逐句语义认证；中断试次不评分。
+- 首候选proposed2/3/5、approved1及细化proposed1/2实际读取禁止的controller元数据；
+  首候选proposed4以父目录grep扫描元数据并返回文件名，不能与实际cat内容混为一类。
+  未观察到业务实现或项目测试运行；细化approved2只求值内置字符串来比较掩码，
+  proposed5标为“py_compile”的动作实际只print('skip')，不误报成项目编译/测试。
+  额外伙伴/owner门禁、证据范围和个别来源缩写错误仍保留；机械PASS不抹除这些问题。
+
+Ruling: 复用经身份核对的历史control — 已有原始反例足以建立RED — 代价是不能据此做同期因果比较。
+Ruling: 只允许一次同因素细化 — 首轮暴露基线与编辑授权混用，先做最小区分 — 代价是增加10个计划槽位且可能仍无收益。
+Ruling: 反例足以拒绝时提前停止并撤回候选 — 更多approved重复不能挽救proposal核心矛盾 — 代价是细化轮不完整，不能认证其全量行为。
+
+最终75个运行时文件与`fa464cc`逐字节相同，snapshot仍为
+`eac639eeb792db28a5ffba1b9a3a88969b5a5604fb4057bc29a41efa8937bebe`；
+候选快照分别为`d9f4d6d15d8716fc1fa0c651964b6d8839d8a9a8662a20ff97725cdfaebae8d6`和
+`9e8095db0d7aa2f79031e6895e261a3655f422403a62df1489de2c87707b5485`。
+冻结harness152个源码未变（控制方导入留下3个pyc缓存，未进入actor runtime）；没有运行standard，
+上轮9/13与未验收状态不变，未`--accept`。不修改另一agent的L2/L3、live安装、main或v0.5.0。
+
+本批只保留评测要求：v1仍有效时历史收敛保留其原始范围内的当前支持；已生效变更与后续编辑授权分开，
+且header/matrix/final使用同一判断基准。没有新的运行时优化可交付，不宣称提示词根因、稳定改进或效率收益。
+后续应先验证这种表达在真实项目中的阅读与维护负担，再决定是否继续改模板；不自动扩建追踪平台。
+
+最终验证：root105/105、router171/171、context37/37，package12skills/214files/0.5.0、
+docs104Markdown/325links/0错误及diff检查通过。一次全分支独立评审0 Critical/0 Important/0 Minor；
+独立复核两个核心反例、原始事件/报告身份和全部来源，另重跑packet12、trace7、context37通过。
+评审范围与未认证事项逐项记录在本批计划，不将来源核对外推为所有历史报告的逐句语义认证。
+Task 7: complete（两候选拒绝，评测证据保留；提交身份见Git及外部final-provenance.json）。
+本地提交，不推送、不合并、不发布；当前状态仍是有待改进的方法，而非新验收基线。

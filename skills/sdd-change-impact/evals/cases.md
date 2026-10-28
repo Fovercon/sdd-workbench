@@ -213,6 +213,12 @@ old reports for actual omissions; retain guidance only for demonstrated needs.
 
 - In proposal-only reports, inspect matrix and final summary as well as headers:
   current v1 support and conditional v2 effects remain distinguishable throughout.
+  With v1 still effective, a v1 convergence record retains its original scoped
+  support; calling it historical alone does not revoke current-v1 support.
+- With an approved delta already effective, assess current conformity against
+  that changed baseline. Pending authority to edit Plan or implementation does
+  not make the effective delta hypothetical. Check the same basis in the header,
+  matrix and final reply; a correct header does not excuse a contradictory final.
 - In approved-v2 reports, identify the delta's Spec origin and the next remaining
   Plan work. State whether the primary route names the original owner or the
   earliest currently unsynchronized contract; enum choice alone does not prove
