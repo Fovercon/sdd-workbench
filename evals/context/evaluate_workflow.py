@@ -3,7 +3,7 @@
 import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 
-CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','plan-migration','plan-migration-gap','impact-proposed','impact-approved')
+CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','plan-migration','plan-migration-gap','impact-proposed','impact-approved','verification-profile','verification-profile-gap')
 
 def probe_selection(path):
     scope={};exec(compile(Path(path).read_bytes(),str(path),'exec'),scope)
@@ -46,6 +46,10 @@ def evaluate(case,run):
         if not all((root/p).is_file() and (root/p).read_bytes().strip() for p in requested):errors.append('Required planning output missing')
     if case in ('impact-proposed','impact-approved') and not ((root/'IMPACT.md').is_file() and (root/'IMPACT.md').read_bytes().strip()):
         errors.append('Impact report missing')
+    if case in ('verification-profile','verification-profile-gap'):
+        unexpected=[p for p in created if p!='VERIFICATION.md']
+        if not ((root/'VERIFICATION.md').is_file() and (root/'VERIFICATION.md').read_bytes().strip()):
+            errors.append('Verification design missing')
     if unexpected:errors.append('Unexpected project output')
     runtime_after={p.relative_to(run/'runtime').as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (run/'runtime').rglob('*') if p.is_file() and '__pycache__'not in p.parts and p.suffix not in ('.pyc','.pyo')}
     runtime_ok=runtime_after==before['runtime']

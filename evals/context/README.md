@@ -289,3 +289,46 @@ the target state meaning but is not an oracle declaring every Spec detail ready.
 Keep full drafts under `NEEDS_SPEC`, proposed partial work, control-metadata reads,
 receipt timeline claims and repeated hash-maintenance work visible in review;
 mechanical PASS and internally matching hashes do not authenticate those claims.
+
+## Domain quality profile
+
+`verification-profile` supplies a design-only synthetic summary service with an
+approved domain policy, six development/calibration examples, current reviewer
+disagreements, revision1 labels and an old schema-only report. The future sealed
+set has no supplied content, labels, count or hash. `verification-profile-gap`
+changes only DOMAIN's adjudication authority/unresolved-item policy; its prompt
+and remaining inputs are identical. Neither fixture establishes a whole domain's
+quality or general verification competence.
+
+```bash
+python3 evals/context/prepare_workflow.py --case verification-profile --ref REF --output /tmp/profile-control-1
+python3 evals/context/run_pi.py /tmp/profile-control-1
+python3 evals/context/evaluate_workflow.py verification-profile /tmp/profile-control-1
+python3 evals/context/measure.py --host pi --events /tmp/profile-control-1/events.jsonl --output /tmp/profile-control-1/metrics.json
+```
+
+Use a fresh directory and resolve the registered DeepSeek Flash ID before native
+runs. `--ref` selects runtime only; archive the current preparer, guard, launcher,
+measurement sources and fixture separately. Freeze a source-derived manual oracle
+outside actor input before execution. Repeat five/state, preserving same-state
+input/prompt bytes, native identities, usage, process outcomes and all raw events.
+Backend revision remains unreported when absent; permissions are instruction-scoped.
+
+The guard requires only nonempty `VERIFICATION.md`, protects original sources,
+runtime and Git HEAD, and rejects extra project outputs or wrong case before
+executing any project checks. It never imports project code for these cases.
+Placeholder reports in unit tests prove the guard only, not semantic correctness.
+Actor authority covers design; written future commands are not actual test runs.
+Review actual calls/finals and material profile sections against Case20 in
+`sdd-verification-design/evals/cases.md`: structure versus meaning, faithful
+paraphrase, data/version/split identity, independent calibration, visible disputes,
+domain-owned policy, evidence currency and real execution boundaries.
+
+Do not label visible examples as held-out, historical structure as current quality,
+unresolved disagreement as accepted, or proposed cases as executed. Unknown sealed
+data and absent thresholds stay unknown. Outcome names are not standalone oracles.
+Record omissions and boundary violations separately from mechanical PASS. Preserve
+interrupted trials unscored. A method candidate requires an observed gap and paired
+forward plus frozen standard before retention; no automatic `--accept`. This small
+directed design evaluation does not measure real generator quality, production
+coverage, reviewer reliability, causal improvement or maintenance savings.

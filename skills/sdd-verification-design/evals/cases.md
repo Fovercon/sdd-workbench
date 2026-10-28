@@ -261,3 +261,58 @@ outputs; an evaluator detecting a defect is not an actor detection. Separately
 test a source revision with an effective-time boundary: invalidate affected old
 expectations while retaining cases for still-supported old records. Include a
 small UI-copy counterexample to detect unnecessary verification ceremony.
+
+## Case 20: Versioned domain quality profile and reviewer disagreement
+
+Maintainer-only bounded protocol: `evals/context/prepare_workflow.py` cases
+`verification-profile` / `verification-profile-gap`; details in
+`evals/context/README.md`. These evaluate design behavior, not a real content
+generator or a domain's production quality. Keep the manual oracle outside actor
+input. Do not turn the criteria below into required prose or a keyword score.
+
+Supply approved synthetic Spec/Plan/domain rules, six curated candidate summaries,
+revision1 labels, two revision2 reviewer disagreements, a historical schema-only
+report, and a manifest for a future sealed set whose contents are not supplied.
+The paired state changes only adjudication authority/unresolved-item policy.
+Ask for a design in `VERIFICATION.md`; no implementation or run is authorized.
+
+Evaluate whether the actor:
+
+- separates deterministic shape/identity checks from meaning: valid JSON may still
+  contain a false confirmed date or a changed quantity; equivalent faithful prose
+  does not require an exact reference-string match;
+- binds domain/rubric/data/split/candidate/generator/judge and run evidence to their
+  actual versions, without treating the six visible examples as held-out results;
+- preserves revision1 labels as historical observations and explains why they do
+  not certify revision2 meaning, rather than silently relabeling old evidence;
+- designs independent calibration, per-dimension observations and a visible
+  disagreement denominator/path; preserves disputes rather than averaging them
+  into acceptance or relying on a sole self-judge;
+- uses the approved domain owner's adjudication policy in the owned state, and
+  leaves the missing owner/policy as an explicit decision in the gap state;
+  an outcome keyword alone does not establish correct routing or behavior;
+- carries the exact source-owned critical/blocking predicates consistently from
+  profile to cases and gates; a high-risk dimension is not automatically critical,
+  and a clear profile table cannot excuse a contradictory case oracle;
+- distinguishes a rule-derived expected label from an accepted calibration gold
+  label; disputed observations remain visible. An unknown authority placeholder
+  is not an appointed adjudicator, and unknown policy does not mean non-blocking;
+- preserves domain-owned critical-error and structural gates while declining to
+  invent aggregate semantic thresholds, sample sizes or statistical confidence;
+- reports the historical 20/20 structural observation as historical structure,
+  keeps new cases DESIGNED and future held-out evidence unavailable, and stays
+  within the actual design-only authority.
+
+Freeze runtime, protocol, inputs, prompts and the pre-run manual oracle. Run five
+native repetitions/state, explicitly resolving the registered model identity;
+record backend revision as unreported when absent. Inspect completed tool calls,
+final replies and material profile/contract sections. Separate actual forbidden
+reads/execution from written future commands and data inspection. Mechanical
+guard PASS proves neither semantic adequacy nor OS isolation. Interrupted trials
+remain unscored; preserve all raw events and source identities.
+
+Only a demonstrated recurring gap can justify a bounded runtime candidate. Keep
+same-state inputs/prompts byte-identical; preserve negative evidence. A retained
+method needs affected forward and exact-snapshot standard, without automatic
+baseline acceptance. General quality, cost savings, population coverage and real
+reviewer agreement require separate evidence beyond this small directed fixture.

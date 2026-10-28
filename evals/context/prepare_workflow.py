@@ -20,6 +20,9 @@ for case in ('plan-migration','plan-migration-gap'):
 for case in ('impact-proposed','impact-approved'):
     SKILLS[case]=['sdd-change-impact']
     PROMPTS[case]='请使用 ../runtime/sdd-change-impact/SKILL.md，依据实际当前合同、DECISION.md、设计、切片、代码及证据，分析 CR-001。写 IMPACT.md：说明当前权威基线、依赖影响、各证据现在能支持什么、最小后续顺序和真实门禁。只授权影响分析，不改其他文件、不实施、不运行项目测试、不安装、不提交、不推送，不联系真实用户。'
+for case in ('verification-profile','verification-profile-gap'):
+    SKILLS[case]=['sdd-verification-design']
+    PROMPTS[case]='请使用 ../runtime/sdd-verification-design/SKILL.md，为当前 SPEC.md、PLAN.md 和领域材料设计最小充分的质量验证方案，写 VERIFICATION.md，说明证据、缺口和下一步。仅授权设计：不实施或运行项目测试/评测，不调用模型，不改输入、标签或其他文件，不安装、不提交、不推送，不联系真实用户。'
 
 def prepare(case,output,ref=None):
     output=Path(output).resolve()
@@ -38,8 +41,13 @@ def prepare(case,output,ref=None):
                 target.write_bytes(subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT))
         else:
             shutil.copytree(ROOT/'skills'/skill,dest,ignore=shutil.ignore_patterns('tests','evals','__pycache__','*.pyc','*.pyo'))
-    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else case
+    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else 'verification-profile' if case in ('verification-profile','verification-profile-gap') else case
     shutil.copytree(ROOT/'evals/context/inputs'/fixture,output/'project')
+    if case=='verification-profile-gap':
+        domain=output/'project/DOMAIN.md'
+        domain.write_text(domain.read_text(encoding='utf-8').replace(
+            'ADJUDICATION: Synthetic domain owner D resolves reviewer disagreements against DOMAIN revision2; unresolved items block semantic acceptance and are reported separately.',
+            'ADJUDICATION: No adjudication authority or unresolved-item acceptance policy has been approved. Reviewer disagreement remains open; do not appoint an owner or decide a gate for the owner.'),encoding='utf-8')
     if case=='plan-migration-gap':
         spec=output/'project/SPEC.md'
         spec.write_text(spec.read_text(encoding='utf-8').replace(
