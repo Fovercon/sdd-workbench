@@ -68,4 +68,7 @@ def evaluate(case,run):
     (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');return result
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=CASES);p.add_argument('run');a=p.parse_args();print(json.dumps(evaluate(a.case,a.run),ensure_ascii=True))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('case',choices=CASES);p.add_argument('run');a=p.parse_args()
+    result=evaluate(a.case,a.run)
+    print(json.dumps(result,ensure_ascii=True))
+    raise SystemExit(result['automated_guards'] != 'PASS')

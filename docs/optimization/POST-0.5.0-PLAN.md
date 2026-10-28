@@ -613,3 +613,54 @@ Final: fixed Important（实施者补充发现）：在非builtin import前禁�
 Task 4B: complete（BASE `aaff728`；最终提交身份见本分支Git记录和外部`fixed-candidate/final-provenance.json`）。已验证：root105、router171、context34均通过；package/docs/diff检查通过；一次独立review+缓存Important的一次RED/GREEN修复；修复候选forward10次及standard211次完整留证（9/13，非整体验收）。开发分支保留有价值的有界改动，未扩大为发布动作。
 
 下一批输入：优先以本批保留的“当前/批准后有效性混用、原始拥有层/下一未同步层、测试断言/静态观察归因”反例收窄既有影响报告表示，或验证真实项目已有图的维护负担；先做有界对照，不因为本批多一个门通过就扩展为通用自动传播平台。迁移判断与更广验证网路线继续待办，前端共创仍排除。
+
+### 第五批：影响报告精度对照与评测 CLI 修复
+
+本批沿用[有界计划](2026-10-28-impact-report-plan.md)，BASE `28a1d3e`。
+先测旧版，再尝试把当前支持/条件性影响、原始 owner/下一未同步阶段、实际断言/静态观察分开表示。
+最终撤回三个运行时文件的候选修改，只保留评测反例与确定的 CLI 修复。
+
+实验 `~/.sdd-regression/experiments/impact-report-20261028T022911Z/`：
+control/candidate × proposed/approved，各5次，共20次；同权威状态下的项目/提示逐字节相同，
+原生Pi 1.3.0显式选择已注册`deepseek/deepseek-flash`，全部原始assistant身份与usage完整，backend revision未报告。
+先完成10个control，再执行10个冻结candidate，并发均2；未知共享负载、顺序与随机性限制因果解释。
+完整调用、最终回复和报告关键矩阵/证据/交接段逐次核对，不宣称每句报告均经独立认证。
+
+- 旧版复现提案仍为v1有效、矩阵或总结却无条件标失效的混淆；也有把“不调用export_row”归给只比较输出的测试。
+  control approved2/3/5将primary route写为PLAN（下一未同步层），approved1/4写为SPEC并注明已批准；
+  旧规则允许前一种解释，不能仅凭枚举差异判错或推断重复批准。新评测要求解释归属与下一动作。
+- 候选5份proposal矩阵都明确区分当前v1与条件性v2，但proposed1最终摘要仍有无条件“失效”。
+  proposed2和approved2的失败预测没有始终以代码变更为前提；控制方在独立临时副本复核：
+  两权威状态的旧代码+旧断言均3/3通过，批准合同不会自行改变执行结果。
+- 候选proposed3在矩阵/证据表把目标写成`**78`，proposed4写成`**5678`；正确精确delta应为`******78`。
+  这是实际合同含义矛盾，不因表格结构更清楚而接受。没有据此宣称模板造成错误，也未修补actor报告。
+- 机械guard20/20通过仍不代表行为通过：control proposed2/approved1/approved2与candidate
+  proposed3/4、approved3/4实际读取了被禁止的controller元数据；control approved2还写入后删除两个`/tmp`文件。
+  candidate proposed5仅求值内置字符串表达式，没有导入项目或跑项目测试，不将其误判为实施。
+  未观察到业务代码修改或actor项目测试运行；不能据最终目录证明OS隔离或不存在瞬态副作用。
+- candidate approved1仍增加确认已生效v2/星号读法，approved2增加“接受v2收据缺口”的新门禁，
+  还有样例覆盖被说成完整覆盖等局限；不宣称三类语义问题已修复或更省成本。
+
+Ruling: 撤回三个运行时候选文件，保留反例、输入/运行时身份与新的语义评测点 — 两份精确delta矛盾及残留歧义使本候选不足以验收 — 代价是报告时态、归因和多余门禁仍待更小实验，不能把本批写成方法成功。
+
+所有75个保留运行时文件与`28a1d3e`逐字节相同；snapshot
+`eac639eeb792db28a5ffba1b9a3a88969b5a5604fb4057bc29a41efa8937bebe`。
+20份试次的冻结runtime亦保持原字节、无新增pyc；外部保留`withdrawn-method.diff`与全部负面事件。
+本批不保留方法变化，故不重跑standard；上一轮`20261028T013309Z-standard`的9/13及未验收状态不变，
+没有`--accept`、重评分、修改另一agent的L2/L3、安装、推送、合并或发布。
+
+确定保留的修复：`evaluate_workflow.py`原本只打印JSON，导致FAIL仍exit0。现在PASS退出0、FAIL退出1，
+包括case identity拒绝；JSON字段、保护检查和Python函数返回值不变。
+三个公共CLI反例（缺报告、受保护SPEC被改、错case禁止执行项目代码）先均以`0 != 1`失败，修复后通过；
+同时验证请求产物PASS/0、stdout与保存报告一致。测试中的占位报告仅用于机械guard，未冒充语义证据。
+这关闭4B延期的CLI Minor，不解决模型误读管道状态或工作区权限约束。
+
+完整验证：root105/105、router171/171、context37/37通过；package12skills/214files/0.5.0、docs104Markdown/325links/0错误，diff检查通过。
+一次独立整分支评审未发现新的Critical/Important/Minor；独立重跑context37与package通过，
+并核对10组配对身份、20份原始模型身份/guard/冻结来源及两个精确delta错误的原始write事件。
+评审只复核关键段落，不将本批或历史报告写成逐句语义全量认证。
+
+Task 5: complete（20次有界对照完成，方法候选撤回；未接受新基线）。
+Task 6: complete（guard CLI RED/GREEN及完整检查、独立评审通过，本地提交身份见Git）。
+下一步仍优先把当前/提议效力问题缩成单一表示实验，降低同批引入多个字段的负担；
+这是待验证方向，不是本批已证明的根因或收益。迁移判断与更广验证网继续待办，前端共创仍排除。

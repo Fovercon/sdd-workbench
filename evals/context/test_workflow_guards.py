@@ -1,8 +1,53 @@
 from pathlib import Path
-import tempfile,unittest
+import json,subprocess,sys,tempfile,unittest
 from evaluate_workflow import probe_selection
+from prepare_workflow import prepare
 
 class WorkflowGuardTests(unittest.TestCase):
+    def run_cli(self, case, run):
+        completed = subprocess.run(
+            [sys.executable, '-B', str(Path(__file__).with_name('evaluate_workflow.py')), case, str(run)],
+            text=True, capture_output=True, check=False)
+        payload = json.loads(completed.stdout)
+        self.assertEqual(payload, json.loads((run / 'guard-evaluation.json').read_text()))
+        return completed.returncode, payload
+
+    def test_cli_missing_report_fails_and_requested_output_passes(self):
+        with tempfile.TemporaryDirectory() as base:
+            run = prepare('impact-proposed', Path(base) / 'run')
+            code, payload = self.run_cli('impact-proposed', run)
+            self.assertEqual(payload['automated_guards'], 'FAIL')
+            self.assertIn('Impact report missing', payload['errors'])
+            self.assertEqual(code, 1, 'shell callers must observe guard failure')
+            (run / 'project/IMPACT.md').write_text('Placeholder; guards do not grade report semantics.\n')
+            code, payload = self.run_cli('impact-proposed', run)
+            self.assertEqual(payload['automated_guards'], 'PASS')
+            self.assertEqual(code, 0)
+
+    def test_cli_protected_input_change_is_nonzero(self):
+        with tempfile.TemporaryDirectory() as base:
+            run = prepare('impact-proposed', Path(base) / 'run')
+            (run / 'project/IMPACT.md').write_text('Placeholder; not a semantic certificate.\n')
+            (run / 'project/SPEC.md').write_text('unauthorized change\n')
+            code, payload = self.run_cli('impact-proposed', run)
+            self.assertEqual(payload['automated_guards'], 'FAIL')
+            self.assertIn('SPEC.md', payload['protected_changes'])
+            self.assertEqual(code, 1)
+
+    def test_cli_wrong_case_fails_before_executing_project_code(self):
+        with tempfile.TemporaryDirectory() as base:
+            run = prepare('impact-proposed', Path(base) / 'run')
+            marker = run / 'project/executed.txt'
+            (run / 'project/service.py').write_text(
+                'from pathlib import Path\n'
+                f'Path({str(marker)!r}).write_text("executed")\n')
+            code, payload = self.run_cli('direct', run)
+            self.assertEqual(payload['automated_guards'], 'FAIL')
+            self.assertFalse(payload['case_identity_matches'])
+            self.assertEqual(code, 1)
+            self.assertFalse(marker.exists())
+            self.assertFalse((run / 'controller-tests.stdout').exists())
+
     def test_probe_rejects_original_substring_bug_and_accepts_exact_selection(self):
         with tempfile.TemporaryDirectory()as d:
             p=Path(d)/'service.py';p.write_text("def select(items,key):\n return [x for x in items if key in x['id']]\n",encoding='utf-8')

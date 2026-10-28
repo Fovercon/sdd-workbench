@@ -205,6 +205,35 @@ Source-checkout reproduction is documented in `evals/context/README.md`, section
 same runtime and review actual calls and claims; the two authority states are
 not an old/new method comparison. Mechanical PASS is not semantic acceptance.
 
+### Report precision controls
+
+Compare five fresh runs per state at a frozen old runtime and the candidate,
+using identical project and prompt bytes. Before editing guidance, inspect the
+old reports for actual omissions; retain guidance only for demonstrated needs.
+
+- In proposal-only reports, inspect matrix and final summary as well as headers:
+  current v1 support and conditional v2 effects remain distinguishable throughout.
+- In approved-v2 reports, identify the delta's Spec origin and the next remaining
+  Plan work. State whether the primary route names the original owner or the
+  earliest currently unsynchronized contract; enum choice alone does not prove
+  repeated approval. Existing exact approval is credited, not requested again.
+- Old code plus old output assertions may still pass after a new contract is
+  approved. Identify noncoverage of the new contract without inventing execution
+  failure. A test that only compares output does not prove independent helper
+  calls or input preservation; use actual static evidence or relevant assertions.
+- Keep unverified partner links unknown, unrelated count behavior justified, and
+  analysis-only actions within scope. Mechanical guards do not grade these claims.
+- Check every concrete proposed output against the exact delta, including mask
+  width and retained characters. Clear headings and correct status qualifiers do
+  not compensate for a wrong acceptance value or a contradicted final summary.
+
+Review every call and final reply and the report's supporting sections. Retain
+raw contradictions, incomplete runs and source identities; no automatic string
+score establishes semantic correctness or maintenance savings. A retained method
+change also requires the standard regression on the exact candidate runtime.
+Withdrawn candidates retain their raw evidence; unchanged runtime does not gain
+new method acceptance from evaluation-only maintenance.
+
 ## Failure conditions across all cases
 
 Fail the Skill if it:

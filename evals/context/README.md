@@ -192,8 +192,10 @@ evaluator requires its requested case to match `variant.json`; missing, malforme
 or unsupported identity fails without executing project code or tests. The JSON
 report records `case`, `frozen_case` and `case_identity_matches`. This prevents
 operator misdispatch; editable controller metadata is not a security attestation.
-Read `automated_guards` from the JSON: the current CLI still exits zero for a
-guard rejection, a recorded maintenance limitation rather than a success signal.
+The CLI exits 0 for `automated_guards: PASS`, and 1 for `FAIL`, including a case
+identity rejection. Stdout and `guard-evaluation.json` retain the same JSON result;
+read its scope and errors as well as the process status. Python callers still
+receive the result dictionary from `evaluate()`.
 All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
 pass: no mechanical guard judges the impact report's semantics or authority.
 
