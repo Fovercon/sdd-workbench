@@ -81,12 +81,30 @@ def check_summary(items):
             'meaning':'Source identity check only; not approval, test execution or project completeness.'}
 
 
-def trace_report(snapshot, items, changed_ids, input_sha256):
+def source_selections(root, items, paths):
+    selected = []
+    seen = set()
+    for value in paths:
+        path = evidence.source_path(root, value)
+        if path == root or path.is_dir():
+            raise ValueError('--changed-source requires a file path, not a directory')
+        if path in seen:
+            continue
+        seen.add(path)
+        selected.append({'path': path.relative_to(root).as_posix(),
+                         'item_ids': [item['id'] for item in items if any(
+                             evidence.source_path(root, ref['path']) == path
+                             for ref in item.get('sources', []))]})
+    return selected
+
+
+def trace_report(snapshot, items, changed_ids, input_sha256, selected_sources=None):
     """Query declared dependencies without changing source or semantic judgments."""
-    seeds = list(dict.fromkeys(changed_ids))
+    seeds = list(dict.fromkeys([*(changed_ids or []),
+                               *(key for source in (selected_sources or []) for key in source['item_ids'])]))
     nodes = {item['id']: item for item in items}
-    if not seeds or any(key not in nodes for key in seeds):
-        raise ValueError('trace requires --changed-id identifying existing items')
+    if (not seeds and not selected_sources) or any(key not in nodes for key in seeds):
+        raise ValueError('trace requires an existing --changed-id or a --changed-source file')
     dependencies, dependents = {}, defaultdict(set)
     for item in items:
         refs = set(workstream.references(item))
@@ -113,12 +131,20 @@ def trace_report(snapshot, items, changed_ids, input_sha256):
         record = item.get('work', item.get('stage_detail', {}))
         if 'result' in record:
             row['recorded_result'] = record['result']
+        if selected_sources is not None:
+            row['selected_by_sources'] = [source['path'] for source in selected_sources if key in source['item_ids']]
         rows.append(row)
-    return {'project_id': snapshot['project_id'], 'scope': snapshot['scope'], 'input_sha256': input_sha256,
+    report = {'project_id': snapshot['project_id'], 'scope': snapshot['scope'], 'input_sha256': input_sha256,
             'changed_ids': seeds, 'coverage': 'DECLARED_LINKS_ONLY', 'items': rows,
             'meaning': 'Hypothetical dependency query. Freshness is the actual source check, not the selected change. '
                        'No recorded path does not establish semantic independence. Missing links may remain undiscovered. '
                        'Recorded state/result is historical input, not new test execution or approval.'}
+    if selected_sources is not None:
+        report.update(changed_sources=selected_sources,
+                      unmapped_sources=[source['path'] for source in selected_sources if not source['item_ids']])
+        report['meaning'] += (' File selection includes every citing record, not a semantic delta. '
+                              'Unmapped sources have no recorded seed, not proof of no impact.')
+    return report
 
 
 def describe_contract():
@@ -150,7 +176,7 @@ def describe_contract():
         'file_node':{'view':'structure','kind':'code_observation','file':'actual root-relative path also in sources','group':'optional module name','sublabel':'optional technical label'},
         'decision_input':{'fields':['id','kind','prompt','owner','scope'],'kind':'input','options':'omit for free text','rules':'Item state remains PENDING_HUMAN until a real answer; source binding is not approval. Other decision types use human-decisions.md.'},
         'next_id':'If present, identify an existing item with concrete next text. Match the actual next action; do not invent a blocking gate.',
-        'trace':'trace --root PROJECT --input observations.json --changed-id ID (repeatable): read-only declared downstream links; no path is not semantic independence; source freshness stays separate.',
+        'trace':'trace --root PROJECT --input observations.json --changed-id ID and/or --changed-source FILE (repeatable): read-only declared links; source selectors include all citing records and expose unmapped files; no path is not semantic independence; freshness stays separate.',
         'next':'Read applicable mode semantics, draft source-bound observations, run check --summary, then render; inspect implementation only for a concrete unresolved tool failure.'}
 
 
@@ -166,12 +192,14 @@ def main():
     parser.add_argument('--reason',help='Reason for new observations or a relocated source root during update')
     parser.add_argument('--summary',action='store_true',help='Compact check output; full check JSON remains the default')
     parser.add_argument('--changed-id',action='append',help='Existing item ID to query downstream (trace only; repeatable)')
+    parser.add_argument('--changed-source',action='append',help='Root-relative file whose citing items seed trace; unmapped files stay explicit (trace only; repeatable)')
     args=parser.parse_args()
     try:
         if args.summary and args.command!='check':raise ValueError('--summary is valid only for check')
         if args.changed_id and args.command!='trace':raise ValueError('--changed-id is valid only for trace')
-        if args.command=='trace' and (not args.changed_id or args.output is not None or args.reason is not None):
-            raise ValueError('trace requires --changed-id and takes no --output or --reason')
+        if args.changed_source and args.command!='trace':raise ValueError('--changed-source is valid only for trace')
+        if args.command=='trace' and (not (args.changed_id or args.changed_source) or args.output is not None or args.reason is not None):
+            raise ValueError('trace requires --changed-id or --changed-source and takes no --output or --reason')
         if args.command=='describe':
             if any((args.root,args.input,args.output,args.previous,args.reason)):raise ValueError('describe takes no project or output arguments')
             print(json.dumps(describe_contract(),ensure_ascii=False,separators=(',',':')));return 0
@@ -198,7 +226,8 @@ def main():
         if args.command=='check':
             print(json.dumps(check_summary(items) if args.summary else items,ensure_ascii=False,indent=2));return code
         if args.command=='trace':
-            print(json.dumps(trace_report(snapshot,items,args.changed_id,sha(data)),ensure_ascii=False,indent=2));return code
+            selected = source_selections(root,items,args.changed_source) if args.changed_source else None
+            print(json.dumps(trace_report(snapshot,items,args.changed_id,sha(data),selected),ensure_ascii=False,indent=2));return code
         if args.output is None:raise ValueError('render/update requires --output version directory')
         if args.output.exists() or args.output.is_symlink():raise ValueError('Output exists; choose a fresh version directory')
         output=args.output.resolve()

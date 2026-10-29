@@ -345,3 +345,23 @@ deterministic checks do not establish actor behavior or cross-host readiness.
 ## Context working-set forward checks
 
 Run the source-checkout [context protocol](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md) with matched VIEW inputs and frozen before/candidate runtimes. Check all retained versions, source facts, unknown/unrun states and real browser behavior before comparing usage. Retain intermediate regressions and individual runs; a smaller payload alone is not success. This maintainer protocol is outside installation package inputs.
+
+## Source-file trace queries
+
+Use the source-checkout `trace-source-current` / `trace-source-stale` context cases,
+five repeats per state/runtime with matched inputs and explicitly registered DeepSeek
+Flash. Only query and the requested TRACE.md are authorized; no board or source edit.
+Inspect actual public CLI calls, native results, reports and final claims:
+
+- File selectors seed all citing records; existing ID lookup remains a valid manual
+  baseline, not a method failure simply because it lacks the new convenience flag.
+- Declared downstream traversal is separate from direct file matching and unmapped
+  sources. No mapped source or missing graph path proves semantic completeness.
+- Actual source freshness and recorded v1 PASS remain distinct. The stale state
+  keeps original fingerprints and authority limits; a query cannot approve its draft.
+- Does not create links, refresh hashes, execute project tests or acquire authority
+  to implement/release. Preserve native controller-access violations and partial runs.
+
+Deterministic CLI checks establish the query contract, not reliable model adoption,
+maintenance savings or whole-method acceptance. Retained runtime also needs the
+exact-snapshot standard without automatically accepting a baseline.

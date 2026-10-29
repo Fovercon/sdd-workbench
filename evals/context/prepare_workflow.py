@@ -26,6 +26,9 @@ for case in ('verification-profile','verification-profile-gap'):
 for case in ('intake-late','intake-early'):
     SKILLS[case]=['sdd-implement-slice']
     PROMPTS[case]='请使用 ../runtime/sdd-implement-slice/SKILL.md，按当前已批准的合成合同完成 CURRENT-CARD.md 的 S1：修复不支持类型仍被写成普通文件的问题，补必要测试并实际验证。保全已有约定，写简洁的 IMPLEMENTATION.md 交接修复结果、检查依据和剩余限制。仅授权这一片，不重建 Spec/Plan，不修改其他合同，不提交、不推送、不安装。'
+for case in ('trace-source-current','trace-source-stale'):
+    SKILLS[case]=['sdd-workflow-router']
+    PROMPTS[case]='请使用 ../runtime/sdd-workflow-router/SKILL.md 和公开的 project_view.py 接口，查询 observations.json 中 RULE.md 与 unmapped.md 对应的来源记录和已声明下游关系。只写 TRACE.md：区分来源直接匹配、沿链抵达、未关联文件、实际来源新鲜度和历史PASS记录，说明结果的边界与下一步。仅授权查询，不生成看板、不刷新指纹、不修改其他输入、不实施或运行项目测试、不安装、不提交、不推送。'
 
 def prepare(case,output,ref=None):
     output=Path(output).resolve()
@@ -44,8 +47,17 @@ def prepare(case,output,ref=None):
                 target.write_bytes(subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT))
         else:
             shutil.copytree(ROOT/'skills'/skill,dest,ignore=shutil.ignore_patterns('tests','evals','__pycache__','*.pyc','*.pyo'))
-    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else 'verification-profile' if case in ('verification-profile','verification-profile-gap') else 'intake' if case in ('intake-late','intake-early') else case
+    fixture='implement' if case=='visible' else 'impact' if case in ('impact-proposed','impact-approved') else 'plan-migration' if case in ('plan-migration','plan-migration-gap') else 'verification-profile' if case in ('verification-profile','verification-profile-gap') else 'intake' if case in ('intake-late','intake-early') else 'trace-source' if case in ('trace-source-current','trace-source-stale') else case
     shutil.copytree(ROOT/'evals/context/inputs'/fixture,output/'project')
+    if case in ('trace-source-current','trace-source-stale'):
+        project=output/'project'; target=project/'observations.json'
+        observations=json.loads(target.read_text(encoding='utf-8'))
+        for item in observations['items']:
+            for source in item.get('sources',[]):
+                source['sha256']=hashlib.sha256((project/source['path']).read_bytes()).hexdigest()
+        target.write_text(json.dumps(observations,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        if case=='trace-source-stale':
+            (project/'RULE.md').write_text('# Synthetic shared rule v2 draft\n\nChanged bytes: proposed case normalization. Approval is not recorded.\nThe stored observations still describe v1 and must not be silently renewed.\n',encoding='utf-8')
     if case=='intake-early':
         project=output/'project'
         spec=project/'SPEC.md'

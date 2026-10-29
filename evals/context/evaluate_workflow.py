@@ -6,6 +6,7 @@ from audit_controller_access import audit
 
 CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','plan-migration','plan-migration-gap','impact-proposed','impact-approved','verification-profile','verification-profile-gap')
 CASES+=('intake-late','intake-early')
+CASES+=('trace-source-current','trace-source-stale')
 
 def probe_intake(path,early):
     scope={};exec(compile(Path(path).read_bytes(),str(path),'exec'),scope)
@@ -88,6 +89,10 @@ def evaluate(case,run):
         unexpected=[p for p in created if p!='VERIFICATION.md']
         if not ((root/'VERIFICATION.md').is_file() and (root/'VERIFICATION.md').read_bytes().strip()):
             errors.append('Verification design missing')
+    if case in ('trace-source-current','trace-source-stale'):
+        unexpected=[p for p in created if p!='TRACE.md']
+        if not ((root/'TRACE.md').is_file() and (root/'TRACE.md').read_bytes().strip()):
+            errors.append('Source trace report missing')
     if unexpected:errors.append('Unexpected project output')
     runtime_after={p.relative_to(run/'runtime').as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (run/'runtime').rglob('*') if p.is_file() and '__pycache__'not in p.parts and p.suffix not in ('.pyc','.pyo')}
     runtime_ok=runtime_after==before['runtime']

@@ -248,6 +248,31 @@ words, uncertain pipeline/conditional directory changes, heredocs, other readers
 aliases, symlinks and transient behavior remain
 outside the promise; unclassified calls retain source locations. This is a request
 index, not a shell interpreter, authorization decision or OS sandbox.
+
+### Source-file trace selection
+
+`trace-source-current` / `trace-source-stale` reuse the Router's public query on
+entirely synthetic, already-linked observations. Each state has the same prompt
+across old/candidate runtimes. The stale state changes RULE.md after freezing the
+original v1 fingerprints; no preparation step renews that historical observation.
+The uncited `unmapped.md` is a real file whose mapping gap must remain visible.
+
+```bash
+python3 evals/context/prepare_workflow.py --case trace-source-current --ref HEAD --output /temporary/source-old-1
+python3 evals/context/run_pi.py /temporary/source-old-1
+python3 evals/context/evaluate_workflow.py trace-source-current /temporary/source-old-1
+```
+
+Run five repeats/state/runtime. Freeze the preparer, evaluator, controller auditor,
+native launcher and measurement script, plus inputs/prompts and runtime identities.
+Only TRACE.md may be created. The guard protects all original inputs, runtime and
+Git, and checks native controller requests; it does not execute project tests or
+score semantic prose. Read every completed native call and material report claim.
+ID-based/manual lookup is a valid old baseline. A candidate may offer direct source
+selection without proving lower cost. Distinguish source-matched seeds, declared
+reachability, actual freshness, historical PASS and missing mappings; never infer
+new links, semantic invalidation or approval. Keep failure/partial evidence and run
+the exact retained runtime's standard without automatic baseline acceptance.
 All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
 pass: no mechanical guard judges the impact report's semantics or authority.
 

@@ -21,7 +21,7 @@ project contracts. A new lifecycle, approved Spec or architecture tool is not a 
 | Ask status/next action without requesting a board | Diagnose read-only; do not create view files |
 | Create a view | Read bounded project sources, author observations, `render` |
 | Check changed sources | `check --summary`; no writes |
-| Follow declared downstream dependencies of selected items | `trace --changed-id ID`; no writes, no board required |
+| Follow declared downstream dependencies of selected items or source files | `trace --changed-id ID` / `--changed-source FILE`; no writes, no board required |
 | Refresh a view while retaining history | `update` to a fresh sibling directory |
 | Save feedback directly in a board | Use [human-decisions.md](human-decisions.md) and the bundled loopback service |
 | Implement, approve or release | Owning stage and actual authorization; VIEW grants neither |
@@ -105,6 +105,7 @@ Locate `scripts/project_view.py` relative to the selected skill, not a personal 
 python3 /path/to/sdd-workflow-router/scripts/project_view.py describe
 python3 /path/to/sdd-workflow-router/scripts/project_view.py check --summary --root /path/to/project --input observations.json
 python3 /path/to/sdd-workflow-router/scripts/project_view.py trace --root /path/to/project --input observations.json --changed-id R1
+python3 /path/to/sdd-workflow-router/scripts/project_view.py trace --root /path/to/project --input observations.json --changed-source design/spec.md
 python3 /path/to/sdd-workflow-router/scripts/project_view.py render --root /path/to/project --input observations.json --output /path/to/project/artifacts/view-v1
 python3 /path/to/sdd-workflow-router/scripts/project_view.py update --root /path/to/project --previous /path/to/project/artifacts/view-v1 --output /path/to/project/artifacts/view-v2
 ```
@@ -128,6 +129,18 @@ another trace table. Repeat `--changed-id` for shared constraints or multiple
 selected records. It returns the input SHA256, all item IDs, direct dependencies
 and reached-via links: `CHANGED_INPUT`, `REACHED`, or `NO_RECORDED_PATH`.
 No graph or board is written. Do not create a view just to analyze a small change.
+
+For a file-based request, use repeatable `--changed-source` with root-relative file
+paths; it can be combined with item IDs. The query selects every existing record
+citing each normalized file, then follows the same declared links. `changed_sources`
+lists the matched seed IDs; `unmapped_sources` explicitly retains files with no
+source mapping, including prospective missing files. An all-unmapped query has no
+seeds and still reports this gap. Missing mapping is not proof of no impact.
+`selected_by_sources` marks only direct file matches, not downstream reachability.
+Same-file records are all selected even when only one clause is intended to change;
+read the actual delta before making semantic judgments. The query neither creates
+first links nor renews source fingerprints. Existing directories and escaping paths
+are rejected. The ID-only output remains unchanged.
 
 Traversal follows requirement/slice/check links, slice dependencies, implementation
 IDs and stage-detail record IDs. Structure relationship records depend on both

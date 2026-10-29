@@ -118,6 +118,79 @@ class TraceTests(unittest.TestCase):
             self.assertNotEqual(run.returncode, 0)
             self.assertFalse(run.stdout.strip())
 
+    def test_source_query_selects_every_citing_record_before_traversal(self):
+        run = self.run_cli('--changed-source', 'component-1.py', seeds=())
+        self.assertEqual(run.returncode, 0, run.stderr)
+        report = json.loads(run.stdout); rows = {r['id']: r for r in report['items']}
+        self.assertEqual(report['changed_ids'], ['code1', 'S1 范围%'])
+        self.assertEqual(report['changed_sources'], [{'path': 'component-1.py', 'item_ids': ['code1', 'S1 范围%']}])
+        self.assertEqual(report['unmapped_sources'], [])
+        self.assertEqual(rows['S1 范围%']['selected_by_sources'], ['component-1.py'])
+        self.assertEqual(rows['V1']['selection'], 'REACHED')
+        self.assertEqual(rows['V1']['recorded_result'], 'PASS')
+        self.assertEqual(rows['R1']['selection'], 'NO_RECORDED_PATH')
+        self.assertEqual(rows['R1']['selected_by_sources'], [])
+
+    def test_source_aliases_and_ids_have_stable_union_and_legacy_shape(self):
+        path = next(i for i in self.data['items'] if i['id'] == 'R1')['sources'][0]['path']
+        run = self.run_cli('--changed-source', './' + path, '--changed-source', 'nested/../' + path,
+                           seeds=('R3', 'R3'))
+        self.assertEqual(run.returncode, 0, run.stderr)
+        report = json.loads(run.stdout)
+        self.assertEqual(report['changed_ids'], ['R3', 'R1'])
+        self.assertEqual(report['changed_sources'], [{'path': path, 'item_ids': ['R1']}])
+        self.assertNotIn('changed_sources', json.loads(self.run_cli().stdout))
+
+    def test_unmapped_source_is_an_explicit_gap_even_when_every_path_is_unmapped(self):
+        (self.root / 'unmapped.md').write_text('No observation cites this file.\n')
+        run = self.run_cli('--changed-source', 'unmapped.md', '--changed-source', 'prospective.md', seeds=())
+        self.assertEqual(run.returncode, 0, run.stderr)
+        report = json.loads(run.stdout)
+        self.assertEqual(report['changed_ids'], [])
+        self.assertEqual(report['unmapped_sources'], ['unmapped.md', 'prospective.md'])
+        self.assertTrue(all(not row['item_ids'] for row in report['changed_sources']))
+        self.assertTrue(all(row['selection'] == 'NO_RECORDED_PATH' for row in report['items']))
+        self.assertNotIn('UNCHANGED', run.stdout)
+        mixed = self.run_cli('--changed-source', 'unmapped.md', seeds=('R1',))
+        self.assertEqual(json.loads(mixed.stdout)['changed_ids'], ['R1'])
+        self.assertEqual(json.loads(mixed.stdout)['unmapped_sources'], ['unmapped.md'])
+
+    def test_source_selection_keeps_same_file_meaning_and_actual_stale_missing_evidence_separate(self):
+        r1 = next(i for i in self.data['items'] if i['id'] == 'R1')
+        r3 = next(i for i in self.data['items'] if i['id'] == 'R3')
+        r3['sources'] = r1['sources']
+        path = r1['sources'][0]['path']
+        (self.root / path).write_text('Changed bytes do not decide the meaning of both records.\n')
+        run = self.run_cli('--changed-source', path, seeds=())
+        self.assertEqual(run.returncode, 2, run.stderr)
+        self.assertTrue(run.stdout.strip(), run.stderr)
+        report = json.loads(run.stdout); rows = {r['id']: r for r in report['items']}
+        self.assertEqual(report['changed_ids'], ['R1', 'R3'])
+        self.assertEqual(rows['R3']['freshness'], 'STALE')
+        self.assertEqual(rows['R3']['recorded_state'], 'SATISFIED')
+        self.assertEqual(rows['R1']['sources'][0]['sha256'], r1['sources'][0]['sha256'])
+        (self.root / path).unlink()
+        missing = self.run_cli('--changed-source', path, seeds=())
+        self.assertEqual(missing.returncode, 2)
+        self.assertEqual(json.loads(missing.stdout)['changed_ids'], ['R1', 'R3'])
+        missing_rows = {r['id']: r for r in json.loads(missing.stdout)['items']}
+        self.assertEqual(missing_rows['R1']['freshness'], 'UNKNOWN')
+
+    def test_source_query_respects_root_boundary_and_command_scope(self):
+        (self.root / 'folder').mkdir()
+        outside = self.root.parent / (self.root.name + '-outside')
+        (self.root / 'escape').symlink_to(outside)
+        for value in ('../outside.md', str(outside), '.', 'folder', 'escape'):
+            with self.subTest(value=value):
+                run = self.run_cli('--changed-source', value, seeds=())
+                self.assertEqual(run.returncode, 1, run.stderr)
+                self.assertFalse(run.stdout.strip())
+                self.assertNotIn('Traceback', run.stderr)
+        for command in ('describe', 'check', 'render', 'update'):
+            run = subprocess.run([sys.executable, '-B', str(CLI), command, '--changed-source', 'x.md'], capture_output=True, text=True)
+            self.assertNotEqual(run.returncode, 0)
+            self.assertFalse(run.stdout.strip())
+
     def test_plain_python_query_does_not_write_import_caches_outside_project(self):
         # -B in other tests must not hide writes to a read-only supplied runtime.
         runtime = self.root / 'runtime'
@@ -126,7 +199,7 @@ class TraceTests(unittest.TestCase):
         before = {str(p.relative_to(self.root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in self.root.rglob('*') if p.is_file()}
         env = {k: v for k, v in os.environ.items() if k not in ('PYTHONDONTWRITEBYTECODE', 'PYTHONPYCACHEPREFIX')}
         run = subprocess.run([sys.executable, str(runtime / 'project_view.py'), 'trace', '--root', str(self.root),
-                              '--input', str(self.input), '--changed-id', 'R1'], capture_output=True, text=True, env=env)
+                              '--input', str(self.input), '--changed-source', 'component-1.py'], capture_output=True, text=True, env=env)
         self.assertEqual(run.returncode, 0, run.stderr)
         self.assertEqual(before, {str(p.relative_to(self.root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in self.root.rglob('*') if p.is_file()})
 
