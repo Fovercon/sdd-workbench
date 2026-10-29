@@ -215,6 +215,39 @@ The CLI exits 0 for `automated_guards: PASS`, and 1 for `FAIL`, including a case
 identity rejection. Stdout and `guard-evaluation.json` retain the same JSON result;
 read its scope and errors as well as the process status. Python callers still
 receive the result dictionary from `evaluate()`.
+
+### Native controller-file requests
+
+`evaluate_workflow.py` also reads a present `events.jsonl` through
+`audit_controller_access.py`. It rejects explicit controller-file read requests
+and invalid/incomplete native traces. A missing log is `NOT_RECORDED`, so pre-run
+fixture/code checks can still run; their PASS does not establish process compliance.
+Inspect `native_controller_access`, as well as the existing manual-review requirement.
+When freezing this evaluator for an experiment, include
+`audit_controller_access.py` in the protocol snapshot and fingerprint map alongside
+the preparer, evaluator, launcher and measurement script.
+
+To audit a historical run without changing its reports or executing its commands:
+
+```bash
+python3 evals/context/audit_controller_access.py /temporary/trial
+```
+
+The standalone CLI prints JSON: exit1 means `REQUESTS_FOUND`, exit2 means
+`NOT_RECORDED` or `INVALID_OR_INCOMPLETE`; exit0 means only
+`NO_REQUESTS_OBSERVED` within the bounded detector. Every result requires manual review.
+The output binds the native stream and auditor SHA256 and points to tool-call IDs
+and original start/end lines. Findings distinguish a submitted request from the
+whole tool call's nullable error state; neither alone proves content delivery.
+
+The detector resolves structured `read` paths and literal `cat` operands against
+the project cwd, with simple literal `cd` segments. It compares exact trial-root
+paths, not basenames or report keywords. `ls`, printed examples and a project file
+named `variant.json` are not controller reads. Dynamic/escaped/concatenated shell
+words, uncertain pipeline/conditional directory changes, heredocs, other readers,
+aliases, symlinks and transient behavior remain
+outside the promise; unclassified calls retain source locations. This is a request
+index, not a shell interpreter, authorization decision or OS sandbox.
 All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
 pass: no mechanical guard judges the impact report's semantics or authority.
 

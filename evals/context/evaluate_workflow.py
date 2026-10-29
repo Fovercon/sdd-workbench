@@ -2,6 +2,7 @@
 """Independent bounded behavior/protection guards, not a model judge."""
 import argparse,hashlib,json,re,subprocess,sys,tempfile
 from pathlib import Path
+from audit_controller_access import audit
 
 CASES=('implement','visible','direct','risk','recover','plan-local','plan-durable','plan-migration','plan-migration-gap','impact-proposed','impact-approved','verification-profile','verification-profile-gap')
 CASES+=('intake-late','intake-early')
@@ -65,6 +66,9 @@ def evaluate(case,run):
         (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
         return result
     before=json.loads((run/'input-receipt.json').read_text(encoding='utf-8'));errors=[]
+    access=audit(run)
+    if access['findings']:errors.append('Controller-file read request in native tool arguments')
+    if access['status']=='INVALID_OR_INCOMPLETE':errors.append('Invalid or incomplete native event stream')
     implementing=case in ('implement','visible','direct','intake-late','intake-early')
     production='intake.py' if case in ('intake-late','intake-early') else 'service.py'
     allowed=lambda name:implementing and(name==production or name.startswith('tests/'))
@@ -103,6 +107,7 @@ def evaluate(case,run):
         if not report:errors.append('Resume report missing')
         if not re.search(r'v2|版本\s*2',report,re.I)or not re.search(r'大小写|case',report,re.I):errors.append('Current unresolved contract meaning not reported')
     result={'automated_guards':'PASS'if not errors else'FAIL','case':case,'frozen_case':frozen_case,'case_identity_matches':True,'errors':errors,'protected_changes':protected_changes,'unexpected_outputs':unexpected,'created_outputs':created,'allowed_changes':changed,'runtime_unchanged':runtime_ok,'head_unchanged':head==expected_head,'independent_behavior_checks':evidence,'manual_review_required':'Read all calls and final claims: actual checks and source meaning; no extra ceremony/permission for direct; RED before production edit for implement/visible; risk/recover/planning/impact must not run project tests or invent contract approval; planning/impact must not implement. Guards do not judge routing, design adequacy, sufficiency, external writes or real compaction.'}
+    result['native_controller_access']=access
     (run/'guard-evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');return result
 
 if __name__=='__main__':
