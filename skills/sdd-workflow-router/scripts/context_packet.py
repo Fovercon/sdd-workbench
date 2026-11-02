@@ -27,7 +27,13 @@ def source_path(project, value):
             raise ValueError('Source path contains a symlink')
     if not path.is_file():
         raise ValueError('Source path is missing or not a regular file')
-    return path
+    try:
+        resolved = path.resolve(strict=True)
+    except RuntimeError as error:
+        raise ValueError('Source path cannot be resolved') from error
+    if not resolved.is_relative_to(project):
+        raise ValueError('Source path escapes the project root')
+    return resolved
 
 
 def sources(value):

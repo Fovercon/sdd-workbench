@@ -5,6 +5,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
+
+from prepare_workflow import prepare as prepare_fixture
 
 from evaluate_workflow import evaluate
 
@@ -21,13 +24,34 @@ class IntakeProtocolTests(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_preparation_preserves_utf8_with_non_utf8_path_defaults(self):
+        read_text, write_text = Path.read_text, Path.write_text
+        def locale_read(path, *args, **kwargs):
+            if not args and kwargs.get('encoding') is None:
+                kwargs['encoding'] = 'cp1252'
+            return read_text(path, *args, **kwargs)
+        def locale_write(path, data, *args, **kwargs):
+            if not args and kwargs.get('encoding') is None:
+                kwargs['encoding'] = 'cp1252'
+            return write_text(path, data, *args, **kwargs)
+        with tempfile.TemporaryDirectory() as directory:
+            for case in CASES:
+                with self.subTest(case=case):
+                    trial = Path(directory)/case
+                    with mock.patch.object(Path, 'read_text', locale_read), mock.patch.object(Path, 'write_text', locale_write):
+                        try:
+                            prepare_fixture(case, trial)
+                        except UnicodeError as error:
+                            self.fail('UTF-8 fixture used the host default encoding: '+str(error))
+                    self.assertIn('条目名称被拒绝'.encode('utf-8'), (trial/'project/intake.py').read_bytes())
+
     def test_public_cli_freezes_ref_and_inputs_and_rejects_reuse(self):
         with tempfile.TemporaryDirectory() as directory:
             for case in CASES:
                 with self.subTest(case=case):
                     a, b = Path(directory)/(case+'-ref'), Path(directory)/(case+'-current')
                     self.prepare(case, a, 'HEAD'); self.prepare(case, b)
-                    x, y = [json.loads((t/'input-receipt.json').read_text()) for t in (a,b)]
+                    x, y = [json.loads((t/'input-receipt.json').read_text(encoding='utf-8')) for t in (a,b)]
                     self.assertEqual(x['project'], y['project'])
                     self.assertEqual((a/'prompt.txt').read_bytes(), (b/'prompt.txt').read_bytes())
                     for trial, receipt in ((a,x),(b,y)):
@@ -37,7 +61,7 @@ class IntakeProtocolTests(unittest.TestCase):
                     result = subprocess.run([sys.executable, '-B', str(ROOT/'evals/context/prepare_workflow.py'),
                                              '--case', case, '--output', str(a)], capture_output=True)
                     self.assertNotEqual(result.returncode, 0)
-                    self.assertEqual(json.loads((a/'input-receipt.json').read_text()), x)
+                    self.assertEqual(json.loads((a/'input-receipt.json').read_text(encoding='utf-8')), x)
 
     def test_two_states_have_opposite_name_rejection_timing(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -62,12 +86,12 @@ with tempfile.TemporaryDirectory() as d:
             for case in CASES:
                 trial = Path(directory)/case; self.prepare(case,trial)
                 self.assertEqual(evaluate(case,trial)['automated_guards'],'FAIL')
-                (trial/'project/IMPLEMENTATION.md').write_text('Mechanical output only, not semantic acceptance.\n')
+                (trial/'project/IMPLEMENTATION.md').write_text('Mechanical output only, not semantic acceptance.\n', encoding='utf-8')
                 self.assertEqual(evaluate(case,trial)['automated_guards'],'FAIL')
                 code=trial/'project/intake.py'
-                original=code.read_text()
+                original=code.read_text(encoding='utf-8')
                 code.write_text(original.replace('record["kind"] in {"link", "fifo"}',
-                                                 'record["kind"] not in {"file", "dir"}'))
+                                                 'record["kind"] not in {"file", "dir"}'), encoding='utf-8')
                 self.assertEqual(evaluate(case,trial)['automated_guards'],'PASS')
                 protected=trial/'project/SPEC.md'; data=protected.read_bytes()
                 protected.write_bytes(data+b'\nchanged\n')

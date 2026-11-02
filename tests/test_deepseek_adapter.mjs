@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { apply, name, inject } from '../adapters/deepseek.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -33,7 +33,7 @@ test('Each loaded body is verbatim from the only skills tree and relative refere
     const raw = await readFile(row.path, 'utf8');
     assert.equal(loaded.content, raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, ''));
     for (const match of loaded.content.matchAll(/\]\((references\/[^)]+|\.\.\/sdd-[^)]+)\)/g)) {
-      await readFile(path.resolve(loaded.resourceBase.path, match[1]));
+      await readFile(fileURLToPath(new URL(match[1], pathToFileURL(row.path))));
     }
   }
 });

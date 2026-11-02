@@ -61,20 +61,20 @@ def prepare(case,output,ref=None):
     if case=='intake-early':
         project=output/'project'
         spec=project/'SPEC.md'
-        spec.write_text(spec.read_text().replace('Name timing: LATE; earlier accepted\nfiles may remain, and no rollback or all-errors-before-write guarantee exists.',
+        spec.write_text(spec.read_text(encoding='utf-8').replace('Name timing: LATE; earlier accepted\nfiles may remain, and no rollback or all-errors-before-write guarantee exists.',
                                                'Name timing: EARLY; all name rejection occurs in preflight before\nthe destination is created or any member is written.')
                         .replace('ok.txt remains\nunder the approved LATE timing. This is expected behavior, not a new defect.',
-                                 'ok.txt is absent\nunder the approved EARLY timing. This is expected behavior, not a new defect.'))
+                                 'ok.txt is absent\nunder the approved EARLY timing. This is expected behavior, not a new defect.'), encoding='utf-8')
         plan=project/'PLAN.md'
-        plan.write_text(plan.read_text().replace('then mkdir and iterate file records. Name policy stays inside that write loop.\nName timing: LATE; do not move its rejection into preflight or add rollback.',
-                                                'then validate forbidden names across all file records, then mkdir and write.\nName timing: EARLY; preserve preflight name rejection without adding rollback.'))
+        plan.write_text(plan.read_text(encoding='utf-8').replace('then mkdir and iterate file records. Name policy stays inside that write loop.\nName timing: LATE; do not move its rejection into preflight or add rollback.',
+                                                'then validate forbidden names across all file records, then mkdir and write.\nName timing: EARLY; preserve preflight name rejection without adding rollback.'), encoding='utf-8')
         code=project/'intake.py'
-        text=code.read_text()
+        text=code.read_text(encoding='utf-8')
         name_check='        if record["name"] == "blocked.txt":\n            raise RejectedRecord("条目名称被拒绝：blocked.txt")\n'
         text=text.replace(name_check,'')
         text=text.replace('    destination = Path(destination)\n',
                           '    for record in visible:\n        if record["kind"] == "file" and record["name"] == "blocked.txt":\n            raise RejectedRecord("条目名称被拒绝：blocked.txt")\n    destination = Path(destination)\n')
-        code.write_text(text)
+        code.write_text(text, encoding='utf-8')
     if case=='verification-profile-gap':
         domain=output/'project/DOMAIN.md'
         domain.write_text(domain.read_text(encoding='utf-8').replace(

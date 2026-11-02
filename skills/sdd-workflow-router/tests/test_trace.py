@@ -8,6 +8,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+from project_view_lib.evidence import source_path
 
 from workstream_fixture import fixture
 
@@ -191,11 +195,19 @@ class TraceTests(unittest.TestCase):
             self.assertNotEqual(run.returncode, 0)
             self.assertFalse(run.stdout.strip())
 
+    def test_windows_unresolvable_symlink_error_is_rejected(self):
+        unresolved = self.root / 'windows-loop'
+        error = OSError(22, 'Cannot resolve filename')
+        error.winerror = 1921
+        with mock.patch.object(Path, 'resolve', return_value=unresolved), mock.patch.object(Path, 'stat', side_effect=error):
+            with self.assertRaises(ValueError):
+                source_path(self.root, 'windows-loop')
+
     def test_cyclic_source_paths_are_clean_read_only_input_errors(self):
         for name, target in [('self-loop', 'self-loop'), ('cycle-a', 'cycle-b'), ('cycle-b', 'cycle-a')]:
             (self.root / name).symlink_to(target)
         original = self.data['items'][0]['sources'][0]['path']
-        for name in ('self-loop', 'cycle-a'):
+        for name in ('self-loop', 'cycle-a', 'self-loop/missing.md', 'cycle-a/missing.md'):
             for location in ('selector', 'observation'):
                 with self.subTest(name=name, location=location):
                     self.data['items'][0]['sources'][0]['path'] = original
