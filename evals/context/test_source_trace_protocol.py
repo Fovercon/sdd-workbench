@@ -29,7 +29,7 @@ class SourceTraceProtocolTests(unittest.TestCase):
                 x, y = [json.loads((p / 'input-receipt.json').read_text()) for p in (a, b)]
                 self.assertEqual(x['project'], y['project'])
                 self.assertEqual((a / 'prompt.txt').read_bytes(), (b / 'prompt.txt').read_bytes())
-                observations = json.loads((b / 'project/observations.json').read_text())
+                observations = json.loads((b / 'project/observations.json').read_text(encoding='utf-8'))
                 ref = next(i for i in observations['items'] if i['id'] == 'R-RULE')['sources'][0]
                 actual = hashlib.sha256((b / 'project/RULE.md').read_bytes()).hexdigest()
                 self.assertEqual(ref['sha256'] == actual, case == 'trace-source-current')

@@ -113,8 +113,8 @@ def prepare(case,output,ref=None):
         for name in ('AGENTS.md','SPEC.md','PLAN.md','TASKS.md','CURRENT-CARD.md'):
             data=(output/'project'/name).read_bytes()
             prompt+='\nSOURCE '+name+' SHA256 '+hashlib.sha256(data).hexdigest()+'\n'+data.decode()+'\nEND SOURCE\n'
-    (output/'prompt.txt').write_text(prompt,encoding='utf-8')
-    receipt={name:{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()for p in root.rglob('*')if p.is_file()and '.git'not in p.parts}
+    (output/'prompt.txt').write_bytes(prompt.encode('utf-8'))
+    receipt={name:{p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()for p in root.rglob('*')if p.is_file()and '.git'not in p.parts}
              for name,root in [('project',output/'project'),('runtime',output/'runtime')]}
     (output/'input-receipt.json').write_text(json.dumps(receipt,indent=2),encoding='utf-8')
     (output/'variant.json').write_text(json.dumps({'source':revision,'case':case,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest()},indent=2),encoding='utf-8')
