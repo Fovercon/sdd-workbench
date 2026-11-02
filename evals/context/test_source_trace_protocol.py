@@ -43,7 +43,7 @@ class SourceTraceProtocolTests(unittest.TestCase):
                 command = [sys.executable, str(trial / 'runtime/sdd-workflow-router/scripts/project_view.py'),
                            'trace', '--root', str(trial / 'project'), '--input', str(trial / 'project/observations.json'),
                            '--changed-source', 'RULE.md', '--changed-source', 'unmapped.md']
-                result = subprocess.run(command, capture_output=True, text=True)
+                result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
                 self.assertEqual(result.returncode, 0 if case.endswith('current') else 2, result.stderr)
                 report = json.loads(result.stdout); rows = {r['id']: r for r in report['items']}
                 self.assertEqual(report['changed_ids'], ['R-RULE'])
