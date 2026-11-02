@@ -216,6 +216,24 @@ identity rejection. Stdout and `guard-evaluation.json` retain the same JSON resu
 read its scope and errors as well as the process status. Python callers still
 receive the result dictionary from `evaluate()`.
 
+
+All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
+pass: no mechanical guard judges the impact report's semantics or authority.
+
+Manually inspect calls, report and final claims. For a proposal, distinguish
+conditional future invalidation from current v1 evidence. For approved v2, trace
+C-001 through both consumers, design, slices, old tests and convergence. Preserve
+the independent count behavior only with dependency/semantic reasons; a changed
+whole-Spec hash still prevents treating the old global receipt as current. Missing
+partner evidence stays unknown/review-required. An unchanged filename, passing old
+assertion or matching identifier is insufficient. No implementation, propagation
+or project test execution is authorized in either actor run.
+
+If a method candidate is retained after observing a reproducible gap, repeat the
+affected forward and standard on its exact runtime. Evaluation-only changes do
+not create a new method-standard result or establish automated trace maintenance,
+production correctness, complete semantic coverage or cost savings.
+
 ### Native controller-file requests
 
 `evaluate_workflow.py` also reads a present `events.jsonl` through
@@ -273,22 +291,6 @@ selection without proving lower cost. Distinguish source-matched seeds, declared
 reachability, actual freshness, historical PASS and missing mappings; never infer
 new links, semantic invalidation or approval. Keep failure/partial evidence and run
 the exact retained runtime's standard without automatic baseline acceptance.
-All original inputs, runtime and Git HEAD remain protected. Placeholder prose can
-pass: no mechanical guard judges the impact report's semantics or authority.
-
-Manually inspect calls, report and final claims. For a proposal, distinguish
-conditional future invalidation from current v1 evidence. For approved v2, trace
-C-001 through both consumers, design, slices, old tests and convergence. Preserve
-the independent count behavior only with dependency/semantic reasons; a changed
-whole-Spec hash still prevents treating the old global receipt as current. Missing
-partner evidence stays unknown/review-required. An unchanged filename, passing old
-assertion or matching identifier is insufficient. No implementation, propagation
-or project test execution is authorized in either actor run.
-
-If a method candidate is retained after observing a reproducible gap, repeat the
-affected forward and standard on its exact runtime. Evaluation-only changes do
-not create a new method-standard result or establish automated trace maintenance,
-production correctness, complete semantic coverage or cost savings.
 
 ## Explicit excerpt packet integration
 

@@ -191,6 +191,30 @@ class TraceTests(unittest.TestCase):
             self.assertNotEqual(run.returncode, 0)
             self.assertFalse(run.stdout.strip())
 
+    def test_cyclic_source_paths_are_clean_read_only_input_errors(self):
+        for name, target in [('self-loop', 'self-loop'), ('cycle-a', 'cycle-b'), ('cycle-b', 'cycle-a')]:
+            (self.root / name).symlink_to(target)
+        original = self.data['items'][0]['sources'][0]['path']
+        for name in ('self-loop', 'cycle-a'):
+            for location in ('selector', 'observation'):
+                with self.subTest(name=name, location=location):
+                    self.data['items'][0]['sources'][0]['path'] = original
+                    if location == 'observation':
+                        self.data['items'][0]['sources'][0]['path'] = name
+                    self.input.write_text(json.dumps(self.data, ensure_ascii=False), encoding='utf-8')
+                    before = {p.relative_to(self.root).as_posix():
+                              ('link', os.readlink(p)) if p.is_symlink() else ('file', p.read_bytes())
+                              for p in self.root.rglob('*') if p.is_symlink() or p.is_file()}
+                    run = self.run_cli('--changed-source', name, seeds=())
+                    self.assertEqual(run.returncode, 1, run.stderr)
+                    self.assertFalse(run.stdout.strip())
+                    self.assertNotIn('Traceback', run.stderr)
+                    self.assertTrue(run.stderr.strip())
+                    self.assertEqual(before, {p.relative_to(self.root).as_posix():
+                                     ('link', os.readlink(p)) if p.is_symlink() else ('file', p.read_bytes())
+                                     for p in self.root.rglob('*') if p.is_symlink() or p.is_file()})
+                    self.data['items'][0]['sources'][0]['path'] = original
+
     def test_plain_python_query_does_not_write_import_caches_outside_project(self):
         # -B in other tests must not hide writes to a read-only supplied runtime.
         runtime = self.root / 'runtime'

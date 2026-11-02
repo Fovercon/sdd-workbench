@@ -181,3 +181,11 @@ runs, exact-runtime standard and one fresh independent review are recorded. Keep
 the additive CLI in the local development branch with the disclosed failures and
 two deferred minors; autonomous use and whole-method acceptance remain open.
 Local commit identity is in Git and external final-provenance.json. No push/release.
+
+
+## 2026-11-02 发布收尾修复
+
+两项历史Minor已在用户发布授权后处理：共享来源解析器把Python3.12的循环软链接异常
+转换为正常输入错误；单环/双环在选择器与观察来源两处的公开CLI回归先失败后通过，
+退出1、stdout为空且文件和链接不变。评测README的影响分析结尾已移回所属章节。
+这些是诊断与文档修复，不把历史模型结果改为新版结果。发行候选另行验证。
