@@ -14,7 +14,7 @@ class ControllerAccessTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.run = Path(self.tmp.name) / 'trial with spaces'
+        self.run = (Path(self.tmp.name) / 'trial with spaces').resolve()
         (self.run / 'project').mkdir(parents=True)
         (self.run / 'runtime').mkdir()
         (self.run / 'input-receipt.json').write_text('{"synthetic":true}\n')
@@ -61,12 +61,14 @@ class ControllerAccessTests(unittest.TestCase):
             self.assertIs(item['tool_is_error'], False)
 
     def test_cd_semicolon_newline_and_quoted_absolute_paths(self):
-        command = f'cd "{self.run}"; cat repository.json\ncat "{self.run}/prompt.txt"'
+        # These are POSIX bash arguments, including when the auditor runs on Windows.
+        root = self.run.as_posix()
+        command = f'cd "{root}"; cat repository.json\ncat "{root}/prompt.txt"'
         self.events([('bash', {'command': command}, False)])
         _, result = self.audit()
         self.assertEqual([x['controller_file'] for x in result['findings']],
                          ['repository.json', 'prompt.txt'])
-        self.events([('bash', {'command': f'cd "{self.run}/project" && cat -- ../invocation.json'}, False)])
+        self.events([('bash', {'command': f'cd "{root}/project" && cat -- ../invocation.json'}, False)])
         self.assertEqual(self.audit()[1]['findings'][0]['controller_file'], 'invocation.json')
 
     def test_listing_printing_same_basename_and_runtime_are_not_controller_reads(self):
