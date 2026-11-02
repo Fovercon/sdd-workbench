@@ -144,7 +144,7 @@ wrote an explicitly forbidden external temporary file while claiming no external
 All 45 final-state guards passed, illustrating why they are not semantic/process approval.
 The retained changes are this protocol and stronger runtime/behavior guards, with no
 skill runtime change from the first-batch commit. No new method standard was run for
-this unchanged runtime. See the [optimization ledger](../../docs/optimization/POST-0.5.0-PLAN.md#1b结果与取舍)
+this unchanged runtime. See the [optimization ledger](https://github.com/Fovercon/sdd-workbench/blob/c520e95/docs/optimization/POST-0.5.0-PLAN.md#1b结果与取舍)
 for the bounded findings, review scope and unresolved host-context question.
 
 ## Planning economy and necessary complexity

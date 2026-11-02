@@ -2,6 +2,7 @@
 """Read-only evidence snapshot. Hash agreement never grants semantic approval."""
 import argparse
 import copy
+import errno
 import hashlib
 import html
 import json
@@ -26,6 +27,11 @@ def source_path(root, value):
         result = (root / value).resolve()
     except RuntimeError as error:
         raise ValueError('Source path cannot be resolved (possible symlink loop)') from error
+    try:
+        result.stat()
+    except OSError as error:
+        if error.errno == errno.ELOOP or getattr(error, 'winerror', None) == 1921:
+            raise ValueError('Source path cannot be resolved (possible symlink loop)') from error
     if not result.is_relative_to(root):
         raise ValueError('Source path escapes the project root')
     return result

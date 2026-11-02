@@ -1,6 +1,6 @@
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import subprocess
 import shutil
 import tempfile
@@ -13,18 +13,44 @@ from evaluate_workflow import evaluate
 
 
 class LightWorkflowTests(unittest.TestCase):
+    def test_visible_prompt_preserves_source_bytes_under_newline_translation(self):
+        write_text = Path.write_text
+        def windows_write(path, text, *args, **kwargs):
+            return write_text(path, text.replace('\n', '\r\n'), *args, **kwargs)
+        with tempfile.TemporaryDirectory() as directory:
+            run = Path(directory) / 'trial'
+            with patch.object(Path, 'write_text', windows_write):
+                prepare('visible', run)
+            prompt = (run / 'prompt.txt').read_bytes()
+            variant = json.loads((run / 'variant.json').read_text(encoding='utf-8'))
+            self.assertEqual(hashlib.sha256(prompt).hexdigest(), variant['prompt_sha256'])
+            for name in ('AGENTS.md', 'SPEC.md', 'PLAN.md', 'TASKS.md', 'CURRENT-CARD.md'):
+                self.assertIn((run / 'project' / name).read_bytes(), prompt)
+
+    def test_receipt_paths_use_portable_separators(self):
+        relative_to = Path.relative_to
+        def windows_relative(path, *args, **kwargs):
+            return PureWindowsPath(relative_to(path, *args, **kwargs).as_posix())
+        with tempfile.TemporaryDirectory() as directory:
+            run = Path(directory) / 'trial'
+            with patch.object(Path, 'relative_to', windows_relative):
+                prepare('risk', run)
+            receipt = json.loads((run / 'input-receipt.json').read_text(encoding='utf-8'))
+            self.assertTrue(all('\\' not in name for files in receipt.values() for name in files))
+            self.assertEqual(evaluate('risk', run)['automated_guards'], 'PASS')
+
     def test_matched_ref_and_visible_primary_clauses(self):
         with tempfile.TemporaryDirectory() as d:
             repo=Path(d)/'source';repo.mkdir()
             original_root=Path(__file__).resolve().parents[2]
             shutil.copytree(original_root/'evals/context/inputs/implement',repo/'evals/context/inputs/implement')
             skill=repo/'skills/sdd-implement-slice/SKILL.md';skill.parent.mkdir(parents=True)
-            skill.write_text('Committed fixture skill bytes\n')
+            skill.write_bytes(b'Committed fixture skill bytes\n')
             subprocess.run(['git','init','-b','codex/protocol-fixture'],cwd=repo,check=True,capture_output=True)
             subprocess.run(['git','add','.'],cwd=repo,check=True,capture_output=True)
             subprocess.run(['git','-c','user.name=Eval','-c','user.email=eval@example.invalid','-c','commit.gpgsign=false','commit','-m','Fixture'],cwd=repo,check=True,capture_output=True)
             revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()
-            skill.write_text('Uncommitted candidate skill bytes\n')
+            skill.write_bytes(b'Uncommitted candidate skill bytes\n')
             old, new = Path(d)/'old', Path(d)/'new'
             with patch.object(prepare_workflow,'ROOT',repo):
                 prepare('visible', old, ref='HEAD')
@@ -35,7 +61,7 @@ class LightWorkflowTests(unittest.TestCase):
             self.assertEqual(a['project'], b['project'])
             self.assertEqual((old/'runtime/sdd-implement-slice/SKILL.md').read_bytes(),b'Committed fixture skill bytes\n')
             self.assertEqual((new/'runtime/sdd-implement-slice/SKILL.md').read_bytes(),b'Uncommitted candidate skill bytes\n')
-            prompt=(old/'prompt.txt').read_text()
+            prompt=(old/'prompt.txt').read_bytes().decode('utf-8')
             for name in ('AGENTS.md','SPEC.md','PLAN.md','CURRENT-CARD.md'):
                 data=(old/'project'/name).read_bytes()
                 self.assertIn(data.decode(), prompt)

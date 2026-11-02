@@ -6,11 +6,29 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+
+from prepare_packet import prepare
 
 CLI = Path(__file__).with_name('prepare_packet.py')
 
 
 class PacketProtocolTests(unittest.TestCase):
+    def test_preparer_preserves_declared_bytes_under_newline_translation(self):
+        write_text = Path.write_text
+        def windows_write(path, text, *args, **kwargs):
+            return write_text(path, text.replace('\n', '\r\n'), *args, **kwargs)
+        trial = Path(self.tmp.name) / 'translated'
+        with patch.object(Path, 'write_text', windows_write):
+            prepare(trial)
+        variant = json.loads((trial / 'variant.json').read_text(encoding='utf-8'))
+        self.assertEqual(hashlib.sha256((trial / 'prompt.txt').read_bytes()).hexdigest(),
+                         variant['prompt_sha256'])
+        selection = json.loads((trial / 'project/selection.json').read_text(encoding='utf-8'))
+        for source in selection['sources']:
+            self.assertEqual(hashlib.sha256((trial / 'project' / source['path']).read_bytes()).hexdigest(),
+                             source['expected_sha256'])
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)

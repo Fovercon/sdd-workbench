@@ -38,9 +38,9 @@ class WorkflowGuardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as base:
             run = prepare('intake-late', Path(base) / 'run')
             code_file = run / 'project/intake.py'
-            code_file.write_text(code_file.read_text().replace(
+            code_file.write_text(code_file.read_text(encoding='utf-8').replace(
                 'record["kind"] in {"link", "fifo"}',
-                'record["kind"] not in {"file", "dir"}'))
+                'record["kind"] not in {"file", "dir"}'), encoding='utf-8')
             (run / 'project/IMPLEMENTATION.md').write_text('Not semantic acceptance.\n')
             events = [
                 {'type': 'tool_execution_start', 'toolCallId': 'read-control',

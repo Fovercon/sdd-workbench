@@ -59,14 +59,14 @@ def prepare(output, ref=None):
     project.mkdir()
     selected = []
     for name, text in INPUTS.items():
-        (project / name).write_text(text, encoding='utf-8')
+        (project / name).write_bytes(text.encode('utf-8'))
         selected.append({'id': name, 'path': name, 'start': RANGES[name][0], 'end': RANGES[name][1],
                          'reason': '当前义务' if name != 'shared.md' else '共享约束',
                          'expected_sha256': hashlib.sha256(text.encode()).hexdigest()})
     (project / 'selection.json').write_text(json.dumps(
         {'schema': 1, 'task': '准备 S2 上下文；无实施或批准授权', 'sources': selected},
         ensure_ascii=False, indent=2), encoding='utf-8')
-    (output / 'prompt.txt').write_text(PROMPT, encoding='utf-8')
+    (output / 'prompt.txt').write_bytes(PROMPT.encode('utf-8'))
     (output / 'input-receipt.json').write_text(json.dumps(
         {'project': hashes(project), 'runtime': hashes(output / 'runtime')}, indent=2), encoding='utf-8')
     (output / 'variant.json').write_text(json.dumps({'source': revision,

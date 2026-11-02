@@ -29,7 +29,7 @@ class SourceTraceProtocolTests(unittest.TestCase):
                 x, y = [json.loads((p / 'input-receipt.json').read_text()) for p in (a, b)]
                 self.assertEqual(x['project'], y['project'])
                 self.assertEqual((a / 'prompt.txt').read_bytes(), (b / 'prompt.txt').read_bytes())
-                observations = json.loads((b / 'project/observations.json').read_text())
+                observations = json.loads((b / 'project/observations.json').read_text(encoding='utf-8'))
                 ref = next(i for i in observations['items'] if i['id'] == 'R-RULE')['sources'][0]
                 actual = hashlib.sha256((b / 'project/RULE.md').read_bytes()).hexdigest()
                 self.assertEqual(ref['sha256'] == actual, case == 'trace-source-current')
@@ -43,7 +43,7 @@ class SourceTraceProtocolTests(unittest.TestCase):
                 command = [sys.executable, str(trial / 'runtime/sdd-workflow-router/scripts/project_view.py'),
                            'trace', '--root', str(trial / 'project'), '--input', str(trial / 'project/observations.json'),
                            '--changed-source', 'RULE.md', '--changed-source', 'unmapped.md']
-                result = subprocess.run(command, capture_output=True, text=True)
+                result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
                 self.assertEqual(result.returncode, 0 if case.endswith('current') else 2, result.stderr)
                 report = json.loads(result.stdout); rows = {r['id']: r for r in report['items']}
                 self.assertEqual(report['changed_ids'], ['R-RULE'])
