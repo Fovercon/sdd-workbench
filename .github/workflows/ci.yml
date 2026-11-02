@@ -28,7 +28,17 @@ jobs:
       - run: python tools/package.py check
       - run: python tools/docs.py check
       - run: python -B -m unittest discover -s tests -v
-      - run: python -B -m unittest discover -s evals/context -p "test_*.py" -v
+      - name: Verify maintenance protocols
+        shell: python
+        run: |
+          import sys, unittest
+          sys.dont_write_bytecode = True
+          result = unittest.TextTestRunner(verbosity=2).run(
+              unittest.defaultTestLoader.discover('evals/context', pattern='test_*.py'))
+          for test, detail in result.failures + result.errors:
+              message = detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title={test.id()}::{message}', flush=True)
+          sys.exit(not result.wasSuccessful())
       - if: runner.os != 'Windows'
         run: python -B -m unittest discover -s skills/sdd-workflow-router/tests -v
       - run: python tools/package.py build
