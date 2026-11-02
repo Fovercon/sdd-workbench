@@ -1,0 +1,15 @@
+{
+  "dataset_id": "repair-summary-synthetic-2",
+  "domain_revision": 2,
+  "visible_examples": {"path": "data/examples.jsonl", "role": "development-and-calibration", "count": 6},
+  "reviews": {"path": "data/reviews.json", "role": "observations-not-adjudication"},
+  "sealed_future_set": {
+    "dataset_id": "repair-summary-sealed-2",
+    "state": "NOT_SUPPLIED_NOT_RUN",
+    "custody": "synthetic domain owner D",
+    "count": null,
+    "content_hash": null,
+    "labels_hash": null
+  },
+  "scope_limit": "Small synthetic calibration material, no population or hold-out quality estimate. Freeze actual future content/labels/split identities before any authorized evaluation."
+}

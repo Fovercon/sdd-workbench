@@ -2,6 +2,25 @@
 
 Adapt section depth to `LIGHT`, `STANDARD`, or `DETAILED`. Do not retain empty headings that add no review value.
 
+At `LIGHT` depth, use this compact shape instead of filling every full-template
+section below:
+
+- **Plan:** source/version and authority, changed interface/invariants with Spec
+  links, existing behavior reused, the material decision with a viable alternative
+  and cost/revisit rationale, risk/verification, and a scoped design review question
+  with the actual review state. Prose boundaries suffice; add a view only when it
+  resolves a real ambiguity. Reference the Spec rather than restating it per section.
+- **Tasks:** the behavior slice with its Spec/Plan links, prerequisites, complete
+  acceptance checks, RED/GREEN and regression evidence, risk and stop condition.
+  Signature changes and boundary/negative tests for that same behavior stay together.
+  A separate slice has a distinct observable outcome and necessary dependency.
+- **Current card:** expand only when implementation is the next authorized action
+  or a card is explicitly requested. Otherwise record the blocked next action;
+  planning-only authority does not become execution authority through a draft card.
+
+Retain all applicable contract and approval obligations. `STANDARD` and `DETAILED`
+use the full design coverage below, scaled to actual risk.
+
 ## Record placement
 
 Default locations in a fresh repository are `design/plan.md` and `design/tasks.md` (alongside the suite Spec default); follow an established repository convention or explicit user destination when one exists, and keep the choice consistent with the AGENTS.md source-of-truth map.

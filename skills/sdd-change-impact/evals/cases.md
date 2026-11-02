@@ -181,6 +181,65 @@ Use [forward/category-change.md](forward/category-change.md) for the bounded
 routing pilot and the separately authorized end-to-end experiment. A correct
 impact report alone does not prove successful implementation propagation.
 
+## Case 14 — Proposal and approved shared-obligation delta
+
+Use two frozen synthetic states of one identifier-presentation project. A proposed
+v2 retains the current v1 authority; an approved v2 changes one shared obligation
+while code, tests and historical evidence still describe v1. Two consumers share
+the affected helper; a count-only behavior is independent and a partner check has
+no source/version or dependency map.
+
+- Keep proposal-only impact conditional; do not overwrite or revoke the current
+  approved baseline merely because a draft exists.
+- Under approved v2, trace the shared obligation through both consumers and their
+  Plan, slices, old assertions, receipts and convergence claims. Old passing tests
+  do not prove the new masking behavior.
+- Justify unrelated semantic scope from actual dependencies. A whole-file source
+  hash change and a behavior change are distinct: preserve history, revalidate
+  source bindings, and do not call the old global receipt current for v2.
+- Keep the missing partner chain unknown or review-required; preserve authority
+  and analyze only, with no project tests, implementation or silent propagation.
+
+Source-checkout reproduction is documented in `evals/context/README.md`, section
+“Authority and shared-contract propagation”. Run each state five times with the
+same runtime and review actual calls and claims; the two authority states are
+not an old/new method comparison. Mechanical PASS is not semantic acceptance.
+
+### Report precision controls
+
+Compare five fresh runs per state at a frozen old runtime and the candidate,
+using identical project and prompt bytes. Before editing guidance, inspect the
+old reports for actual omissions; retain guidance only for demonstrated needs.
+
+- In proposal-only reports, inspect matrix and final summary as well as headers:
+  current v1 support and conditional v2 effects remain distinguishable throughout.
+  With v1 still effective, a v1 convergence record retains its original scoped
+  support; calling it historical alone does not revoke current-v1 support.
+- With an approved delta already effective, assess current conformity against
+  that changed baseline. Pending authority to edit Plan or implementation does
+  not make the effective delta hypothetical. Check the same basis in the header,
+  matrix and final reply; a correct header does not excuse a contradictory final.
+- In approved-v2 reports, identify the delta's Spec origin and the next remaining
+  Plan work. State whether the primary route names the original owner or the
+  earliest currently unsynchronized contract; enum choice alone does not prove
+  repeated approval. Existing exact approval is credited, not requested again.
+- Old code plus old output assertions may still pass after a new contract is
+  approved. Identify noncoverage of the new contract without inventing execution
+  failure. A test that only compares output does not prove independent helper
+  calls or input preservation; use actual static evidence or relevant assertions.
+- Keep unverified partner links unknown, unrelated count behavior justified, and
+  analysis-only actions within scope. Mechanical guards do not grade these claims.
+- Check every concrete proposed output against the exact delta, including mask
+  width and retained characters. Clear headings and correct status qualifiers do
+  not compensate for a wrong acceptance value or a contradicted final summary.
+
+Review every call and final reply and the report's supporting sections. Retain
+raw contradictions, incomplete runs and source identities; no automatic string
+score establishes semantic correctness or maintenance savings. A retained method
+change also requires the standard regression on the exact candidate runtime.
+Withdrawn candidates retain their raw evidence; unchanged runtime does not gain
+new method acceptance from evaluation-only maintenance.
+
 ## Failure conditions across all cases
 
 Fail the Skill if it:

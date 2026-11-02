@@ -1,0 +1,14 @@
+{
+  "review_set_id": "repair-calibration-observations-2",
+  "source": "Synthetic independent reviewer observations, not final adjudication",
+  "revision2": [
+    {"id":"E1","A":"faithful","B":"faithful"},
+    {"id":"E2","A":"critical-false-commitment","B":"critical-false-commitment"},
+    {"id":"E3","A":"critical-quantity-and-unrequested-action","B":"critical-quantity-and-unrequested-action"},
+    {"id":"E4","A":"critical-false-commitment","B":"faithful"},
+    {"id":"E5","A":"faithful","B":"style-concern"},
+    {"id":"E6","A":"faithful","B":"faithful"}
+  ],
+  "historical_revision1": [{"id":"E4","label":"faithful","domain_revision":1,"current_acceptance":false}],
+  "unresolved_ids": ["E4","E5"]
+}

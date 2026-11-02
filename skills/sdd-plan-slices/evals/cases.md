@@ -168,6 +168,63 @@ keep missing data semantics explicit. A plan-only task must not claim tests ran.
 Use behavior slices and targeted failure evidence, not a fixed layer quota or a
 blanket low-risk exemption. Record concrete added complexity and its owning risk.
 
+In a source checkout, follow `evals/context/README.md`, section "Planning economy
+and necessary complexity" (`plan-local`, `plan-durable`), for native old/candidate
+trials, five repeats
+per case/variant with identical inputs and prompts. Read Plan/Tasks and raw calls:
+the local predicate's negative/compatibility checks belong with its behavior;
+the durable design retains independent writers, acknowledgment/recovery and atomic
+import evidence. Compare complete viable alternatives and their owned failure/test
+burden; do not require a particular storage library or a fixed diagram/slice count.
+Keep pending approvals, input preservation and no-test/no-implementation scope.
+Mechanical guard PASS, smaller artifacts and matching requirement strings do not
+establish semantic adequacy or measured future maintenance savings. Retained method
+changes also require the exact-candidate standard regression; keep all failed trials.
+
+## Case 10 — Reuse and gradual migration of two legacy flows
+
+Use the synthetic `plan-migration` and `plan-migration-gap` states documented in
+the source checkout's `evals/context/README.md`, section "Reuse and gradual
+migration". Inspect the legacy code, data and tests; evaluate the unapproved
+simplification draft while writing only the requested planning artifacts.
+
+- Preserve origin-qualified identity, per-origin order, raw text and distinct
+  display/state meanings. A reusable helper does not make two public contracts
+  interchangeable. Base reuse, adaptation, replacement and exclusion choices on
+  actual responsibilities; no fixed label count or storage engine is required.
+- Specify refusal, validation, atomic publication and exact replay without losing
+  later admissions. Verify both legacy flows and imported results before switch;
+  an import success message alone is not sufficient cutover evidence.
+  Compare identical preconditions across interfaces, failure tables, slices and
+  proposed tests: import → new admission → the exact original pair replay must
+  succeed without mutation. It cannot also require `TARGET_NOT_EMPTY` for that
+  same sequence. A coverage matrix does not reconcile contradictory assertions.
+- Separate rollback before new-target admissions from recovery afterward. An old
+  snapshot cannot restore newly acknowledged data. Give the operational state
+  guard and its verification, rather than only naming backup and rollback paths.
+- In the gap state, known old meanings do not approve a new unified meaning.
+  Return the consequential missing semantic to Spec; do not make executable slices
+  depend on an agent-selected target meaning disguised as an adapter assumption.
+  Requested Plan/Tasks files retain the blocker, verified decision inputs and
+  next owner action. Check whether a full technical contract and speculative DAG
+  are still produced without an explicitly authorized stable partial scope.
+- Preserve real design approval and planning-only authority; no migration, project
+  tests, new implementation, deletion of old sources or fabricated verification.
+
+Run five repeats per state/runtime with frozen paired inputs and prompts. Read all
+calls/finals and supporting Plan/Tasks sections; record origin-specific behavior,
+transition guards, missing decisions and evidence claims independently of guard
+PASS. Preserve raw failures and partial runs. Retain a method candidate only for
+demonstrated gaps, with affected forward and exact-candidate standard evidence;
+no automatic string score proves migration safety or future maintenance savings.
+
+Review the fixture's precision too: "same-source" beyond the identical original
+file pair, and whether an imported-record no-op retry closes the rollback window,
+are not fully pinned. Preserve legitimate owner questions; do not score a content
+fingerprint versus path-plus-content policy, or conservative no-op guard, as wrong
+by preference. The specified state mapping does not certify all Spec readiness.
+Check receipt claims against actual native calls/timeline as well as file hashes.
+
 ## Case 11 — Layout-only plan under a complete-sounding Spec
 
 **Prompt**

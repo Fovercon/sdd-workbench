@@ -22,7 +22,10 @@ KINDS = {'approved_contract': '已批准合同', 'design': '设计安排', 'code
 def source_path(root, value):
     if not isinstance(value, str) or not value or Path(value).is_absolute():
         raise ValueError('Source paths must be relative to the project root')
-    result = (root / value).resolve()
+    try:
+        result = (root / value).resolve()
+    except RuntimeError as error:
+        raise ValueError('Source path cannot be resolved (possible symlink loop)') from error
     if not result.is_relative_to(root):
         raise ValueError('Source path escapes the project root')
     return result

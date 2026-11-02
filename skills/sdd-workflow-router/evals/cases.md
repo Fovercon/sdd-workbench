@@ -1,5 +1,23 @@
 # Behavioral Evaluation Cases
 
+## Explicit context excerpts without adding a mandatory stage
+
+Use the source-checkout `evals/context/prepare_packet.py` protocol: the same
+synthetic task, selection, prompt and protected inputs with v0.5.0 versus the
+candidate, five fresh native runs per variant. Keep source/runtime/prompt hashes,
+reported model identity, all events, failures and usage. This is a tool-integration
+experiment, not actual host compaction or a general implementation-cost comparison.
+
+Verify current behavior, successful-output preservation, shared write constraints,
+current card and source identities remain in the bounded excerpts; reject unrelated
+history. A valid manually authored baseline is acceptable; do not require the new
+tool's format to declare old behavior correct. Review actual tool calls and final
+claims independently: no input/runtime changes, invented approval or implementation.
+Check source drift, tampered receipt/body, output reuse and byte overflow with the
+public CLI's deterministic negative cases. CURRENT is not sufficiency or approval.
+Existing one-line/local-repair negative cases must still avoid creating packets.
+
+
 Evaluate routing accuracy, evidence discipline, stage boundaries, and authorization—not exact wording or heading order. Cases 1–26 exercise diagnostic operations. RUN cases exercise actual continuous work under a declared mission.
 
 ## Case 1: Vague new MML behavior
@@ -327,3 +345,23 @@ deterministic checks do not establish actor behavior or cross-host readiness.
 ## Context working-set forward checks
 
 Run the source-checkout [context protocol](https://github.com/Fovercon/sdd-workbench/blob/main/evals/context/README.md) with matched VIEW inputs and frozen before/candidate runtimes. Check all retained versions, source facts, unknown/unrun states and real browser behavior before comparing usage. Retain intermediate regressions and individual runs; a smaller payload alone is not success. This maintainer protocol is outside installation package inputs.
+
+## Source-file trace queries
+
+Use the source-checkout `trace-source-current` / `trace-source-stale` context cases,
+five repeats per state/runtime with matched inputs and explicitly registered DeepSeek
+Flash. Only query and the requested TRACE.md are authorized; no board or source edit.
+Inspect actual public CLI calls, native results, reports and final claims:
+
+- File selectors seed all citing records; existing ID lookup remains a valid manual
+  baseline, not a method failure simply because it lacks the new convenience flag.
+- Declared downstream traversal is separate from direct file matching and unmapped
+  sources. No mapped source or missing graph path proves semantic completeness.
+- Actual source freshness and recorded v1 PASS remain distinct. The stale state
+  keeps original fingerprints and authority limits; a query cannot approve its draft.
+- Does not create links, refresh hashes, execute project tests or acquire authority
+  to implement/release. Preserve native controller-access violations and partial runs.
+
+Deterministic CLI checks establish the query contract, not reliable model adoption,
+maintenance savings or whole-method acceptance. Retained runtime also needs the
+exact-snapshot standard without automatically accepting a baseline.

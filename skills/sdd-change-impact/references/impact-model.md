@@ -159,6 +159,15 @@ earliest owner
 
 This is neither “edit everything” nor “patch only the code”. The goal is the smallest set that restores an internally consistent, evidence-backed chain.
 
+If the project already has source-bound Router observations, its optional
+`project_view.py trace --root PROJECT --input observations.json --changed-id ID`
+can follow declared downstream links without maintaining another trace map.
+Use the [query contract](../../sdd-workflow-router/references/project-view.md#query-existing-dependencies)
+when that tool is available; no board or Router workflow is required. This is a
+navigation aid: selected change, checked source freshness and recorded test results
+are separate. A reached record needs impact assessment; no recorded path does not
+justify UNCHANGED. Inspect missing Plan/shared-dependency links in primary sources.
+
 ## 9. Facts and assessments
 
 Use:

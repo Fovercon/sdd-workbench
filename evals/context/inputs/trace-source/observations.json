@@ -1,0 +1,207 @@
+{
+  "project_id": "synthetic-source-trace",
+  "title": "合成文件追溯记录",
+  "scope": "仅查询已有关系；不代表真实批准、执行或验收",
+  "captured_at": "2026-10-29",
+  "items": [
+    {
+      "id": "Spec",
+      "label": "Spec",
+      "state": "SATISFIED",
+      "view": "progress",
+      "kind": "assessment",
+      "stage": "Spec",
+      "sources": [
+        {
+          "path": "DESIGN.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ]
+    },
+    {
+      "id": "Tasks",
+      "label": "Tasks",
+      "state": "SATISFIED",
+      "view": "progress",
+      "kind": "assessment",
+      "stage": "Tasks",
+      "sources": [
+        {
+          "path": "DESIGN.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ]
+    },
+    {
+      "id": "Converge",
+      "label": "Converge",
+      "state": "SATISFIED",
+      "view": "progress",
+      "kind": "assessment",
+      "stage": "Converge",
+      "sources": [
+        {
+          "path": "RESULT.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ]
+    },
+    {
+      "id": "R-RULE",
+      "label": "R-RULE",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "assessment",
+      "stage": "Spec",
+      "sources": [
+        {
+          "path": "RULE.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "requirement",
+        "acceptance": [
+          "Preserve selected identifier case."
+        ]
+      }
+    },
+    {
+      "id": "R-OTHER",
+      "label": "R-OTHER",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "assessment",
+      "stage": "Spec",
+      "sources": [
+        {
+          "path": "OTHER.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "requirement",
+        "acceptance": [
+          "Count emitted items in input order."
+        ]
+      }
+    },
+    {
+      "id": "S-WORK",
+      "label": "S-WORK",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "assessment",
+      "stage": "Tasks",
+      "sources": [
+        {
+          "path": "DESIGN.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "slice",
+        "status": "DONE",
+        "requirement_ids": [
+          "R-RULE"
+        ]
+      }
+    },
+    {
+      "id": "S-OTHER",
+      "label": "S-OTHER",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "assessment",
+      "stage": "Tasks",
+      "sources": [
+        {
+          "path": "DESIGN.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "slice",
+        "status": "DONE",
+        "requirement_ids": [
+          "R-OTHER"
+        ]
+      }
+    },
+    {
+      "id": "T-WORK",
+      "label": "T-WORK",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "runtime_evidence",
+      "stage": "Converge",
+      "sources": [
+        {
+          "path": "RESULT.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "check",
+        "result": "PASS",
+        "requirement_ids": [
+          "R-RULE"
+        ],
+        "slice_ids": [
+          "S-WORK"
+        ],
+        "acceptance_refs": {
+          "R-RULE": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "T-OTHER",
+      "label": "T-OTHER",
+      "state": "SATISFIED",
+      "view": "capability",
+      "kind": "runtime_evidence",
+      "stage": "Converge",
+      "sources": [
+        {
+          "path": "RESULT.md",
+          "line": 1,
+          "sha256": "FREEZE_ORIGINAL_BYTES"
+        }
+      ],
+      "work": {
+        "type": "check",
+        "result": "PASS",
+        "requirement_ids": [
+          "R-OTHER"
+        ],
+        "slice_ids": [
+          "S-OTHER"
+        ],
+        "acceptance_refs": {
+          "R-OTHER": [
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "lifecycle": {
+    "current_stage": "Converge",
+    "stage_items": {
+      "Spec": "Spec",
+      "Tasks": "Tasks",
+      "Converge": "Converge"
+    }
+  }
+}
