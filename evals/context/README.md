@@ -64,6 +64,31 @@ Partial lists, quiet output, skipped cases and other formats fall outside this
 metric. Execution counts, permission to reuse evidence and token savings require
 separate evidence.
 
+### Capture one run for multiple views of its output
+
+When the task permits project-local evidence, this POSIX-shell example runs a
+stdlib suite once and returns its actual exit status. Substitute the project's
+required test command. The fresh directory keeps the original combined output
+and the exit code together. A reviewer can read it again to list failures or
+quote a summary.
+
+```sh
+(
+    evidence=$(mktemp -d ./test-evidence.XXXXXX) || exit 1
+    status=0
+    python3 -B -m unittest discover -v >"$evidence/output.log" 2>&1 || status=$?
+    printf '%s\n' "$status" >"$evidence/exit-code" || exit 1
+    printf 'Evidence: %s (test exit %s)\n' "$evidence" "$status"
+    awk '/^(FAIL|ERROR): /' "$evidence/output.log"
+    tail -n 6 "$evidence/output.log"
+    exit "$status"
+)
+```
+
+Keep the full log for tracebacks, skips, warnings and the collection count.
+Check the tested inputs, environment, scope and project gates when deciding
+whether that result can support a later claim.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,

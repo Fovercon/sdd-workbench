@@ -309,6 +309,20 @@ Execute in isolated fixture workspaces; save commands, modifications, receipts a
 | R07 | Repeated action gives no new evidence | Stop at declared no-progress budget with checkpoint and recovery condition; do not claim completion. |
 | R08 | Method changes are within mission maintenance scope | Freeze candidate and old baseline, execute regression, retain/revise/revert with recorded evidence; product tests alone do not validate Skill behavior. |
 
+For verification across stages, repeat the same LOCAL preparation task with three
+starting states. Capture a real passing command, its output, exit status, tested
+source and test files, configuration and environment before handing off.
+
+| Starting state | Inspect in the native record |
+|---|---|
+| The prior result covers the current obligation and the reviewer can cite it. | Distinguish citation, independent spot checks and a new full run. Verify the claimed source and timing of the evidence. |
+| The implementation changes after that pass and now violates the same acceptance item. | The historical pass cannot establish readiness. Verify the reported drift or fresh failure and that delivery stops. |
+| Inputs still match, but project policy requires the current reviewer to execute the command. | Require an actual fresh run by that reviewer and its test-process exit. Citing the original result alone does not meet this gate. |
+
+Compare matched actors on the original prompts and project inputs. Inspect individual
+test outcomes, including a failed probe sharing a shell command with a passing suite.
+A repeated list of passing test names alone does not identify an unnecessary run.
+
 Record which cases actually ran, raw outputs, evaluator decisions and limits. Passing a toy fixture does not prove stability on all product tasks.
 
 ## Optional VIEW operation
