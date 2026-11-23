@@ -310,6 +310,35 @@ constraints. A manually authored old-format packet can pass: the oracle checks
 literal obligations, source identity, the 4096-byte Markdown limit, protected inputs
 and runtime, rather than requiring the candidate helper or receipt schema.
 
+The packet guard also uses the shared native controller-request auditor. A matched
+read request (including a failed tool call) or an invalid/incomplete event stream
+makes the guard fail even when packet content is correct. Its own
+`packet-evaluation.json` is a controller file too. Missing events remain
+`native_controller_access.status = NOT_RECORDED`: a content-only PASS is not
+process verification. `NO_REQUESTS_OBSERVED` only describes the auditor's bounded
+matching rules; dynamic commands and other readers still require manual review.
+
+`evaluate` and the CLI write `packet-evaluation.json` for a fresh trial. To inspect
+archived trials without replacing their reports, use the read-only entry point at
+the original recorded path, and create a separate result:
+
+```python
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, 'evals/context')
+from prepare_packet import inspect_packet
+
+result = inspect_packet(Path('/original/recorded/trial'))
+with Path('/temporary/new-packet-audit.json').open('x', encoding='utf-8') as stream:
+    json.dump(result, stream, ensure_ascii=False, indent=2)
+```
+
+Do not relocate trials or rewrite native paths before auditing: absolute requests
+must still refer to the original workspace. Retain the old report and record the
+new auditor/evaluator identity; a new guard result is not a new model run or a
+retroactive change to an accepted baseline.
+
 Read ranges, actual calls, final authority claims and unexpected external writes
 manually; string/field checks do not prove semantic completeness. Source selection
 is supplied here, so this does not measure autonomous relevance discovery. Native

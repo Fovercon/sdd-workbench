@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+import prepare_packet
 from prepare_packet import prepare
 
 CLI = Path(__file__).with_name('prepare_packet.py')
@@ -32,7 +33,7 @@ class PacketProtocolTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.run = Path(self.tmp.name) / 'trial'
+        self.run = (Path(self.tmp.name) / 'trial').resolve()
         result = self.call('prepare', '--output', self.run)
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -59,12 +60,74 @@ class PacketProtocolTests(unittest.TestCase):
         result = self.call('evaluate', self.run)
         return result, json.loads(result.stdout)
 
+    def native_read(self, path, error=False):
+        return [
+            {'type': 'tool_execution_start', 'toolCallId': 'read-1',
+             'toolName': 'read', 'args': {'path': path}},
+            {'type': 'tool_execution_end', 'toolCallId': 'read-1',
+             'toolName': 'read', 'isError': error, 'result': {'content': []}},
+            {'type': 'agent_end'},
+        ]
+
+    def write_events(self, events):
+        (self.run / 'events.jsonl').write_text(
+            '\n'.join(map(json.dumps, events)) + '\n', encoding='utf-8')
+
+    def test_correct_packet_fails_after_controller_read_request(self):
+        self.manual_packet()
+        for name, error in (('input-receipt.json', False), ('prompt.txt', True),
+                            ('packet-evaluation.json', False)):
+            with self.subTest(name=name, error=error):
+                path = (self.run / name).as_posix()
+                self.write_events(self.native_read(path, error))
+                result, report = self.evaluate()
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(report['automated_guards'], 'FAIL')
+                self.assertTrue(report['protected_sources_unchanged'])
+                self.assertEqual(report['native_controller_access']['status'], 'REQUESTS_FOUND')
+                finding = report['native_controller_access']['findings'][0]
+                self.assertEqual(finding['controller_file'], name)
+                self.assertEqual((finding['start_line'], finding['end_line']), (1, 2))
+                self.assertIs(finding['tool_is_error'], error)
+
+    def test_correct_packet_fails_with_invalid_or_unfinished_native_events(self):
+        self.manual_packet()
+        for stream in ('', 'not json\n', json.dumps(self.native_read('spec.md')[0]) + '\n'):
+            with self.subTest(stream=stream):
+                (self.run / 'events.jsonl').write_text(stream, encoding='utf-8')
+                result, report = self.evaluate()
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(report['native_controller_access']['status'], 'INVALID_OR_INCOMPLETE')
+
+    def test_correct_packet_keeps_permitted_source_read_distinct_from_controller_read(self):
+        self.manual_packet()
+        self.write_events(self.native_read('spec.md'))
+        result, report = self.evaluate()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('native_controller_access', report)
+        self.assertEqual(report['native_controller_access']['status'], 'NO_REQUESTS_OBSERVED')
+
+    def test_inspection_preserves_raw_events_and_historical_report(self):
+        self.manual_packet()
+        self.write_events(self.native_read('../prompt.txt'))
+        (self.run / 'packet-evaluation.json').write_bytes(b'{"historical":"PASS"}\n')
+        before = {p.relative_to(self.run): p.read_bytes() for p in self.run.rglob('*') if p.is_file()}
+        self.assertTrue(callable(getattr(prepare_packet, 'inspect_packet', None)),
+                        'Packet inspection needs a read-only replay entry point')
+        report = prepare_packet.inspect_packet(self.run)
+        self.assertEqual(report['automated_guards'], 'FAIL')
+        self.assertEqual(report['native_controller_access']['status'], 'REQUESTS_FOUND')
+        self.assertEqual(before, {p.relative_to(self.run): p.read_bytes()
+                                  for p in self.run.rglob('*') if p.is_file()})
+
     def test_oracle_accepts_manual_correct_packet_without_requiring_candidate_format(self):
         self.manual_packet()
         result, report = self.evaluate()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(report['automated_guards'], 'PASS')
         self.assertTrue(report['protected_sources_unchanged'])
+        self.assertIn('native_controller_access', report)
+        self.assertEqual(report['native_controller_access']['status'], 'NOT_RECORDED')
 
     def test_oracle_rejects_missing_shared_obligation_and_modified_source(self):
         self.manual_packet()

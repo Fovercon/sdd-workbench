@@ -13,7 +13,7 @@ CONTROLLER_FILES = (
     'input-receipt.json', 'variant.json', 'repository.json', 'prompt.txt',
     'invocation.json', 'events.jsonl', 'stderr.log', 'process-result.json',
     'metrics.json', 'guard-evaluation.json', 'controller-tests.stdout',
-    'controller-tests.stderr',
+    'controller-tests.stderr', 'packet-evaluation.json',
 )
 
 
