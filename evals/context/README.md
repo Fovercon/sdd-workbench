@@ -117,7 +117,10 @@ expected stdout bytes, a Python evaluator can compare stderr separately in memor
 import subprocess
 
 result = subprocess.run(argv, cwd=project, capture_output=True, timeout=15)
-assert (result.returncode, result.stdout, result.stderr) == (0, expected_stdout, b"")
+observed = (result.returncode, result.stdout, result.stderr)
+expected = (0, expected_stdout, b"")
+if observed != expected:
+    raise SystemExit(f"Expected {expected!r}, got {observed!r}")
 ```
 
 Use this for a short, bounded command. Capturing its streams needs no log
