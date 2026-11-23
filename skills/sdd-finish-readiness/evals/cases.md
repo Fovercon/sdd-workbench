@@ -10,6 +10,23 @@ is `NOT_READY`. The readiness actor does not execute delivery; an authorized
 controller subsequently verifies the actual files and usage before recording a
 local receipt. Use the Router's [contract-handoff forward protocol](../../sdd-workflow-router/evals/forward/contract-handoff.md).
 
+Use the following variations to check the local decision and its consequences:
+
+- **Authorized source delivery.** The mission names the source, usage notes
+  (with a space in the filename), and a trace with a final delivery entry.
+  It also requests a separate SHA-256 list. Preserve existing trace entries,
+  verify actual usage, and check the final list against every promised path
+  and its current bytes. As a negative control, append to the trace after
+  signing or omit the usage notes: each change must invalidate the result.
+- **Readiness assessment only.** Use the same deliverables and existing usage
+  evidence. The user reserves execution. Assess current readiness, identify
+  who may deliver, and check for actual writes or an issued receipt during
+  the assessment, including files created and subsequently removed.
+- **Local package.** A previous archive passed an installation check. The
+  current archive has different bytes and fails the required use after install.
+  Keep the old evidence tied to the old archive, block delivery of the current
+  one, and leave any repair to the authorized stage.
+
 Evaluate readiness decisions and evidence handling, not exact wording or heading order.
 
 ## Case 1: Development PR with Unreleased changes

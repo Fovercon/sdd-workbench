@@ -89,6 +89,25 @@ Keep the full log for tracebacks, skips, warnings and the collection count.
 Check the tested inputs, environment, scope and project gates when deciding
 whether that result can support a later claim.
 
+### Check a declared final checksum list
+
+When a delivery agreement specifies a separate SHA256SUMS file and its exact
+coverage, pass the agreed project-relative paths independently. Deriving them
+from the manifest would hide omissions. Run against a stable POSIX project
+snapshot after the final edits.
+
+```sh
+python3 evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
+  trace.md 'notes from review.txt' design/plan.md
+```
+
+Exit 0 means each agreed path occurs exactly once and matches its current bytes.
+The checker accepts UTF-8 GNU checksum rows with a space or asterisk mode marker,
+printable relative paths (including spaces), an optional leading `./`, and LF
+line endings. It rejects prose, escaped names, symlinks, special files and a
+manifest listing itself. Each target is an opaque file. Historical snapshots and
+checksums embedded in Markdown or JSON require their own evidence interpretation.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,
