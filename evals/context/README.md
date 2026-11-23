@@ -48,6 +48,22 @@ not authorize starting background services.
   benchmark. Keep failed runs and all intermediate candidates. Report individual values and
   sample size, not just a favorable mean.
 
+The Pi-only `pi_unittest_verbose_lists` field counts case-list output delivered by
+matched native bash calls. It accepts at least two consecutive standard verbose
+`test… (…) ... ok` lines and a complete successful unittest footer in the same text
+block, with a matching case count. `list_utf8_bytes` counts just the case lines,
+including their original line endings. `repeated_lists` and
+`repeated_list_utf8_bytes` count occurrences with identical rows and ordering
+already seen in a different completed call. The first eight repeat witnesses
+point to the original and repeated tool-end event lines. Codex reports `null`.
+
+A bash call can print a saved log or run several checks. Interpret repeated
+output using the original commands, inputs, environment and stage obligations.
+A failed later probe can share a tool result with a complete passing list.
+Partial lists, quiet output, skipped cases and other formats fall outside this
+metric. Execution counts, permission to reuse evidence and token savings require
+separate evidence.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,
