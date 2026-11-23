@@ -108,6 +108,12 @@ line endings. It rejects prose, escaped names, symlinks, special files and a
 manifest listing itself. Each target is an opaque file. Historical snapshots and
 checksums embedded in Markdown or JSON require their own evidence interpretation.
 
+For a live closeout comparison, give each actor its own project, the frozen
+read-only skills and a private temporary directory. Keep trial controls and
+the host's temporary files outside the four model tools. Record temporary
+writes even if the actor removes them. They matter when the request authorizes
+assessment only and explicitly forbids writes.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,
