@@ -18,9 +18,54 @@ def category(tool,args):
     return 'source_or_other'
 
 
+UNITTEST_OK_ROW = re.compile(r'test\w* \([^()\r\n]+\) \.\.\. ok\r?\n')
+UNITTEST_SUMMARY = re.compile(r'Ran ([0-9]+) tests in [0-9]+(?:\.[0-9]+)?s\r?\n')
+
+
+def passing_unittest_lists(text):
+    """Yield the delivered UTF-8 rows preceding a complete verbose success footer."""
+    lines = text.splitlines(keepends=True)
+    for i, line in enumerate(lines):
+        summary = UNITTEST_SUMMARY.fullmatch(line)
+        if not summary or i < 4 or i + 2 >= len(lines):
+            continue
+        end = i - 2
+        if (lines[end] not in ('\n', '\r\n') or lines[i - 1].rstrip('\r\n') != '-' * 70
+                or lines[i + 1] not in ('\n', '\r\n') or lines[i + 2].rstrip('\r\n') != 'OK'):
+            continue
+        start = end
+        while start and UNITTEST_OK_ROW.fullmatch(lines[start - 1]):
+            start -= 1
+        count = end - start
+        if count >= 2 and str(count) == summary.group(1):
+            yield ''.join(lines[start:end]).encode('utf-8'), count
+
+
+def record_unittest_lists(content, end_line, first_ends, stats):
+    for item in content:
+        if item.get('type') != 'text':
+            continue
+        for rows, count in passing_unittest_lists(item.get('text', '')):
+            size = len(rows)
+            stats['complete_lists'] += 1
+            stats['list_utf8_bytes'] += size
+            first = first_ends.setdefault(hashlib.sha256(rows).digest(), end_line)
+            if first == end_line:
+                continue
+            stats['repeated_lists'] += 1
+            stats['repeated_list_utf8_bytes'] += size
+            if len(stats['witnesses']) < 8:
+                stats['witnesses'].append({'first_end_line': first, 'repeat_end_line': end_line,
+                                           'tests': count, 'utf8_bytes': size})
+
+
 def measure(host,path):
     counts=Counter();tools=Counter();sizes=Counter();calls={};seen_reads=Counter();models=set();largest=[]
     usage_count=missing_input=missing_usage=repeated=malformed=nontext=0;inputs=[];outputs=[];cache=[];native_totals=Counter();digest=hashlib.sha256();valid_utf8=True
+    first_list_ends = {}
+    observed_bash_ids = set()
+    verbose_lists = {'complete_lists': 0, 'list_utf8_bytes': 0, 'repeated_lists': 0,
+                     'repeated_list_utf8_bytes': 0, 'witnesses': []}
     with Path(path).open('rb')as stream:
         for line_no,raw in enumerate(stream,1):
             digest.update(raw)
@@ -56,6 +101,11 @@ def measure(host,path):
             if host=='pi'and kind=='tool_execution_end':
                 call=calls.get(e.get('toolCallId'),{'tool':e.get('toolName'),'category':'unmatched_tool','line':line_no})
                 content=e.get('result',{}).get('content',[]);n=0
+                call_id = e.get('toolCallId')
+                if (isinstance(call_id, str) and call_id and call_id in calls
+                        and call['tool'] == e.get('toolName') == 'bash' and call_id not in observed_bash_ids):
+                    observed_bash_ids.add(call_id)
+                    record_unittest_lists(content, line_no, first_list_ends, verbose_lists)
                 for item in content:
                     if item.get('type')=='text':n+=len(item.get('text','').encode('utf-8'))
                     else:nontext+=1
@@ -74,6 +124,7 @@ def measure(host,path):
             'reported_request_input_peak':max(inputs)if inputs and host=='pi'else None,
             'reported_output_sum':sum(outputs)if outputs else None,'reported_cache_read_sum':sum(cache)if cache else None,
             'native_token_totals':dict(native_totals),'models_observed':[{'provider':a,'model':b}for a,b in sorted(models,key=str)],
+            'pi_unittest_verbose_lists': verbose_lists if host == 'pi' else None,
             'tool_calls':dict(tools),'repeated_identical_read_requests':repeated,'delivered_tool_text_utf8_bytes':sum(sizes.values()),
             'tool_text_bytes_by_heuristic_category':dict(sizes),'largest_tool_outputs':largest,'nontext_blocks_not_tokenized':nontext,
             'limits':['Pi request peak is observed assistant-message input, not a measured resident window or host capacity. Codex turn aggregates do not expose a per-request peak.',

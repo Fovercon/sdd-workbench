@@ -13,7 +13,7 @@ CONTROLLER_FILES = (
     'input-receipt.json', 'variant.json', 'repository.json', 'prompt.txt',
     'invocation.json', 'events.jsonl', 'stderr.log', 'process-result.json',
     'metrics.json', 'guard-evaluation.json', 'controller-tests.stdout',
-    'controller-tests.stderr',
+    'controller-tests.stderr', 'packet-evaluation.json',
 )
 
 
@@ -96,6 +96,7 @@ def audit(run):
                   'Only structured read paths and literal cat operands with simple cd are indexed.',
                   'No matches do not prove compliance: dynamic shell, other readers, aliases, symlinks and transient effects need manual review.',
                   'The event digest binds observed bytes, not actor identity, authenticity or OS isolation.',
+                  'Recorded cwd fields must match this project path; these fields are not authenticated.',
               ]}
     source = run / 'events.jsonl'
     if not source.exists():
@@ -107,6 +108,27 @@ def audit(run):
         result['issues'].append({'line': None, 'reason': 'Native event stream unreadable'})
         return result
     result['events_sha256'] = hashlib.sha256(raw).hexdigest()
+    project = run / 'project'
+
+    def check_cwd(value, origin, line=None):
+        try:
+            matches = (isinstance(value, str) and bool(value)
+                       and Path(value).is_absolute() and Path(value).resolve() == project)
+        except (OSError, ValueError, RuntimeError):
+            matches = False
+        if not matches:
+            result['issues'].append({'line': line, 'reason': 'Recorded cwd does not match project root: ' + origin})
+
+    invocation = run / 'invocation.json'
+    if invocation.exists():
+        try:
+            metadata = json.loads(invocation.read_text(encoding='utf-8'))
+            if not isinstance(metadata, dict):
+                raise ValueError('Expected invocation object')
+            if 'cwd' in metadata:
+                check_cwd(metadata['cwd'], 'invocation.json')
+        except (OSError, ValueError) as error:
+            result['issues'].append({'line': None, 'reason': 'Invalid invocation metadata: ' + str(error)})
     calls = {}; completed = set(); terminal = False
     protected = {run / name: name for name in CONTROLLER_FILES}
     for line_no, line in enumerate(raw.splitlines(), 1):
@@ -119,6 +141,8 @@ def audit(run):
             kind = event.get('type')
             if not isinstance(kind, str):
                 raise ValueError('Missing event type')
+            if kind == 'session' and 'cwd' in event:
+                check_cwd(event['cwd'], 'session', line_no)
             if kind in ('agent_start', 'turn_start', 'turn_end', 'message_start',
                         'message_update', 'message_end', 'tool_execution_start',
                         'tool_execution_update', 'tool_execution_end'):

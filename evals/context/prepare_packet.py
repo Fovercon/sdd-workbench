@@ -7,6 +7,11 @@ from pathlib import Path
 import shutil
 import subprocess
 
+if __package__:
+    from .audit_controller_access import audit
+else:
+    from audit_controller_access import audit
+
 ROOT = Path(__file__).resolve().parents[2]
 SKILL = 'skills/sdd-workflow-router/'
 PROMPT = ('请使用 ../runtime/sdd-workflow-router/SKILL.md，为当前切片准备同一工作区新会话需要的原文材料。'
@@ -74,10 +79,16 @@ def prepare(output, ref=None):
     return str(output)
 
 
-def evaluate(run):
+def inspect_packet(run):
+    """Inspect original trial paths without replacing reports or other evidence."""
     run = Path(run).resolve()
     before = json.loads((run / 'input-receipt.json').read_text(encoding='utf-8'))
     project, errors = run / 'project', []
+    access = audit(run)
+    if access['findings']:
+        errors.append('Controller-file read request in native tool arguments')
+    if access['status'] == 'INVALID_OR_INCOMPLETE':
+        errors.append('Invalid or incomplete native event stream')
     after = hashes(project)
     unchanged = all(after.get(p) == sha for p, sha in before['project'].items())
     if not unchanged:
@@ -107,9 +118,16 @@ def evaluate(run):
             errors.append('Missing source identity: ' + name)
     result = {'automated_guards': 'FAIL' if errors else 'PASS', 'errors': errors,
               'protected_sources_unchanged': unchanged, 'runtime_unchanged': runtime_ok,
+              'native_controller_access': access,
               'context_bytes': len(body), 'manual_review_required':
               'Read ranges, meaning, all tool calls and final authority claims; no OS sandbox or cost conclusion.'}
-    (run / 'packet-evaluation.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+    return result
+
+
+def evaluate(run):
+    result = inspect_packet(run)
+    (Path(run) / 'packet-evaluation.json').write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
     return result
 
 

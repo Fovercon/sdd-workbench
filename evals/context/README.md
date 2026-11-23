@@ -48,6 +48,72 @@ not authorize starting background services.
   benchmark. Keep failed runs and all intermediate candidates. Report individual values and
   sample size, not just a favorable mean.
 
+The Pi-only `pi_unittest_verbose_lists` field counts case-list output delivered by
+matched native bash calls. It accepts at least two consecutive standard verbose
+`test… (…) ... ok` lines and a complete successful unittest footer in the same text
+block, with a matching case count. `list_utf8_bytes` counts just the case lines,
+including their original line endings. `repeated_lists` and
+`repeated_list_utf8_bytes` count occurrences with identical rows and ordering
+already seen in a different completed call. The first eight repeat witnesses
+point to the original and repeated tool-end event lines. Codex reports `null`.
+
+A bash call can print a saved log or run several checks. Interpret repeated
+output using the original commands, inputs, environment and stage obligations.
+A failed later probe can share a tool result with a complete passing list.
+Partial lists, quiet output, skipped cases and other formats fall outside this
+metric. Execution counts, permission to reuse evidence and token savings require
+separate evidence.
+
+### Capture one run for multiple views of its output
+
+When the task permits project-local evidence, this POSIX-shell example runs a
+stdlib suite once and returns its actual exit status. Substitute the project's
+required test command. The fresh directory keeps the original combined output
+and the exit code together. A reviewer can read it again to list failures or
+quote a summary.
+
+```sh
+(
+    evidence=$(mktemp -d ./test-evidence.XXXXXX) || exit 1
+    status=0
+    python3 -B -m unittest discover -v >"$evidence/output.log" 2>&1 || status=$?
+    printf '%s\n' "$status" >"$evidence/exit-code" || exit 1
+    printf 'Evidence: %s (test exit %s)\n' "$evidence" "$status"
+    awk '/^(FAIL|ERROR): /' "$evidence/output.log"
+    tail -n 6 "$evidence/output.log"
+    exit "$status"
+)
+```
+
+Keep the full log for tracebacks, skips, warnings and the collection count.
+Check the tested inputs, environment, scope and project gates when deciding
+whether that result can support a later claim.
+
+### Check a declared final checksum list
+
+When a delivery agreement specifies a separate SHA256SUMS file and its exact
+coverage, pass the agreed project-relative paths independently. Deriving them
+from the manifest would hide omissions. Run against a stable POSIX project
+snapshot after the final edits.
+
+```sh
+python3 evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
+  trace.md 'notes from review.txt' design/plan.md
+```
+
+Exit 0 means each agreed path occurs exactly once and matches its current bytes.
+The checker accepts UTF-8 GNU checksum rows with a space or asterisk mode marker,
+printable relative paths (including spaces), an optional leading `./`, and LF
+line endings. It rejects prose, escaped names, symlinks, special files and a
+manifest listing itself. Each target is an opaque file. Historical snapshots and
+checksums embedded in Markdown or JSON require their own evidence interpretation.
+
+For a live closeout comparison, give each actor its own project, the frozen
+read-only skills and a private temporary directory. Keep trial controls and
+the host's temporary files outside the four model tools. Record temporary
+writes even if the actor removes them. They matter when the request authorizes
+assessment only and explicitly forbids writes.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,
@@ -309,6 +375,42 @@ The actor chooses verified excerpts from an explicit selection including shared
 constraints. A manually authored old-format packet can pass: the oracle checks
 literal obligations, source identity, the 4096-byte Markdown limit, protected inputs
 and runtime, rather than requiring the candidate helper or receipt schema.
+
+The packet guard also uses the shared native controller-request auditor. A matched
+read request (including a failed tool call) or an invalid/incomplete event stream
+makes the guard fail even when packet content is correct. Its own
+`packet-evaluation.json` is a controller file too. Missing events remain
+`native_controller_access.status = NOT_RECORDED`: a content-only PASS is not
+process verification. `NO_REQUESTS_OBSERVED` only describes the auditor's bounded
+matching rules; dynamic commands and other readers still require manual review.
+
+`evaluate` and the CLI write `packet-evaluation.json` for a fresh trial. To inspect
+archived trials without replacing their reports, use the read-only entry point at
+the original recorded path, and create a separate result:
+
+```sh
+python3 -B - <<'PY'
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, 'evals/context')
+from prepare_packet import inspect_packet
+
+result = inspect_packet(Path('/original/recorded/trial'))
+with Path('/temporary/new-packet-audit.json').open('x', encoding='utf-8') as stream:
+    json.dump(result, stream, ensure_ascii=False, indent=2)
+PY
+```
+
+Do not relocate trials or rewrite native paths before auditing: absolute requests
+must still refer to the original workspace. Retain the old report and record the
+new auditor/evaluator identity; a new guard result is not a new model run or a
+retroactive change to an accepted baseline.
+If an invocation or native session records a different project cwd, the shared
+auditor reports `INVALID_OR_INCOMPLETE`, rather than interpreting relocated
+absolute requests as clean. Missing cwd metadata is tolerated for legacy/manual
+fixtures; it does not establish workspace identity. Use `-B` when importing frozen
+protocols so the replay does not add bytecode caches to their directories.
 
 Read ranges, actual calls, final authority claims and unexpected external writes
 manually; string/field checks do not prove semantic completeness. Source selection
