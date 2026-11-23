@@ -3,12 +3,13 @@
 Use these commands and fields when maintaining an actual checkpoint. For a new
 one, the full installation includes [loop-state.example.json](../evals/loop-state.example.json).
 In a runtime without examples, use the field table below. Store the checkpoint
-in the project's established task or evidence location. Paths are relative to
-`--root`. The helper uses the Python 3 standard library.
+in the project's established task or evidence location. Give the checkpoint's
+absolute path when calling from another directory. File references inside the
+checkpoint resolve relative to `--root`. The helper uses the Python 3 standard library.
 
 ```bash
-python3 /path/to/sdd-workflow-router/scripts/sdd_loop.py identity loop.json --root /path/to/project
-python3 /path/to/sdd-workflow-router/scripts/sdd_loop.py status loop.json --root /path/to/project
+python3 /path/to/sdd-workflow-router/scripts/sdd_loop.py identity /path/to/project/loop.json --root /path/to/project
+python3 /path/to/sdd-workflow-router/scripts/sdd_loop.py status /path/to/project/loop.json --root /path/to/project
 ```
 
 `identity` computes hashes from actual files. After executing and assessing work, the Agent records these identities in receipts. Never update a receipt's baseline without rerunning the relevant work. `status` returns exactly one route or stop; the Agent executes, updates the checkpoint with truthful evidence, then calls it again. `COMPLETE` is a checkpoint consistency result, not independent verification that the descriptions, authorization or semantic claims are true.
