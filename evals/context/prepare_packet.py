@@ -7,7 +7,10 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from audit_controller_access import audit
+if __package__:
+    from .audit_controller_access import audit
+else:
+    from audit_controller_access import audit
 
 ROOT = Path(__file__).resolve().parents[2]
 SKILL = 'skills/sdd-workflow-router/'

@@ -322,7 +322,8 @@ matching rules; dynamic commands and other readers still require manual review.
 archived trials without replacing their reports, use the read-only entry point at
 the original recorded path, and create a separate result:
 
-```python
+```sh
+python3 -B - <<'PY'
 import json
 from pathlib import Path
 import sys
@@ -332,12 +333,18 @@ from prepare_packet import inspect_packet
 result = inspect_packet(Path('/original/recorded/trial'))
 with Path('/temporary/new-packet-audit.json').open('x', encoding='utf-8') as stream:
     json.dump(result, stream, ensure_ascii=False, indent=2)
+PY
 ```
 
 Do not relocate trials or rewrite native paths before auditing: absolute requests
 must still refer to the original workspace. Retain the old report and record the
 new auditor/evaluator identity; a new guard result is not a new model run or a
 retroactive change to an accepted baseline.
+If an invocation or native session records a different project cwd, the shared
+auditor reports `INVALID_OR_INCOMPLETE`, rather than interpreting relocated
+absolute requests as clean. Missing cwd metadata is tolerated for legacy/manual
+fixtures; it does not establish workspace identity. Use `-B` when importing frozen
+protocols so the replay does not add bytecode caches to their directories.
 
 Read ranges, actual calls, final authority claims and unexpected external writes
 manually; string/field checks do not prove semantic completeness. Source selection
