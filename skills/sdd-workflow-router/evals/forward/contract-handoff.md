@@ -17,6 +17,10 @@ The contracts must preserve derived/delegated bases rather than invent human
 approval. `LOCAL` remains the target through Finish and actual delivery; a package,
 PR, release tag or deployment is required only if the request says so. Self-review
 must remain labeled self-review. Confirm notes and supplied tests are preserved.
+For each worked usage example, take its record list as data and call the
+delivered functions on that exact input in the isolated evaluator. Compare
+the result and any stated calculation with the report. A passing product
+suite can still accompany an incorrect usage example.
 
 ## Reserved design approval counterexample
 

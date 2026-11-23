@@ -97,7 +97,7 @@ from the manifest would hide omissions. Run against a stable POSIX project
 snapshot after the final edits.
 
 ```sh
-python3 evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
+python3 -B evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
   trace.md 'notes from review.txt' design/plan.md
 ```
 
@@ -107,6 +107,21 @@ printable relative paths (including spaces), an optional leading `./`, and LF
 line endings. It rejects prose, escaped names, symlinks, special files and a
 manifest listing itself. Each target is an opaque file. Historical snapshots and
 checksums embedded in Markdown or JSON require their own evidence interpretation.
+
+For a permitted usage check, take the exact input and expected output from
+the delivered example. The command's return provides its exit code and
+output directly. Given the command's argument list, project directory and
+expected stdout bytes, a Python evaluator can compare stderr separately in memory.
+
+```python
+import subprocess
+
+result = subprocess.run(argv, cwd=project, capture_output=True, timeout=15)
+assert (result.returncode, result.stdout, result.stderr) == (0, expected_stdout, b"")
+```
+
+Use this for a short, bounded command. Capturing its streams needs no log
+file. The command itself still needs to respect the task's write permissions.
 
 For a live closeout comparison, give each actor its own project, the frozen
 read-only skills and a private temporary directory. Keep trial controls and
