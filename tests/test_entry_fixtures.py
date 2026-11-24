@@ -10,6 +10,9 @@ import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tools'))
+from docs import prose
+
 ENTRY=ROOT/'skills/sdd-workflow-router/evals/forward/prepare_entry.py'
 spec=importlib.util.spec_from_file_location('prepare_entry',ENTRY)
 prepare=importlib.util.module_from_spec(spec);spec.loader.exec_module(prepare)
@@ -78,7 +81,8 @@ class EntryFixtures(unittest.TestCase):
                ROOT/'skills/sdd-plan-slices/evals/forward/layout.md']
         checked=0
         for file in files:
-            for ref in re.findall(r'(?<!!)\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)',file.read_text(encoding='utf-8')):
+            page = prose(file.read_text(encoding='utf-8'))
+            for ref in re.findall(r'(?<!!)\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)', page):
                 if '://' in ref or ref.startswith('#'):continue
                 target=ref.split('#')[0]
                 self.assertTrue((file.parent/target).exists(),(file,ref));checked+=1
