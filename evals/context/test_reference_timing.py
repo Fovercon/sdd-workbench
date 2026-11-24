@@ -25,14 +25,17 @@ def end(call, *texts, tool="read", error=False):
 
 
 class ReferenceTimingTests(unittest.TestCase):
-    def run_cli(self, events, reference=REFERENCE + "\n", host="pi"):
+    def run_cli(self, events, reference=REFERENCE + "\n", host="pi", extra_args=()):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source, stream, output = (root / name for name in ("source.md", "events.jsonl", "metrics.json"))
-            source.write_bytes(reference.encode())
+            options = list(extra_args)
+            if reference is not None:
+                source.write_bytes(reference.encode())
+                options.extend(["--reference-text", str(source)])
             stream.write_text("".join(json.dumps(e) + "\n" for e in events), encoding="utf-8")
             run = subprocess.run([sys.executable, "-B", str(MEASURE), "--host", host, "--events", str(stream),
-                                  "--output", str(output), "--reference-text", str(source)], capture_output=True)
+                                  "--output", str(output), *options], capture_output=True)
             return run, json.loads(output.read_bytes()) if output.exists() else None
 
     def test_first_whole_text_links_to_the_request_that_selected_the_call(self):
@@ -104,3 +107,27 @@ class ReferenceTimingTests(unittest.TestCase):
             run, result = self.run_cli([], source, host)
             self.assertEqual(run.returncode, 2)
             self.assertIsNone(result)
+
+    def test_opt_in_stage_tool_counts_returned_body_alongside_builtin_reads(self):
+        events = [reply("bad", "stage", "other"), start("bad", "open_stage"),
+                  end("bad", REFERENCE, tool="open_stage", error=True),
+                  start("stage", "open_stage"), end("stage", REFERENCE, tool="open_stage"),
+                  start("other", "write"), end("other", REFERENCE, tool="write"),
+                  reply("read"), start("read"), end("read", REFERENCE)]
+        run, original = self.run_cli(events)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        self.assertEqual(original["pi_reference_text"]["matched_calls"], 1)
+        run, result = self.run_cli(events, extra_args=["--reference-tool", "open_stage"])
+        self.assertEqual(run.returncode, 0, run.stderr)
+        measured = result["pi_reference_text"]
+        self.assertEqual(measured["matched_calls"], 2)
+        self.assertEqual(measured["tools_considered"], ["bash", "open_stage", "read"])
+        self.assertEqual(measured["first_return"], {"request": 1, "assistant_end_line": 1,
+                                                   "start_line": 4, "end_line": 5, "tool": "open_stage"})
+        self.assertEqual(original["delivered_tool_text_utf8_bytes"], result["delivered_tool_text_utf8_bytes"])
+
+    def test_extra_result_channel_requires_a_reference(self):
+        run, result = self.run_cli([], reference=None, extra_args=["--reference-tool", "open_stage"])
+        self.assertEqual(run.returncode, 2)
+        self.assertIn(b"requires --reference-text", run.stderr)
+        self.assertIsNone(result)

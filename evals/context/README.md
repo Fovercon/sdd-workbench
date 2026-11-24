@@ -91,6 +91,13 @@ A missing or ambiguous issuer is reported as null. Overlapping calls sharing
 an ID cannot establish a match. Use the raw trace and completion status
 to interpret zero matches and measure actual usage separately.
 
+Some hosts return skill bodies through a dedicated tool. When comparing such
+hosts, pass the same additional channel on both sets of logs, for example
+`--reference-tool open_stage` alongside `--reference-text`. The report lists
+the tools considered. A selection request, catalog entry or failed activation
+does not count as a complete body. The extra channel affects reference matching
+only. The normal tool-output and native usage counters already include it.
+
 ### Capture one run for multiple views of its output
 
 When the task permits project-local evidence, this POSIX-shell example runs a

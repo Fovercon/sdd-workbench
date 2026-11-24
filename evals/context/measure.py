@@ -62,7 +62,7 @@ def record_unittest_lists(content, end_line, first_ends, stats):
 class ReferenceTiming:
     """Locate exact reference text in successful Pi tool returns."""
 
-    def __init__(self, path):
+    def __init__(self, path, extra_tools=()):
         raw = Path(path).read_bytes()
         body = raw[:-2] if raw.endswith(b'\r\n') else raw.removesuffix(b'\n')
         self.text = body.decode('utf-8')
@@ -70,6 +70,9 @@ class ReferenceTiming:
             raise ValueError('reference text must contain non-whitespace content')
         self.report = {'source_sha256': hashlib.sha256(raw).hexdigest(), 'matched_text_utf8_bytes': len(body),
                        'matched_calls': 0, 'first_return': None}
+        self.tools = {'read', 'bash', *extra_tools}
+        if extra_tools:
+            self.report['tools_considered'] = sorted(self.tools)
         self.request = 0
         self.issuers = {}
         self.pending = {}
@@ -105,7 +108,7 @@ class ReferenceTiming:
                 return
             start = self.pending.pop(call_id, None)
             result = event.get('result') or {}
-            if tool not in ('read', 'bash') or not start or start[0] != tool:
+            if tool not in self.tools or not start or start[0] != tool:
                 return
             if event.get('isError') is not False or result.get('isError'):
                 return
@@ -120,10 +123,12 @@ class ReferenceTiming:
                                                'start_line': start[1], 'end_line': line, 'tool': tool}
 
 
-def measure(host,path,reference_text=None):
+def measure(host,path,reference_text=None,reference_tools=()):
+    if reference_tools and reference_text is None:
+        raise ValueError('--reference-tool requires --reference-text')
     if reference_text is not None and host != 'pi':
         raise ValueError('reference-text timing requires native Pi tool events')
-    reference = ReferenceTiming(reference_text) if reference_text is not None else None
+    reference = ReferenceTiming(reference_text, reference_tools) if reference_text is not None else None
     counts=Counter();tools=Counter();sizes=Counter();calls={};seen_reads=Counter();models=set();largest=[]
     usage_count=missing_input=missing_usage=repeated=malformed=nontext=0;inputs=[];outputs=[];cache=[];native_totals=Counter();digest=hashlib.sha256();valid_utf8=True
     first_list_ends = {}
@@ -203,9 +208,11 @@ def measure(host,path,reference_text=None):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--host',choices=['pi','codex'],required=True);p.add_argument('--events',required=True);p.add_argument('--output',required=True)
     p.add_argument('--reference-text', type=Path, help='Pi only: locate an exact frozen UTF-8 reference in read/bash returns')
+    p.add_argument('--reference-tool', action='append', default=[],
+                   help='also check successful returns from this named Pi tool (repeatable)')
     a=p.parse_args()
     try:
-        result=measure(a.host,a.events,a.reference_text)
+        result=measure(a.host,a.events,a.reference_text,a.reference_tool)
     except (OSError, ValueError) as exc:
         p.error(str(exc))
     Path(a.output).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

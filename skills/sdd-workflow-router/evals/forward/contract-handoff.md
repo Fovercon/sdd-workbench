@@ -32,6 +32,14 @@ an already-converged baseline requesting only a readiness assessment. Check
 that the actor obtains the required evidence at the right time and stays within
 the write and delivery permissions for each request.
 
+For a host comparison, freeze the same skill sources, catalog descriptions,
+project, prompt and model on both sides. Verify which files each tool can
+actually read before and after selecting a stage, including an authorized
+early consultation and a switch back. Include the stage-selection tool's
+returned text in exposure counts. Count unique entrypoints before the first
+real failing slice test, check that the required later evidence arrived, and
+compare whole-run native usage with the verified deliverables.
+
 ## Reserved design approval counterexample
 
 Copy the same initial fixture into another temporary project. Add this actual
