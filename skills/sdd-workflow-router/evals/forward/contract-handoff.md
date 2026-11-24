@@ -39,6 +39,13 @@ early consultation and a switch back. Include the stage-selection tool's
 returned text in exposure counts. Count unique entrypoints before the first
 real failing slice test, check that the required later evidence arrived, and
 compare whole-run native usage with the verified deliverables.
+Include a known required reference and a genuinely absent file. After the actor
+switches stages, check whether it can distinguish the two, recover the original
+reference and use it in its decision. Inspect claims that a reference was
+missing or optional against the frozen source and the actor's actual view.
+When the task requires a digest, compare the reported SHA-256 with the
+original reference bytes. Record any digest of a stage-selection notice
+separately so that a successful hash command cannot satisfy the wrong check.
 
 ## Reserved design approval counterexample
 
