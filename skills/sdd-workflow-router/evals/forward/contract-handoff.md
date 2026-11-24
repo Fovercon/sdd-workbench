@@ -17,6 +17,35 @@ The contracts must preserve derived/delegated bases rather than invent human
 approval. `LOCAL` remains the target through Finish and actual delivery; a package,
 PR, release tag or deployment is required only if the request says so. Self-review
 must remain labeled self-review. Confirm notes and supplied tests are preserved.
+For each worked usage example, take its record list as data and call the
+delivered functions on that exact input in the isolated evaluator. Compare
+the result and any stated calculation with the report. A passing product
+suite can still accompany an incorrect usage example.
+
+When testing when Finish is first consulted, compare its actual tool return
+with the first slice's failing test, the combined review decision, and the
+readiness decision. Record full text, excerpts and catalog descriptions
+separately. Use the assistant request that selected each call to distinguish
+an earlier instruction from one returned in the same batch of tools.
+Repeat with a project requiring a named Finish gate before design, and with
+an already-converged baseline requesting only a readiness assessment. Check
+that the actor obtains the required evidence at the right time and stays within
+the write and delivery permissions for each request.
+
+For a host comparison, freeze the same skill sources, catalog descriptions,
+project, prompt and model on both sides. Verify which files each tool can
+actually read before and after selecting a stage, including an authorized
+early consultation and a switch back. Include the stage-selection tool's
+returned text in exposure counts. Count unique entrypoints before the first
+real failing slice test, check that the required later evidence arrived, and
+compare whole-run native usage with the verified deliverables.
+Include a known required reference and a genuinely absent file. After the actor
+switches stages, check whether it can distinguish the two, recover the original
+reference and use it in its decision. Inspect claims that a reference was
+missing or optional against the frozen source and the actor's actual view.
+When the task requires a digest, compare the reported SHA-256 with the
+original reference bytes. Record any digest of a stage-selection notice
+separately so that a successful hash command cannot satisfy the wrong check.
 
 ## Reserved design approval counterexample
 

@@ -64,6 +64,40 @@ Partial lists, quiet output, skipped cases and other formats fall outside this
 metric. Execution counts, permission to reuse evidence and token savings require
 separate evidence.
 
+### Locate the first return of a skill's text
+
+Use the frozen file from the trial. This example locates the first successful
+Pi read or shell result containing the Finish entrypoint in full.
+
+```sh
+python3 -B evals/context/measure.py --host pi --events /path/to/trial/events.jsonl \
+  --reference-text /path/to/trial/runtime/sdd-finish-readiness/SKILL.md --output /path/to/metrics.json
+```
+
+`pi_reference_text` records the source SHA-256, matched byte length, number
+of matching calls and the first matching tool start and end lines. When the
+last completed assistant message uniquely declares the matching call, its ordinal
+and line identify the request that chose the call. Two tools requested in the
+same message were selected before either result could inform that choice.
+Compare the end line with independently verified implementation, review and
+readiness events. For a distinctive passage, supply its exact frozen bytes as
+the reference and report it separately from full-file matches.
+
+One text block must contain the complete UTF-8 reference, ignoring one final
+line ending in the reference. The match identifies returned text. A different
+file can contain the same words, and the skill catalog, split excerpts, failed
+calls or other channels can carry information outside this measurement.
+A missing or ambiguous issuer is reported as null. Overlapping calls sharing
+an ID cannot establish a match. Use the raw trace and completion status
+to interpret zero matches and measure actual usage separately.
+
+Some hosts return skill bodies through a dedicated tool. When comparing such
+hosts, pass the same additional channel on both sets of logs, for example
+`--reference-tool open_stage` alongside `--reference-text`. The report lists
+the tools considered. A selection request, catalog entry or failed activation
+does not count as a complete body. The extra channel affects reference matching
+only. The normal tool-output and native usage counters already include it.
+
 ### Capture one run for multiple views of its output
 
 When the task permits project-local evidence, this POSIX-shell example runs a
@@ -97,7 +131,7 @@ from the manifest would hide omissions. Run against a stable POSIX project
 snapshot after the final edits.
 
 ```sh
-python3 evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
+python3 -B evals/context/check_delivery_manifest.py /temporary/project evidence/SHA256SUMS -- \
   trace.md 'notes from review.txt' design/plan.md
 ```
 
@@ -108,11 +142,76 @@ line endings. It rejects prose, escaped names, symlinks, special files and a
 manifest listing itself. Each target is an opaque file. Historical snapshots and
 checksums embedded in Markdown or JSON require their own evidence interpretation.
 
+For a permitted usage check, take the exact input and expected output from
+the delivered example. The command's return provides its exit code and
+output directly. Given the command's argument list, project directory and
+expected stdout bytes, a Python evaluator can compare stderr separately in memory.
+
+```python
+import subprocess
+
+result = subprocess.run(argv, cwd=project, capture_output=True, timeout=15)
+observed = (result.returncode, result.stdout, result.stderr)
+expected = (0, expected_stdout, b"")
+if observed != expected:
+    raise SystemExit(f"Expected {expected!r}, got {observed!r}")
+```
+
+Use this for a short, bounded command. Capturing its streams needs no log
+file. The command itself still needs to respect the task's write permissions.
+
 For a live closeout comparison, give each actor its own project, the frozen
 read-only skills and a private temporary directory. Keep trial controls and
 the host's temporary files outside the four model tools. Record temporary
 writes even if the actor removes them. They matter when the request authorizes
 assessment only and explicitly forbids writes.
+
+### Read-only closeout checks
+
+When the request permits a fresh local check and forbids filesystem changes,
+the controller can run that check with Linux Bubblewrap. Select a stable
+synthetic fixture containing only regular files and directories.
+
+```sh
+python3 -B evals/context/run_readonly_probe.py /path/to/fixture -- python3 -B "src/credit counter.py" 8
+```
+
+The child starts in the read-only project at `/project`, with read-only system
+binaries and libraries, an empty read-only `/tmp`, a fresh environment and a
+private network namespace. A missing sandbox dependency stops the probe before
+launch. The filesystem rejects writes. The wrapper forwards stdout, stderr and
+the child's exit status, which can still be zero if the child handles a write
+error or a later shell command succeeds. Keep the caller's stdout and stderr on
+permitted streams. Shell redirections outside the wrapper use the caller's
+permissions.
+
+The wrapper applies to one command. For a whole read-only assessment, route
+every model tool through the restricted host, mount its project, skill runtime
+and private temporary directory read-only, and keep controller logs outside
+the model's reach. Check that read and product commands succeed and that edit,
+file creation and shell redirection are refused in the actual mounted trial.
+Use a separate writable trial with an observer to measure how the actor uses
+its permissions. A request that authorizes saving a named report or executing
+delivery needs its own write scope.
+
+To check recorded write activity, pass the controller's `watch.json` and
+any exact files the request allows. Omitting `--allow-file` checks a zero-write
+request. In this example only the report path is permitted.
+
+```sh
+python3 -B evals/context/audit_write_events.py /path/to/trial/watch.json --allow-file project/work/readiness.md
+```
+
+The JSON input is the observer's array of notifications. Each has a
+trial-relative `path` under `project`, `runtime` or `sandbox-tmp`, an
+`events` list of inotify names and a boolean `directory`. Output identifies
+the log by SHA-256 and findings by row, including creation and removal of
+temporary files. Exit 1 means out-of-scope write activity was recorded.
+Exit 2 flags invalid input, overflow or lost coverage and retains any
+identifiable findings. Exit 0 means no out-of-scope events were recorded.
+Check watcher coverage, completeness, before/after bytes and actual commands
+when evaluating a zero-write claim. The path comparison does not check
+whether an allowed file was produced correctly or whether it was append-only.
 
 ## Quality precedes efficiency
 
