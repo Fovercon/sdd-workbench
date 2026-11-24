@@ -23,6 +23,18 @@ Expected invariants:
 - Scores information retrieval and actual behavior separately from file/line
   counts; no unmeasured time/token savings or forced heavy checks for this slice.
 
+For a two-slice project that requires chronological commands and results,
+compare the same executed check across the receipt, trace and mutable task
+status. Exclude planned commands and genuine reruns on the next slice from
+duplicate counts. Give a fresh recipient each layout with a valid reference,
+a wrong section in an existing file, and a changed source with a failing check.
+Score retrieval of the original RED and tested source, detection of unusable
+evidence, and execution of required current or independent checks separately.
+After advancing the task table to S02, reopen the cited S01 card from the
+delivered files or pinned revision. Inspect actual tool results and the
+mandated trace entries. A shorter record or a correct final label alone
+cannot pass the case.
+
 Evaluate implementation decisions, scope discipline, evidence, and routing—not exact wording or heading order.
 
 ## Case 1: MML selected-failure rerun replacement
