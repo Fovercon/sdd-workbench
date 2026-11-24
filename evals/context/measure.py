@@ -59,7 +59,71 @@ def record_unittest_lists(content, end_line, first_ends, stats):
                                            'tests': count, 'utf8_bytes': size})
 
 
-def measure(host,path):
+class ReferenceTiming:
+    """Locate exact reference text in successful Pi tool returns."""
+
+    def __init__(self, path):
+        raw = Path(path).read_bytes()
+        body = raw[:-2] if raw.endswith(b'\r\n') else raw.removesuffix(b'\n')
+        self.text = body.decode('utf-8')
+        if not self.text.strip():
+            raise ValueError('reference text must contain non-whitespace content')
+        self.report = {'source_sha256': hashlib.sha256(raw).hexdigest(), 'matched_text_utf8_bytes': len(body),
+                       'matched_calls': 0, 'first_return': None}
+        self.request = 0
+        self.issuers = {}
+        self.pending = {}
+        self.extra_ends = Counter()
+
+    def observe(self, event, line):
+        kind = event.get('type')
+        if kind == 'message_end' and event.get('message', {}).get('role') == 'assistant':
+            self.request += 1
+            unissued = self.issuers
+            self.issuers = {}
+            for block in event['message'].get('content', []):
+                if isinstance(block, dict) and block.get('type') == 'toolCall' and isinstance(block.get('id'), str):
+                    call_id = block['id']
+                    duplicate = call_id in unissued or call_id in self.issuers
+                    self.issuers[call_id] = None if duplicate else (block.get('name'), self.request, line)
+            return
+        call_id = event.get('toolCallId')
+        if not isinstance(call_id, str) or not call_id:
+            return
+        tool = event.get('toolName')
+        if kind == 'tool_execution_start':
+            declaration = self.issuers.pop(call_id, None)
+            issuer = declaration[1:] if declaration and declaration[0] in (None, tool) else (None, None)
+            if call_id in self.pending:
+                self.pending[call_id] = None
+                self.extra_ends[call_id] += 1
+            else:
+                self.pending[call_id] = (tool, line, issuer)
+        elif kind == 'tool_execution_end':
+            if self.extra_ends[call_id]:
+                self.extra_ends[call_id] -= 1
+                return
+            start = self.pending.pop(call_id, None)
+            result = event.get('result') or {}
+            if tool not in ('read', 'bash') or not start or start[0] != tool:
+                return
+            if event.get('isError') is not False or result.get('isError'):
+                return
+            blocks = (block for block in result.get('content', []) if isinstance(block, dict))
+            texts = (block.get('text') for block in blocks if block.get('type') == 'text')
+            if not any(isinstance(text, str) and self.text in text for text in texts):
+                return
+            self.report['matched_calls'] += 1
+            if self.report['first_return'] is None:
+                request, issuer_line = start[2]
+                self.report['first_return'] = {'request': request, 'assistant_end_line': issuer_line,
+                                               'start_line': start[1], 'end_line': line, 'tool': tool}
+
+
+def measure(host,path,reference_text=None):
+    if reference_text is not None and host != 'pi':
+        raise ValueError('reference-text timing requires native Pi tool events')
+    reference = ReferenceTiming(reference_text) if reference_text is not None else None
     counts=Counter();tools=Counter();sizes=Counter();calls={};seen_reads=Counter();models=set();largest=[]
     usage_count=missing_input=missing_usage=repeated=malformed=nontext=0;inputs=[];outputs=[];cache=[];native_totals=Counter();digest=hashlib.sha256();valid_utf8=True
     first_list_ends = {}
@@ -76,6 +140,8 @@ def measure(host,path):
             except ValueError:malformed+=1;continue
             if not isinstance(e,dict):malformed+=1;continue
             kind=e.get('type');counts[kind]+=1;u=None
+            if reference is not None:
+                reference.observe(e, line_no)
             if host=='pi'and kind=='message_end'and e.get('message',{}).get('role')=='assistant':
                 message=e['message'];u=message.get('usage');models.add((message.get('provider'),message.get('model')))
             elif host=='codex'and kind=='turn.completed':u=e.get('usage')
@@ -116,7 +182,8 @@ def measure(host,path):
                 item=e.get('item',{})
                 if item.get('type')=='command_execution':tools['command_execution']+=1;sizes['source_or_other']+=len(item.get('aggregated_output','').encode('utf-8'))
     complete=counts['agent_end']>0 if host=='pi'else counts['turn.completed']>0
-    return {'host':host,'analyzer_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'events_sha256':digest.hexdigest(),'raw_stream_valid_utf8':valid_utf8,'malformed_lines':malformed,
+    return {**({'pi_reference_text': reference.report} if reference is not None else {}),
+            'host':host,'analyzer_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'events_sha256':digest.hexdigest(),'raw_stream_valid_utf8':valid_utf8,'malformed_lines':malformed,
             'native_completion_event_observed':complete,'completed_usage_events':usage_count,'completed_without_usage':missing_usage,
             'usage_events_with_input':len(inputs),'usage_events_missing_input_fields':missing_input,'complete_input_usage':missing_usage==0 and missing_input==0 and usage_count>0,
             'input_usage_granularity':'assistant-message'if host=='pi'else'turn-aggregate',
@@ -134,6 +201,12 @@ def measure(host,path):
                       'No billing, quality, comparative advantage or causal token attribution is inferred.']}
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--host',choices=['pi','codex'],required=True);p.add_argument('--events',required=True);p.add_argument('--output',required=True);a=p.parse_args()
-    result=measure(a.host,a.events);Path(a.output).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--host',choices=['pi','codex'],required=True);p.add_argument('--events',required=True);p.add_argument('--output',required=True)
+    p.add_argument('--reference-text', type=Path, help='Pi only: locate an exact frozen UTF-8 reference in read/bash returns')
+    a=p.parse_args()
+    try:
+        result=measure(a.host,a.events,a.reference_text)
+    except (OSError, ValueError) as exc:
+        p.error(str(exc))
+    Path(a.output).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({k:result[k]for k in ['completed_usage_events','reported_input_sum','reported_request_input_peak','delivered_tool_text_utf8_bytes']},ensure_ascii=True))

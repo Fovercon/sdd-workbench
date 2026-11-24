@@ -22,6 +22,16 @@ delivered functions on that exact input in the isolated evaluator. Compare
 the result and any stated calculation with the report. A passing product
 suite can still accompany an incorrect usage example.
 
+When testing when Finish is first consulted, compare its actual tool return
+with the first slice's failing test, the combined review decision, and the
+readiness decision. Record full text, excerpts and catalog descriptions
+separately. Use the assistant request that selected each call to distinguish
+an earlier instruction from one returned in the same batch of tools.
+Repeat with a project requiring a named Finish gate before design, and with
+an already-converged baseline requesting only a readiness assessment. Check
+that the actor obtains the required evidence at the right time and stays within
+the write and delivery permissions for each request.
+
 ## Reserved design approval counterexample
 
 Copy the same initial fixture into another temporary project. Add this actual

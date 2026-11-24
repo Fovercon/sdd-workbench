@@ -64,6 +64,33 @@ Partial lists, quiet output, skipped cases and other formats fall outside this
 metric. Execution counts, permission to reuse evidence and token savings require
 separate evidence.
 
+### Locate the first return of a skill's text
+
+Use the frozen file from the trial. This example locates the first successful
+Pi read or shell result containing the Finish entrypoint in full.
+
+```sh
+python3 -B evals/context/measure.py --host pi --events /path/to/trial/events.jsonl \
+  --reference-text /path/to/trial/runtime/sdd-finish-readiness/SKILL.md --output /path/to/metrics.json
+```
+
+`pi_reference_text` records the source SHA-256, matched byte length, number
+of matching calls and the first matching tool start and end lines. When the
+last completed assistant message uniquely declares the matching call, its ordinal
+and line identify the request that chose the call. Two tools requested in the
+same message were selected before either result could inform that choice.
+Compare the end line with independently verified implementation, review and
+readiness events. For a distinctive passage, supply its exact frozen bytes as
+the reference and report it separately from full-file matches.
+
+One text block must contain the complete UTF-8 reference, ignoring one final
+line ending in the reference. The match identifies returned text. A different
+file can contain the same words, and the skill catalog, split excerpts, failed
+calls or other channels can carry information outside this measurement.
+A missing or ambiguous issuer is reported as null. Overlapping calls sharing
+an ID cannot establish a match. Use the raw trace and completion status
+to interpret zero matches and measure actual usage separately.
+
 ### Capture one run for multiple views of its output
 
 When the task permits project-local evidence, this POSIX-shell example runs a
