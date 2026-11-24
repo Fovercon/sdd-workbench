@@ -132,6 +132,53 @@ the host's temporary files outside the four model tools. Record temporary
 writes even if the actor removes them. They matter when the request authorizes
 assessment only and explicitly forbids writes.
 
+### Read-only closeout checks
+
+When the request permits a fresh local check and forbids filesystem changes,
+the controller can run that check with Linux Bubblewrap. Select a stable
+synthetic fixture containing only regular files and directories.
+
+```sh
+python3 -B evals/context/run_readonly_probe.py /path/to/fixture -- python3 -B "src/credit counter.py" 8
+```
+
+The child starts in the read-only project at `/project`, with read-only system
+binaries and libraries, an empty read-only `/tmp`, a fresh environment and a
+private network namespace. A missing sandbox dependency stops the probe before
+launch. The filesystem rejects writes. The wrapper forwards stdout, stderr and
+the child's exit status, which can still be zero if the child handles a write
+error or a later shell command succeeds. Keep the caller's stdout and stderr on
+permitted streams. Shell redirections outside the wrapper use the caller's
+permissions.
+
+The wrapper applies to one command. For a whole read-only assessment, route
+every model tool through the restricted host, mount its project, skill runtime
+and private temporary directory read-only, and keep controller logs outside
+the model's reach. Check that read and product commands succeed and that edit,
+file creation and shell redirection are refused in the actual mounted trial.
+Use a separate writable trial with an observer to measure how the actor uses
+its permissions. A request that authorizes saving a named report or executing
+delivery needs its own write scope.
+
+To check recorded write activity, pass the controller's `watch.json` and
+any exact files the request allows. Omitting `--allow-file` checks a zero-write
+request. In this example only the report path is permitted.
+
+```sh
+python3 -B evals/context/audit_write_events.py /path/to/trial/watch.json --allow-file project/work/readiness.md
+```
+
+The JSON input is the observer's array of notifications. Each has a
+trial-relative `path` under `project`, `runtime` or `sandbox-tmp`, an
+`events` list of inotify names and a boolean `directory`. Output identifies
+the log by SHA-256 and findings by row, including creation and removal of
+temporary files. Exit 1 means out-of-scope write activity was recorded.
+Exit 2 flags invalid input, overflow or lost coverage and retains any
+identifiable findings. Exit 0 means no out-of-scope events were recorded.
+Check watcher coverage, completeness, before/after bytes and actual commands
+when evaluating a zero-write claim. The path comparison does not check
+whether an allowed file was produced correctly or whether it was append-only.
+
 ## Quality precedes efficiency
 
 `evaluate_view.py` checks the original inputs, frozen runtime, all retained bundle receipts,
