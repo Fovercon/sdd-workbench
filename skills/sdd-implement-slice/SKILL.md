@@ -61,6 +61,11 @@ is available, use `scripts/evidence.py record` as described in
 test and relevant fixture paths before execution; use a fresh ID for each real
 invocation, including failed attempts before repairs.
 
+Run the selected proof command through capture from its first execution,
+including a quick preview inside a test-writing command. Test creation and
+the captured first run can share one tool call; a later recorded repeat is a
+separate observation.
+
 The returned `command_exit` is the check's outcome; successful recording means
 the observation was saved. Cite that actual record from the receipt's check
 role. One invocation may satisfy several roles; a later run is new evidence
@@ -128,7 +133,7 @@ For `RED_GREEN`:
 
 1. add or select the smallest test that expresses the slice behavior;
 2. name the production change that would make it pass;
-3. run the exact focused command;
+3. run the exact focused command through the selected capture from its first attempt;
 4. confirm it fails rather than errors;
 5. confirm the failure is caused by the missing or defective behavior.
 

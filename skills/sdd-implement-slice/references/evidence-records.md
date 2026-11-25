@@ -31,6 +31,10 @@ revision, the next run has a new ID and preserves the previous output and
 fingerprints. File hashes identify the tested bytes; they
 do not preserve recoverable copies of historical source.
 
+The first try of a selected check, including a preview immediately after
+writing tests, is captured as it executes. Creating tests and then invoking
+`record` in one shell call preserves this boundary without an extra test run.
+
 The recorder executes that command once. For a required chronological trace,
 choose that same trace as `--log`; its saved observation carries the command
 and result. The slice closure cites the observation.

@@ -12,6 +12,8 @@ child exit and tested production/test/fixture identities. Capture it with the
 check, before later edits; the receipt maps roles to those actual records and
 adds classification and limits. Project-required self-contained receipts keep
 their specified command/result/identity fields inline.
+When that format requires complete hashes, include the full values for every
+required source/test file, including unchanged files, from the actual record.
 
 ```markdown
 ## receipt-s02-v1

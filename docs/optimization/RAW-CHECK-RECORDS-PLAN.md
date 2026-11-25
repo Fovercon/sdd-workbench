@@ -62,3 +62,19 @@ gets a fresh role-bearing ID; roles cite observations instead of retyping facts.
 Automatic IDs are not an observed blocker: all sixty-two prior explicit recorder
 calls supplied valid distinct IDs. Compact verification output is a separate
 cost experiment. This batch changes neither mechanism.
+
+## First candidate and refinement
+
+Candidate `aa0df52` completed its fixed five projects and standard run separately.
+Its strict original-invocation coverage was 29/30: one actor tried S02 tests
+directly before its first captured rerun. Equal bytes do not make these the same
+invocation. The first candidate and its twelve readers remain under their own
+source identity. A compatibility receipt also abbreviated required inline hashes.
+
+Refinement makes first execution/previews explicit at the capture and RED steps,
+and makes complete project-required inline hashes explicit. No API changes,
+extra execution or actor prompt hints are added. Freeze a new candidate and five
+fresh fixed producer slots; compare to the same frozen control cohort, with each
+candidate version reported separately. Fresh candidate readers use the same
+preselected positions and common control runtime. The exact revised candidate
+needs its own standard run; no result is pooled or accepted as a new baseline.
