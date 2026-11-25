@@ -49,16 +49,25 @@ link to its retained heading or established stable card file. Resolve the URL
 from the receipt's actual location; a same-document reference can use only the
 fragment. An inline-code card ID is a label, not a navigation link.
 
-## Optional check records
+## Proof check records
 
-When the user or project explicitly selects the recording tool, use
-`scripts/evidence.py` as described in
-[evidence records](references/evidence-records.md). Its `record` action
-executes a real foreground check and returns the actual child exit and
-a relative Markdown link. Recorded check facts may be cited from the
-receipt where the project format permits. Its read-only `verify` action
-checks the links actually saved in the citing document. Keep the project's
-write authority, self-contained formats and frozen records intact.
+Capture foreground RED/baseline, GREEN and required regression commands as
+durable invocation-specific records reachable from the receipt. Reuse the
+project's established capture when it already preserves complete output and
+tested identities. Otherwise, when
+current authority permits an appendable Markdown process log and Python 3.10+
+is available, use `scripts/evidence.py record` as described in
+[evidence records](references/evidence-records.md). Supply the actual production,
+test and relevant fixture paths before execution; use a fresh ID for each real
+invocation, including failed attempts before repairs.
+
+The returned `command_exit` is the check's outcome; successful recording means
+the observation was saved. Cite that actual record from the receipt's check
+role. One invocation may satisfy several roles; a later run is new evidence
+even when its command is identical. Searches and routine file reads need no
+new check record. Preserve project-required inline fields, frozen records and
+write limits; use the established evidence workflow when capture is unavailable
+or its format is incompatible. Read-only `verify` checks the saved links.
 
 ## Workflow
 

@@ -285,6 +285,17 @@ behavior evidence, not a semantic report score or proof of OS isolation. Preserv
 negative and partial results; interrupted trials stay unscored. A retained method
 also needs exact-snapshot standard without automatic baseline acceptance.
 
+## Original proof output survives a test revision
+
+In the [record handoff protocol](forward/record-once.md), let a first genuine
+behavioral RED run before production changes. Revise or extend the tests and
+run the same command again. Inspect both original raw outputs, exact tested
+production/test identities and the receipt's references after the slice closes.
+The later result cannot replace the earlier observation merely because argv
+matches. Compare real child output/exit with persisted records; a recording
+process returning success is not a test pass. Include compatible capture,
+self-contained/frozen receipts and project-pinned alternatives in focused guards.
+
 ## General failure conditions
 
 The Skill fails if it:

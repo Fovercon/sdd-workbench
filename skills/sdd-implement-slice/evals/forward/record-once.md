@@ -55,6 +55,14 @@ copies, change a saved fragment, alter one recorded source, and truncate a
 record before its end. Check the reported states separately from the
 reader's ability to find other evidence. Preserve the original actor tree.
 
+For original-output retention, observe the actual child stdout/stderr
+independently in both versions and compare them to the persisted observation.
+Inspect the earliest behavioral failure before production edits, including an
+earlier test revision later repaired or extended. A repeated command's later
+output is another invocation, not a replacement for its original output.
+Count recoverable full output and production/test/fixture identities separately
+from summaries, readable links and the presence of a recorder command.
+
 ## Ask a fresh recipient
 
 Preselect project slots 1–3 per version before running. Preserve a failed or

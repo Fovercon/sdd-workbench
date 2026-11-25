@@ -123,7 +123,10 @@ as setup evidence and disclose that behavioral RED was not established.
 - A rerun that passes after an unexplained failure is evidence of instability, not clean proof.
 - Skips, xfails, warnings, partial collections, timeouts, and generated-state pollution must remain visible.
 
-Record command, result, baseline, and relevant environment. Preserve stdout excerpts only when needed; do not paste huge logs into the receipt.
+For command checks, preserve complete raw output and tested production/test
+identity in the invocation record. The receipt cites it with the role, verdict,
+environment and limits; include only needed excerpts there. Required inline
+receipt formats retain their specified fields.
 
 ## 8. Workspace safety
 

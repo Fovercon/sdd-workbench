@@ -4,10 +4,18 @@ Use the recorder for authorized, non-interactive foreground checks when the
 project permits appending them to a Markdown process log. Python 3.10+ is
 required. Resolve `scripts/evidence.py` relative to this Skill.
 
-The existing project format, frozen whole-file references and write authority
-determine the allowed record location. For an explicit self-contained format,
-use its established evidence workflow. If Python is unavailable, follow the
-existing manual receipt workflow.
+The existing project format, frozen references and current write authority
+determine the allowed record location. Reuse an established project capture
+that already preserves equivalent evidence. A self-contained receipt retains
+its required inline fields even when raw output is stored in an authorized log.
+If Python is unavailable or the log format cannot carry these records, use the
+existing project workflow with invocation-specific output and tested identities.
+
+## Contents
+
+- [Save the actual check](#save-the-actual-check)
+- [Use the generated reference](#use-the-generated-reference)
+- [Verify the references actually saved](#verify-the-references-actually-saved)
 
 ## Save the actual check
 
@@ -15,6 +23,13 @@ Initialize an authorized log with its title if it does not exist. Select a
 new check ID for each real invocation, including setup repairs and later
 regressions. Include the actual source, tests and relevant fixtures in
 `--source`. An absent source file is recorded as missing.
+
+This capture serves proof-bearing foreground commands, not every search or
+file read. Save the observation at the currently authorized project record
+location so another session can reopen it from the receipt. After a test
+revision, the next run has a new ID and preserves the previous output and
+fingerprints. File hashes identify the tested bytes; they
+do not preserve recoverable copies of historical source.
 
 The recorder executes that command once. For a required chronological trace,
 choose that same trace as `--log`; its saved observation carries the command
@@ -59,8 +74,8 @@ with those exact headings. Verify each document after saving its links.
 The slice closure records outcome, actual changes, deviations, remaining
 limits and Markdown links to these observations. The authorized task status
 contains a Markdown link to that closure and any dependency it satisfies.
-Keep historical cards and
-their stable locations available after advancing to S02.
+One real invocation can support several check roles through the same link.
+Keep historical cards and their stable locations available after advancing to S02.
 
 ## Verify the references actually saved
 
