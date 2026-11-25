@@ -35,6 +35,9 @@ delivered files or pinned revision. Inspect actual tool results and the
 mandated trace entries. A shorter record or a correct final label alone
 cannot pass the case.
 
+The [producer and fresh-recipient protocol](forward/record-once.md) follows
+the first evidence write through S02 and scores natural records as delivered.
+
 Evaluate implementation decisions, scope discipline, evidence, and routing—not exact wording or heading order.
 
 ## Case 1: MML selected-failure rerun replacement
