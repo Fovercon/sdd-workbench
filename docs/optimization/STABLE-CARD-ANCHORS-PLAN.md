@@ -43,22 +43,27 @@ Files are Plan `SKILL.md`, Plan `references/artifact-templates.md`, Implement
 
 ## Task 2 — Verify behavior and cost
 
-- [ ] Run five fresh candidate developments on identical frozen initial inputs.
+- [x] Run five fresh candidate developments on identical frozen initial inputs.
   All five should retain the actual consumed cards and resolvable citations both
   when first saved and after S02. Score ID text and real links separately.
-- [ ] Check product behavior, original RED/GREEN/regression, delivery examples,
+- [x] Check product behavior, original RED/GREEN/regression, delivery examples,
   duplication, permissions, writes and whole-flow native usage independently.
   Do not infer total savings from shorter headings or fewer documents.
-- [ ] Give the first three projects per arm to two fresh read-only recipients
+- [x] Give the first three projects per arm to two fresh read-only recipients
   each, under the same control runtime. Preserve their natural artifacts.
-- [ ] Check custom layouts and existing frozen/self-contained records in focused
+- [x] Check custom layouts and existing frozen/self-contained records in focused
   compatibility runs. New conventions must not authorize rewriting frozen inputs.
-- [ ] Complete the exact-candidate standard regression with registered DeepSeek
+- [x] Complete the exact-candidate standard regression with registered DeepSeek
   Flash and all required local checks. Keep scores and manual interpretation
   separate, preserve failed trials, and do not accept a new baseline.
-- [ ] Keep, revise or drop the method according to observed card retrieval and
+- [x] Keep, revise or drop the method according to observed card retrieval and
   obligations. Report actual costs and any unresolved regressions before the
   final development commit.
+
+The source fix is retained for the 5/5 first/final navigation result and 6/6
+candidate card retrieval. This closes the evaluation task, not every workflow
+guard. Original-output loss, duplicate details and scope/phase failures remain
+open in [the results](STABLE-CARD-ANCHORS-RESULTS.md).
 
 ## Deferred from this batch
 
