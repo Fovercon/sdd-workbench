@@ -31,31 +31,39 @@ gets a fresh role-bearing ID; roles cite observations instead of retyping facts.
 
 ## Work and acceptance
 
-- [ ] Freeze five fresh control developments, identical initial inputs and prompt,
+- [x] Freeze five fresh control developments, identical initial inputs and prompt,
   before evaluating a new candidate. Existing lost-output cases establish RED.
 - [x] Replace named-tool selection with bounded, authorized proof-check capture.
 - [x] Make receipt check fields point to the real invocation; preserve required
   inline formats. Keep the capture API unchanged.
 - [x] Independently review source before freezing the candidate.
-- [ ] Run five fresh matched candidate developments. Primary: all thirty logical
+- [x] Run five fresh matched candidate developments. Primary: all thirty logical
   core roles have retrievable complete original output and matching production
   and test identities. Check actual invocations separately from logical roles,
   wrong failures, repaired tests and later reruns. No overwritten originals.
-- [ ] Observe complete child stdout/stderr independently in both arms. Compare
+- [x] Observe complete child stdout/stderr independently in both arms. Compare
   existing recorder records with actual child processes and native tool results.
   Observe original content at first persistence, not only the final snapshot.
-- [ ] Preselect t1–t3 from both arms for two new readers each, same control
+- [x] Preselect t1–t3 from both arms for two new readers each, same control
   runtime. Distinguish raw recovery, summaries, identity and current applicability.
-- [ ] Check self-contained/frozen layouts and project-pinned capture fallback
+- [x] Check self-contained/frozen layouts and project-pinned capture fallback
   without authorizing new files or weakening evidence requirements. Report
   unavailable-Python behavior only if that environment is actually exercised.
-- [ ] Measure duplicate detail, mutations, whole-flow requests/input/cache/output
+- [x] Measure duplicate detail, mutations, whole-flow requests/input/cache/output
   and tool-return bytes. Record actual gains, regressions and selection differences;
   no lower-cost claim follows from fewer lines or recorder adoption alone.
-- [ ] Run the exact final candidate's standard regression and required local
+- [x] Run the exact final candidate's standard regression and required local
   checks, using explicit registered DeepSeek Flash. Do not accept a new baseline.
-- [ ] Keep, revise or drop the method from the observed evidence, and record
+- [x] Keep, revise or drop the method from the observed evidence, and record
   unresolved guards before integration into the development branch.
+
+Work completed does not mean every criterion passed. Revised `7a4a651` has
+30/30 original-record roles, but the complete preregistered primary fails its
+card-citation requirement (4/5 projects); permission and stage guards also
+have failures. Keep the reliability change on the development branch with
+these limits and higher observed cost, not as release-ready or whole-flow GO.
+Final standard `20261125T091347Z-standard` completed 211/211 and passed 10/13
+gates. See [results and open issues](RAW-CHECK-RECORDS-RESULTS.md).
 
 ## Deferred
 
@@ -69,7 +77,9 @@ Candidate `aa0df52` completed its fixed five projects and standard run separatel
 Its strict original-invocation coverage was 29/30: one actor tried S02 tests
 directly before its first captured rerun. Equal bytes do not make these the same
 invocation. The first candidate and its twelve readers remain under their own
-source identity. A compatibility receipt also abbreviated required inline hashes.
+source identity. One compatibility receipt also used abbreviated hash identities;
+strict full-hash coverage is reported separately from the fixture's required
+identity fields, which did not literally require 64-character hashes.
 
 Refinement makes first execution/previews explicit at the capture and RED steps,
 and makes complete project-required inline hashes explicit. No API changes,
