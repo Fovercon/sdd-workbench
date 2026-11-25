@@ -39,6 +39,19 @@ and the delivered task table, receipt and chronological trace.
   actor later removes it and obtains a genuine pass. Establish chronology
   from native tool events and cross-check authored timestamps against them.
 
+## Check a recorder
+
+For a candidate with an execution recorder, distinguish help or source reads
+from actual delegated checks. Match the recorder process, its child command,
+recorded output and declared source identities to the independent native
+observations. The recorder's successful exit and the child command's exit
+are different facts. Count its real file writes and full record bytes.
+
+Verify links read from the final task and receipt documents. On disposable
+copies, change a saved fragment, alter one recorded source, and truncate a
+record before its end. Check the reported states separately from the
+reader's ability to find other evidence. Preserve the original actor tree.
+
 ## Ask a fresh recipient
 
 Preselect project slots 1–3 per version before running. Preserve a failed or

@@ -44,6 +44,17 @@ Inspect and identify exact versions of:
 
 Do not trust paths, symbols, commands, completion claims, or line numbers merely because the card lists them. Verify short-lived execution detail against the current repository.
 
+## Optional check records
+
+When the user or project explicitly selects the recording tool, use
+`scripts/evidence.py` as described in
+[evidence records](references/evidence-records.md). Its `record` action
+executes a real foreground check and returns the actual child exit and
+a relative Markdown link. Recorded check facts may be cited from the
+receipt where the project format permits. Its read-only `verify` action
+checks the links actually saved in the citing document. Keep the project's
+write authority, self-contained formats and frozen records intact.
+
 ## Workflow
 
 ### 1. Establish slice identity and authority
