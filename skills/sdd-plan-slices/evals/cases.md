@@ -141,6 +141,13 @@ Use these cases to evaluate whether the Skill preserves its boundaries and produ
   upstream rather than executing the historical card or relabeling it current.
 - In a whole-file hash checkpoint, appending to a report makes its old reference
   stale; neither a section locator nor fewer files is grounds to bypass that gate.
+- The cited card ID is an actual retained heading or established stable file.
+  Title/state changes preserve that target; a revised execution contract retains
+  the previous revision. Frozen card bytes stay unchanged, with later state in an
+  existing unfrozen record. A historical `CURRENT` snapshot is not live authority.
+- A nested receipt uses a real Markdown URL relative to itself. Count bare
+  inline-code labels separately from working navigation, including first-write
+  failures repaired later. Use the [record handoff protocol](../../sdd-implement-slice/evals/forward/record-once.md).
 
 ## Failure conditions across all cases
 

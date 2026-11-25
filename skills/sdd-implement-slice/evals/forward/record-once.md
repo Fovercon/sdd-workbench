@@ -29,6 +29,9 @@ and the delivered task table, receipt and chronological trace.
 - Reopen cited sections after advancing to S02. Check actual heading anchors
   and retained card revisions. A filename, fragment string or copied hash
   alone does not establish that the record can be retrieved.
+  Compare the target at its first persisted citation and after card closure.
+  Distinguish real Markdown navigation from inline-code labels, and resolve a
+  nested receipt's URL from that document rather than from the project root.
 - Preserve the project's required independent receipts, inline fields and
   chronological results. Cover a separately required self-contained receipt
   and an existing whole-file hash reference in focused controls.

@@ -44,6 +44,11 @@ Inspect and identify exact versions of:
 
 Do not trust paths, symbols, commands, completion claims, or line numbers merely because the card lists them. Verify short-lived execution detail against the current repository.
 
+In the receipt's card-identity field, cite the consumed revision with a Markdown
+link to its retained heading or established stable card file. Resolve the URL
+from the receipt's actual location; a same-document reference can use only the
+fragment. An inline-code card ID is a label, not a navigation link.
+
 ## Optional check records
 
 When the user or project explicitly selects the recording tool, use
