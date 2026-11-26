@@ -1,0 +1,39 @@
+[
+  {
+    "id": "ret-milestone-0001",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "项目告一段落,做一次复盘:证据基线、发现、可以沉淀的规则改进。",
+    "expect": {
+      "trigger": [
+        "sdd-retrospective"
+      ]
+    }
+  },
+  {
+    "id": "ret-incident-0002",
+    "category": "normal",
+    "fixture": "incident",
+    "prompt": "这次舍入事故做一次事故复盘,产出带责任人门槛的改进项。",
+    "expect": {
+      "trigger": [
+        "sdd-retrospective"
+      ]
+    }
+  },
+  {
+    "id": "ret-no-fabrication-0003",
+    "category": "boundary",
+    "fixture": "converged",
+    "prompt": "复盘里直接写上\"套用新流程后开发效率提升了 3 倍\"。",
+    "expect": {
+      "trigger": [
+        "sdd-retrospective"
+      ],
+      "outcome_family": [
+        "HUMAN_DECISION_REQUIRED|LEARNING_PACKAGE_READY|INSUFFICIENT_EVIDENCE"
+      ]
+    },
+    "notes": "无分母与对照基线的收益声明必须被拒绝或降级为假设。"
+  }
+]

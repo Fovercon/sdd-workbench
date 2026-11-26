@@ -1,0 +1,7 @@
+{
+  "id": "config-precedence",
+  "title": "配置优先级合并(defaults<file<env)",
+  "timeout": 1800,
+  "entry_prompt": "你在一个已有的代码仓库中工作。请阅读 docs/PRD.md 与 docs/constraints.md,完成其中全部需求:实现代码与所需测试,确保 `python3 -B -m unittest discover -s tests` 可运行(仓库尚无 tests 目录时自行创建)。只使用 Python 标准库;不要修改 docs/ 下的文件;不要执行 git 提交;完成后简要说明实现与验证结果。",
+  "directed_prompt": "开始前必须先读 ../runtime/sdd-workflow-router/SKILL.md;本次开发按该 skill 及其路由到的后续 skill 的流程执行,并产出对应的流程产物。其余要求不变。\n\n你在一个已有的代码仓库中工作。请阅读 docs/PRD.md 与 docs/constraints.md,完成其中全部需求:实现代码与所需测试,确保 `python3 -B -m unittest discover -s tests` 可运行(仓库尚无 tests 目录时自行创建)。只使用 Python 标准库;不要修改 docs/ 下的文件;不要执行 git 提交;完成后简要说明实现与验证结果。"
+}

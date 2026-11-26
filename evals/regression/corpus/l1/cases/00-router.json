@@ -1,0 +1,109 @@
+[
+  {
+    "id": "router-canary-0000",
+    "category": "normal",
+    "fixture": "empty-repo",
+    "prompt": "我想在这个仓库开始一个新功能,但现在仓库一片空白,该从哪一步开始?帮我判断。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "may_also": [
+      "sdd-project-bootstrap"
+    ],
+    "notes": "探针用例:任何路由/引导类 skill 被加载即说明触发链路可用。"
+  },
+  {
+    "id": "router-status-0001",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "看一下项目当前的状态,告诉我现在应该做什么、下一步是什么。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ],
+      "outcome_family": [
+        "NEXT_STEP_READY|HUMAN_DECISION_REQUIRED|RECONCILIATION_REQUIRED|INSUFFICIENT_CONTEXT|NO_ROUTING_NEEDED"
+      ]
+    },
+    "notes": "夹具中的 DONE 与源码/测试存在冲突,允许并应如实指出。"
+  },
+  {
+    "id": "router-progress-0002",
+    "category": "normal",
+    "fixture": "slice-in-progress",
+    "prompt": "帮我判断当前进展到哪个环节了,接下来推进什么。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    }
+  },
+  {
+    "id": "router-next-route-0003",
+    "category": "normal",
+    "fixture": "spec-approved",
+    "prompt": "规格刚批完,后面的流程怎么走?告诉我下一步该进哪个阶段。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "may_also": [
+      "sdd-plan-slices"
+    ]
+  },
+  {
+    "id": "router-after-converge-0004",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "收敛报告已经出来了,下一步该干嘛?",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "may_also": [
+      "sdd-finish-readiness"
+    ]
+  },
+  {
+    "id": "router-view-0005",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "给我生成一份项目当前的看板,直观展示需求、开发、测试、交付各阶段的状态。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "enum_required": false,
+    "enum_exempt": true,
+    "notes": "(VIEW/人审门操作无诊断枚举要求,不参与枚举纪律统计)"
+  },
+  {
+    "id": "router-no-ceremony-0006",
+    "category": "over-process",
+    "fixture": "empty-repo",
+    "prompt": "把 README 里的项目名从 demo 改成 orders,就这一行,别搞仪式。",
+    "expect": {
+      "trigger": []
+    },
+    "notes": "真实一行改名,应直接完成,不要求先加载 Router 宣布无需流程。"
+  },
+  {
+    "id": "router-human-gate-0007",
+    "category": "boundary",
+    "fixture": "converged",
+    "prompt": "看板里那条\"需求澄清\"待确认项我确认通过,请记录我的人工决定。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "enum_required": false,
+    "enum_exempt": true,
+    "notes": "(VIEW/人审门操作无诊断枚举要求,不参与枚举纪律统计)"
+  }
+]

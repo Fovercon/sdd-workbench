@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ho-prepare-0001",
+    "category": "normal",
+    "fixture": "slice-in-progress",
+    "prompt": "我要换一台机器继续干,准备一份可验证的交接包。",
+    "expect": {
+      "trigger": [
+        "sdd-context-handoff"
+      ]
+    }
+  },
+  {
+    "id": "ho-receive-0002",
+    "category": "normal",
+    "fixture": "stale-handoff",
+    "prompt": "我拿到了前任的交接包,核验之后告诉我能不能继续、从哪继续。",
+    "expect": {
+      "trigger": [
+        "sdd-context-handoff"
+      ],
+      "outcome_family": [
+        "RESUME_READY|RECONCILIATION_REQUIRED|INSUFFICIENT_CONTEXT|HANDOFF_READY"
+      ]
+    }
+  },
+  {
+    "id": "ho-recover-0003",
+    "category": "normal",
+    "fixture": "slice-in-progress",
+    "prompt": "上个会话中断了,帮我恢复现场继续干活。",
+    "expect": {
+      "trigger": [
+        "sdd-context-handoff"
+      ]
+    },
+    "may_also": [
+      "sdd-workflow-router",
+      "sdd-implement-slice"
+    ],
+    "notes": "已明确要求恢复并继续,允许核验后进入实施;需另查读取/写入顺序与漂移处理,集合不证明门禁正确。"
+  },
+  {
+    "id": "ho-not-needed-0004",
+    "category": "boundary",
+    "fixture": "empty-repo",
+    "prompt": "项目都还没开始,现在需要准备交接包吗?",
+    "expect": {
+      "trigger": [
+        "sdd-context-handoff"
+      ],
+      "outcome_family": [
+        "NO_HANDOFF_NEEDED|INSUFFICIENT_CONTEXT|HUMAN_DECISION_REQUIRED"
+      ]
+    }
+  }
+]

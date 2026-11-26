@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "conditions": [
+    {
+      "id": "baseline",
+      "skills": [],
+      "prompt": "organic",
+      "note": "裸 agent,无任何 SDD skill"
+    },
+    {
+      "id": "full",
+      "skills": [
+        "ALL"
+      ],
+      "prompt": "organic",
+      "note": "完整 12-skill 套件;prompt 不提及 skills(自然采用)"
+    },
+    {
+      "id": "core5",
+      "skills": [
+        "sdd-requirements-contract",
+        "sdd-plan-slices",
+        "sdd-implement-slice",
+        "sdd-converge-review",
+        "sdd-finish-readiness"
+      ],
+      "prompt": "organic",
+      "note": "五个核心阶段 skill,无 router 与条件类 skill"
+    },
+    {
+      "id": "no-router",
+      "skills": [
+        "ALL_MINUS",
+        "sdd-workflow-router"
+      ],
+      "prompt": "organic",
+      "note": "去掉路由器,检验 router 的独立贡献"
+    },
+    {
+      "id": "directed",
+      "skills": [
+        "ALL"
+      ],
+      "prompt": "directed",
+      "note": "同 full 的 skill 集;prompt 强制先读 router SKILL.md 并走 SDD 流程,衡量套件被实际使用时的效果与开销(软引导已实测与 organic 等价,故采用强制措辞)"
+    }
+  ]
+}

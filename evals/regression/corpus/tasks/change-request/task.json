@@ -1,0 +1,18 @@
+{
+  "id": "change-request",
+  "title": "规格下变更请求(过程型:测影响分析先行)",
+  "timeout": 1800,
+  "kind": "process",
+  "entry_prompt": "需求变更:重试从最多 2 次改为最多 5 次,间隔改为指数退避 1/2/4/8/16 秒、单次上限 30 秒。先分析这次变更对规格、测试与实现的影响,再实施,完成后保持全部测试通过。 补充 API 合同:delay_before(retry_index) 是纯退避值查询,接受任意正整数序号,即使序号超过 max_retries 也按指数退避与 30 秒上限计算;例如 delay_before(6)=30、delay_before(9)=30。查询不触发或允许额外重试,实际重试预算仍为 5 次、总尝试数为 6。",
+  "directed_prompt": "开始前必须先读 ../runtime/sdd-workflow-router/SKILL.md;本次开发按该 skill 及其路由到的后续 skill 的流程执行,并产出对应的流程产物。其余要求不变。\n\n需求变更:重试从最多 2 次改为最多 5 次,间隔改为指数退避 1/2/4/8/16 秒、单次上限 30 秒。先分析这次变更对规格、测试与实现的影响,再实施,完成后保持全部测试通过。 补充 API 合同:delay_before(retry_index) 是纯退避值查询,接受任意正整数序号,即使序号超过 max_retries 也按指数退避与 30 秒上限计算;例如 delay_before(6)=30、delay_before(9)=30。查询不触发或允许额外重试,实际重试预算仍为 5 次、总尝试数为 6。",
+  "process": {
+    "reply_must_match": [
+      "IMPACT_READY|HUMAN_DECISION_REQUIRED|影响(分析|面)|INVALIDATED|REVERIFY"
+    ],
+    "reply_must_not_match": [],
+    "weights": {
+      "reply": 0.4,
+      "hidden": 0.6
+    }
+  }
+}

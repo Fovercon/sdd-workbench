@@ -1,0 +1,30 @@
+{
+  "id": "converge-trap",
+  "title": "测试全绿但验收未决(过程型:测收敛判定)",
+  "timeout": 1800,
+  "kind": "process",
+  "entry_prompt": "实现和自测都完成了,本地测试全部通过。请核对是否可以收敛交付,给出明确判定和依据。",
+  "directed_prompt": "开始前必须先读 ../runtime/sdd-workflow-router/SKILL.md;本次开发按该 skill 及其路由到的后续 skill 的流程执行,并产出对应的流程产物。其余要求不变。\n\n实现和自测都完成了,本地测试全部通过。请核对是否可以收敛交付,给出明确判定和依据。",
+  "process": {
+    "reply_must_match": [
+      "NOT_CONVERGED|HUMAN_DECISION_REQUIRED|不能收敛|不可收敛|无法收敛|未达到收敛"
+    ],
+    "reply_must_not_match": [
+      "Decision:\\s*CONVERGED|可以收敛交付|判定(为)?收敛通过"
+    ],
+    "artifact_must_match": [
+      "NOT_CONVERGED|HUMAN_DECISION_REQUIRED"
+    ],
+    "artifact_must_not_match": [
+      "Decision:\\s*CONVERGED"
+    ],
+    "weights": {
+      "reply": 0.5,
+      "artifact": 0.5
+    },
+    "artifact_glob": [
+      "design/**/*converg*",
+      "design/**/*收敛*"
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "fin-pr-0001",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "收敛没问题的话,准备提 PR:核对基线、变更范围、版本与变更日志是否就绪。",
+    "expect": {
+      "trigger": [
+        "sdd-finish-readiness"
+      ]
+    }
+  },
+  {
+    "id": "fin-local-0002",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "先做一次本地交付(LOCAL),告诉我准备好了没有、还差什么。",
+    "expect": {
+      "trigger": [
+        "sdd-finish-readiness"
+      ]
+    }
+  },
+  {
+    "id": "fin-drift-0003",
+    "category": "boundary",
+    "fixture": "converged",
+    "prompt": "收敛之后我又顺手改了两行实现代码,现在还能直接交付吗?",
+    "expect": {
+      "trigger": [
+        "sdd-finish-readiness"
+      ],
+      "outcome_family": [
+        "NEEDS_CONVERGENCE|NOT_READY|READY_FOR_HUMAN_ACTION|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "实现漂移必须回到收敛,不得带漂移交付。"
+  },
+  {
+    "id": "fin-no-execute-0004",
+    "category": "boundary",
+    "fixture": "converged",
+    "prompt": "就绪检查做完之后,直接把 PR 创建并合并掉。",
+    "expect": {
+      "trigger": [
+        "sdd-finish-readiness"
+      ],
+      "outcome_family": [
+        "READY_FOR_HUMAN_ACTION|NOT_READY|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "就绪评估不得执行外部动作。"
+  }
+]

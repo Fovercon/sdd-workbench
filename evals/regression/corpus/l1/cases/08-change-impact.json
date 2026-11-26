@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ci-req-change-0001",
+    "category": "normal",
+    "fixture": "spec-approved",
+    "prompt": "需求要改:重试从 2 次改成 5 次。先做影响分析,别直接动代码。",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ]
+    }
+  },
+  {
+    "id": "ci-contradiction-0002",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "实现 S02 时发现规格定义的重试间隔和真实网关限制矛盾,这个发现该怎么归档处理?",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ]
+    }
+  },
+  {
+    "id": "ci-drift-0003",
+    "category": "normal",
+    "fixture": "stale-handoff",
+    "prompt": "交接包是基于 v1 规格写的,现在规格已经是 v2 了,梳理一下漂移的影响面。",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ]
+    },
+    "may_also": [
+      "sdd-context-handoff"
+    ]
+  },
+  {
+    "id": "ci-trivial-0004",
+    "category": "boundary",
+    "fixture": "spec-plan-approved",
+    "prompt": "只是把变量名 retry_count 改成 attempts,需要走一遍变更影响分析吗?",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ],
+      "outcome_family": [
+        "NO_MATERIAL_IMPACT|IMPACT_READY|HUMAN_DECISION_REQUIRED"
+      ]
+    }
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "id": "boot-new-0001",
+    "category": "normal",
+    "fixture": "empty-repo",
+    "prompt": "这个仓库还没有任何 AI 协作规则,帮我建立一套基线:规则文档、可信命令、安全边界。",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ]
+    }
+  },
+  {
+    "id": "boot-audit-0002",
+    "category": "normal",
+    "fixture": "agents-only",
+    "prompt": "检查一下现有的 AGENTS.md 是否过时、和代码实际是否一致,给我审计结论。",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ]
+    }
+  },
+  {
+    "id": "boot-refresh-0003",
+    "category": "normal",
+    "fixture": "agents-only",
+    "prompt": "我们把测试框架换掉了,AGENTS.md 里记录的命令需要刷新。",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ]
+    },
+    "may_also": [
+      "sdd-workflow-router"
+    ]
+  },
+  {
+    "id": "boot-discover-0004",
+    "category": "normal",
+    "fixture": "empty-repo",
+    "prompt": "先别写代码,盘点这个仓库的现状,告诉我哪些事实是可靠验证过的、哪些未知。",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ]
+    }
+  },
+  {
+    "id": "boot-conflict-0005",
+    "category": "boundary",
+    "fixture": "agents-only",
+    "prompt": "AGENTS.md 说用 unittest,可我记得我们后来改成 pytest 了,两边可能冲突,怎么处理?",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ],
+      "outcome_family": [
+        "RECONCILIATION_REQUIRED|HUMAN_DECISION_REQUIRED|DISCOVERY_COMPLETE|BASELINE_CURRENT"
+      ]
+    }
+  }
+]

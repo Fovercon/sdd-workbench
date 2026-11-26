@@ -1,0 +1,91 @@
+[
+  {
+    "id": "conf-boot-vs-req-0001",
+    "category": "confusion",
+    "fixture": "empty-repo",
+    "prompt": "我要开始做需求了,先把仓库的协作规则和需求规格一起弄好。",
+    "expect": {
+      "trigger": [
+        "sdd-project-bootstrap"
+      ]
+    },
+    "may_also": [
+      "sdd-requirements-contract",
+      "sdd-workflow-router"
+    ],
+    "notes": "最早的门先做:先基线后规格。"
+  },
+  {
+    "id": "conf-cr-vs-conv-0002",
+    "category": "confusion",
+    "fixture": "code-only-changes",
+    "prompt": "这些改动到底满不满足当初的想法?给个判定。",
+    "expect": {
+      "trigger": [
+        "sdd-code-review"
+      ]
+    },
+    "may_also": [
+      "sdd-converge-review"
+    ]
+  },
+  {
+    "id": "conf-finish-vs-conv-0003",
+    "category": "confusion",
+    "fixture": "converged",
+    "prompt": "都做完了,直接发布上线吧。",
+    "expect": {
+      "trigger": [
+        "sdd-finish-readiness"
+      ]
+    },
+    "may_also": [
+      "sdd-converge-review",
+      "sdd-workflow-router"
+    ],
+    "notes": "命名了发布目标应先进就绪评估;就绪评估不执行发布。"
+  },
+  {
+    "id": "conf-ci-vs-impl-0004",
+    "category": "confusion",
+    "fixture": "spec-plan-approved",
+    "prompt": "S02 的重试上限要改成 5 次,改完记得把测试补上。",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ]
+    },
+    "may_also": [
+      "sdd-implement-slice"
+    ],
+    "notes": "合同内变更先走影响分析,而不是直接改实现。"
+  },
+  {
+    "id": "conf-handoff-vs-retro-0005",
+    "category": "confusion",
+    "fixture": "converged",
+    "prompt": "项目做完了,把上下文整理好方便以后接手,顺便总结下经验教训。",
+    "expect": {
+      "trigger": [
+        "sdd-context-handoff"
+      ]
+    },
+    "may_also": [
+      "sdd-retrospective"
+    ]
+  },
+  {
+    "id": "conf-router-vs-direct-0006",
+    "category": "confusion",
+    "fixture": "spec-plan-approved",
+    "prompt": "我是该继续做 S02,还是先处理别的?帮我定。",
+    "expect": {
+      "trigger": [
+        "sdd-workflow-router"
+      ]
+    },
+    "may_also": [
+      "sdd-implement-slice"
+    ]
+  }
+]

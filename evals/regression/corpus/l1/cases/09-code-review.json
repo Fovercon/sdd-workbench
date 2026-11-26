@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cr-diff-0001",
+    "category": "normal",
+    "fixture": "code-only-changes",
+    "prompt": "review 一下 utils.py 最近的改动,CHANGELOG 里那条\"未加测试\"的变更重点看。",
+    "expect": {
+      "trigger": [
+        "sdd-code-review"
+      ]
+    }
+  },
+  {
+    "id": "cr-area-0002",
+    "category": "normal",
+    "fixture": "code-only-changes",
+    "prompt": "对 src/ 做一次工程质量审查,重点看测试质量和隐藏假设。",
+    "expect": {
+      "trigger": [
+        "sdd-code-review"
+      ]
+    }
+  },
+  {
+    "id": "cr-spec-governed-0003",
+    "category": "confusion",
+    "fixture": "spec-plan-approved",
+    "prompt": "帮我 review 一下 S01 的实现代码质量。",
+    "expect": {
+      "trigger": [
+        "sdd-converge-review"
+      ]
+    },
+    "may_also": [
+      "sdd-code-review"
+    ],
+    "notes": "已批准规格管辖的实现评审应走收敛复核,而非独立代码评审。"
+  },
+  {
+    "id": "cr-fix-authorized-0004",
+    "category": "normal",
+    "fixture": "code-only-changes",
+    "prompt": "review 完把发现的问题直接修掉,我已经授权你修。",
+    "expect": {
+      "trigger": [
+        "sdd-code-review"
+      ]
+    },
+    "may_also": [
+      "sdd-change-impact",
+      "sdd-implement-slice",
+      "sdd-workflow-router"
+    ],
+    "enum_required": false,
+    "notes": "已授权评审后修复,允许退出只读评审后进入修复流程;最终可能是实施结果,不强制仍以评审枚举收尾。"
+  },
+  {
+    "id": "cr-vague-0005",
+    "category": "boundary",
+    "fixture": "code-only-changes",
+    "prompt": "帮我们 review 一下代码。",
+    "expect": {
+      "trigger": [
+        "sdd-code-review"
+      ],
+      "outcome_family": [
+        "INSUFFICIENT_SCOPE|REVIEW_COMPLETE|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "无法钉住评审对象时应要求澄清,不得泛泛而谈。"
+  }
+]

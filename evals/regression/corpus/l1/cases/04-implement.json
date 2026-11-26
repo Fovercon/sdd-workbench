@@ -1,0 +1,78 @@
+[
+  {
+    "id": "impl-slice-0001",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "实现 S02:失败重试与失败事件。按执行卡来,完成这一个切片就停。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ]
+    }
+  },
+  {
+    "id": "impl-tdd-0002",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "实现 S02。仓库规则要求 TDD,先给出失败测试的证据再写实现。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ],
+      "outcome_family": [
+        "SLICE_COMPLETE|SLICE_INCOMPLETE|HUMAN_DECISION_REQUIRED|ENVIRONMENT_BLOCKED"
+      ]
+    }
+  },
+  {
+    "id": "impl-bounded-0003",
+    "category": "normal",
+    "fixture": "bounded-copy",
+    "prompt": "S01 的通知文案里把\"¥\"符号统一换成\"元\",只改这一处,别扩大范围。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ]
+    },
+    "notes": "合同下的有界修改:最小工作流是直接进 implement-slice,而不是重走规格。"
+  },
+  {
+    "id": "impl-env-blocked-0004",
+    "category": "boundary",
+    "fixture": "spec-plan-approved",
+    "prompt": "实现 S02,但本机缺少邮件网关的依赖,环境可能起不来。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ],
+      "outcome_family": [
+        "ENVIRONMENT_BLOCKED|SLICE_INCOMPLETE|HUMAN_DECISION_REQUIRED|SLICE_COMPLETE"
+      ]
+    }
+  },
+  {
+    "id": "impl-dirty-ws-0005",
+    "category": "boundary",
+    "fixture": "slice-in-progress",
+    "prompt": "工作区里还有半成品 S02 和一些没提交的实验代码,先把现场核实清楚再继续实现。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ],
+      "outcome_family": [
+        "WORKSPACE_RECONCILIATION_REQUIRED|SLICE_INCOMPLETE|HUMAN_DECISION_REQUIRED|SLICE_COMPLETE"
+      ]
+    }
+  },
+  {
+    "id": "impl-receipt-0006",
+    "category": "normal",
+    "fixture": "slice-in-progress",
+    "prompt": "继续当前执行卡 card-s02-v1,RED 证据已经在,接着做 GREEN,完成后给我执行回执。",
+    "expect": {
+      "trigger": [
+        "sdd-implement-slice"
+      ]
+    }
+  }
+]

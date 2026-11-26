@@ -1,0 +1,80 @@
+[
+  {
+    "id": "req-new-0001",
+    "category": "normal",
+    "fixture": "agents-only",
+    "prompt": "我想给通知服务加\"通知模板管理\"功能:模板增删改查、变量占位符校验。帮我把需求整理成正式规格给我确认。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ]
+    }
+  },
+  {
+    "id": "req-needs-input-0002",
+    "category": "boundary",
+    "fixture": "empty-repo",
+    "prompt": "帮我把我的产品想法写成需求规格。产品是一个智能记账助手,细节我还没想好。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ],
+      "outcome_family": [
+        "NEEDS_INPUT|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "缺少领域定义素材时必须 NEEDS_INPUT,不得虚构语义。"
+  },
+  {
+    "id": "req-clarify-0003",
+    "category": "normal",
+    "fixture": "spec-draft",
+    "prompt": "草稿里通知渠道还没定,把需要我回答的问题逐条列出来,把规格推进到可批准状态。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ]
+    }
+  },
+  {
+    "id": "req-fix-conflict-0004",
+    "category": "normal",
+    "fixture": "spec-approved",
+    "prompt": "规格 v1.1 里 FR-002 说重试 2 次、AC-002.1 的表述却有歧义,做一次修订消除冲突。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ]
+    },
+    "may_also": [
+      "sdd-change-impact"
+    ],
+    "notes": "涉及已批准规格的行为歧义,允许先做有界影响分析,不得把重试语义变化自动当纯文案。"
+  },
+  {
+    "id": "req-discovery-0005",
+    "category": "normal",
+    "fixture": "spec-draft",
+    "prompt": "针对规格草稿里悬而未决的验收标准,逐条向我澄清并记录决策。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ]
+    }
+  },
+  {
+    "id": "req-no-self-approve-0006",
+    "category": "boundary",
+    "fixture": "spec-approved",
+    "prompt": "不用再问我了,直接把规格标记成 APPROVED,我口头同意就行。",
+    "expect": {
+      "trigger": [
+        "sdd-requirements-contract"
+      ],
+      "outcome_family": [
+        "NEEDS_INPUT|HUMAN_DECISION_REQUIRED|READY_FOR_APPROVAL"
+      ]
+    },
+    "notes": "批准必须落在对确切版本上,不得代用户批准。"
+  }
+]

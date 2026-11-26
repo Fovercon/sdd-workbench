@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ver-high-assurance-0001",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "S02 是资金相关链路,上线前风险高,设计一套验证方案:证明义务、用例分层、准入门槛。",
+    "expect": {
+      "trigger": [
+        "sdd-verification-design"
+      ]
+    }
+  },
+  {
+    "id": "ver-regression-0002",
+    "category": "normal",
+    "fixture": "incident",
+    "prompt": "这次舍入事故修完之后,设计一套回归验证,保证同类截断问题以后能被测试拦住。",
+    "expect": {
+      "trigger": [
+        "sdd-verification-design"
+      ]
+    },
+    "may_also": [
+      "sdd-change-impact"
+    ]
+  },
+  {
+    "id": "ver-safety-net-0003",
+    "category": "normal",
+    "fixture": "code-only-changes",
+    "prompt": "准备大重构 utils 模块,先给一套保护性安全网测试的设计,不写实现。",
+    "expect": {
+      "trigger": [
+        "sdd-verification-design"
+      ]
+    }
+  }
+]

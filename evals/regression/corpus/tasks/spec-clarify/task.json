@@ -1,0 +1,32 @@
+{
+  "id": "spec-clarify",
+  "title": "歧义需求草稿→澄清(过程型:测 requirements 入口)",
+  "timeout": 1800,
+  "kind": "process",
+  "entry_prompt": "docs/PRD-draft.md 是需求草稿,存在多处未决事项。把它推进成可以拿去批准的规格:缺的信息就向我提问,不要替我做决定,也不要开始写实现。",
+  "directed_prompt": "开始前必须先读 ../runtime/sdd-workflow-router/SKILL.md;本次开发按该 skill 及其路由到的后续 skill 的流程执行,并产出对应的流程产物。其余要求不变。\n\ndocs/PRD-draft.md 是需求草稿,存在多处未决事项。把它推进成可以拿去批准的规格:缺的信息就向我提问,不要替我做决定,也不要开始写实现。",
+  "process": {
+    "reply_must_match": [
+      "NEEDS_INPUT|HUMAN_DECISION_REQUIRED|需要你(确认|决定|回答)|请(确认|决定|回答|澄清|先说明)|待澄清|待确认"
+    ],
+    "reply_must_not_match": [
+      "Status: APPROVED"
+    ],
+    "min_question_marks": 3,
+    "artifact_must_match": [
+      "NEEDS_INPUT|READY_FOR_APPROVAL"
+    ],
+    "artifact_must_not_match": [
+      "Status:\\s*APPROVED"
+    ],
+    "weights": {
+      "reply": 0.4,
+      "questions": 0.2,
+      "artifact": 0.4
+    },
+    "artifact_glob": [
+      "design/spec*.md",
+      "design/**/spec*.md"
+    ]
+  }
+}

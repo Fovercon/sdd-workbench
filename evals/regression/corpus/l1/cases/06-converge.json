@@ -1,0 +1,69 @@
+[
+  {
+    "id": "conv-check-0001",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "三个切片都完成了,核对实现与规格是否收敛,给我收敛结论。",
+    "expect": {
+      "trigger": [
+        "sdd-converge-review"
+      ]
+    }
+  },
+  {
+    "id": "conv-tests-green-0002",
+    "category": "boundary",
+    "fixture": "converged",
+    "prompt": "本地测试全绿,是不是就等于收敛了?按规格判定一下。",
+    "expect": {
+      "trigger": [
+        "sdd-converge-review"
+      ],
+      "outcome_family": [
+        "CONVERGED|NOT_CONVERGED|INSUFFICIENT_EVIDENCE|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "测试通过不等于收敛,必须对照验收标准逐条判定。"
+  },
+  {
+    "id": "conv-no-spec-0003",
+    "category": "boundary",
+    "fixture": "code-only-changes",
+    "prompt": "我们没有规格文档,直接判定一下实现收敛了吧?",
+    "expect": {
+      "trigger": [
+        "sdd-converge-review"
+      ],
+      "outcome_family": [
+        "INSUFFICIENT_EVIDENCE|NOT_CONVERGED|HUMAN_DECISION_REQUIRED"
+      ]
+    }
+  },
+  {
+    "id": "conv-finding-route-0004",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "收敛检查时发现 FR-003 其实没有任何验证证据,这个发现应该退回哪个阶段处理?",
+    "expect": {
+      "trigger": [
+        "sdd-change-impact"
+      ]
+    },
+    "may_also": [
+      "sdd-converge-review",
+      "sdd-workflow-router"
+    ],
+    "notes": "请求是对已发现问题做阶段归属与传播分析,不要求重新执行整个收敛审查。"
+  },
+  {
+    "id": "conv-independent-0005",
+    "category": "normal",
+    "fixture": "converged",
+    "prompt": "独立复核:别沿用之前报告的结论,重新对照规格和证据做一次收敛判断。",
+    "expect": {
+      "trigger": [
+        "sdd-converge-review"
+      ]
+    }
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "boot-audit-holdout-0001",
+    "category": "boundary",
+    "fixture": "agents-only",
+    "prompt": "仓库协作约定里的目录和验证命令,哪些在现场能对得上?只核实并列出过期项,不要替我更新文件。",
+    "expect": {"trigger": ["sdd-project-bootstrap"]},
+    "notes": "未参与 description 措辞迭代的独立近义入口;核查只读与命令证据。"
+  },
+  {
+    "id": "boot-discover-holdout-0002",
+    "category": "normal",
+    "fixture": "empty-repo",
+    "prompt": "动工之前先勘察一下工程基础:给我可复现的事实和还无法确定的事,别按常见模板补目录或选技术栈。",
+    "expect": {"trigger": ["sdd-project-bootstrap"]}
+  },
+  {
+    "id": "impl-no-target-0007",
+    "category": "over-process",
+    "fixture": "spec-plan-approved",
+    "prompt": "只把通知文案中的 ¥ 换成元;如果当前代码没有这个字符,如实说明并保持文件原样。",
+    "expect": {"trigger": []},
+    "may_also": ["sdd-implement-slice"],
+    "enum_required": false,
+    "notes": "对象不存在的边界单独保留;不再混作实际局部修正的漏触发证据。"
+  },
+  {
+    "id": "neg-readme-no-target-0009",
+    "category": "negative",
+    "fixture": "agents-only",
+    "prompt": "README 若有 demo 就替换成 orders,若没有就保持原样并告诉我;无需建立项目流程。",
+    "expect": {"trigger": []},
+    "enum_required": false
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "id": "plan-new-0001",
+    "category": "normal",
+    "fixture": "spec-approved",
+    "prompt": "规格批了,做技术设计:模块划分、设计图、切成可独立交付的行为切片。",
+    "expect": {
+      "trigger": [
+        "sdd-plan-slices"
+      ]
+    }
+  },
+  {
+    "id": "plan-consistency-0002",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "检查一下计划里的切片依赖有没有环、有没有遗漏规格条目,做一致性检查。",
+    "expect": {
+      "trigger": [
+        "sdd-plan-slices"
+      ]
+    }
+  },
+  {
+    "id": "plan-needs-decision-0003",
+    "category": "boundary",
+    "fixture": "spec-approved",
+    "prompt": "开始规划,但存储选型我定不了,先把需要我拍板的技术决策列出来。",
+    "expect": {
+      "trigger": [
+        "sdd-plan-slices"
+      ],
+      "outcome_family": [
+        "NEEDS_DECISION|READY_FOR_DESIGN_REVIEW"
+      ]
+    }
+  },
+  {
+    "id": "plan-no-spec-0004",
+    "category": "boundary",
+    "fixture": "agents-only",
+    "prompt": "没有规格也直接编一份计划和切片吧,先干起来再说。",
+    "expect": {
+      "trigger": [
+        "sdd-plan-slices"
+      ],
+      "outcome_family": [
+        "NEEDS_SPEC|NEEDS_DECISION|HUMAN_DECISION_REQUIRED"
+      ]
+    },
+    "notes": "无已批准规格时计划必须拒绝而不是编造。"
+  },
+  {
+    "id": "plan-cards-0005",
+    "category": "normal",
+    "fixture": "spec-plan-approved",
+    "prompt": "把 S03 拆成新的执行卡,每张卡都要能先写出失败测试再实现。",
+    "expect": {
+      "trigger": [
+        "sdd-plan-slices"
+      ]
+    }
+  }
+]

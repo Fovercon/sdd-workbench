@@ -1,0 +1,6 @@
+IMPACT_READY
+
+影响分析:FR-201 与 AC-201.1 被变更 INVALIDATED,需 REVERIFY;现有
+tests/test_retry.py 断言旧行为,属被失效测试,须随规格更新。FR-202 不受影响(UNCHANGED)。
+更新序列:规格修订(FR-201 改为 5 次重试、指数退避 1/2/4/8/16s、上限 30s)→ 测试更新 → 实现更新 → 全量回归。
+实现与测试已按新规格更新并通过。

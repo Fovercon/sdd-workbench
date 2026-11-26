@@ -1,0 +1,74 @@
+[
+  {
+    "id": "neg-quicksort-0001",
+    "category": "negative",
+    "fixture": "empty-repo",
+    "prompt": "用 Python 写一个快速排序给我讲讲思路就行,不用建文件。",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-readme-typo-0002",
+    "category": "negative",
+    "fixture": "agents-only",
+    "prompt": "把 README 里的错别字\"骨架\"改成\"框架\"。",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-summary-0003",
+    "category": "negative",
+    "fixture": "spec-approved",
+    "prompt": "这个仓库是干嘛的?用一句话告诉我。",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-run-tests-0004",
+    "category": "negative",
+    "fixture": "agents-only",
+    "prompt": "跑一下项目测试,把输出贴给我。",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-git-0005",
+    "category": "negative",
+    "fixture": "agents-only",
+    "prompt": "当前 git 分支是什么?有没有未提交的改动?",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-dependency-0006",
+    "category": "negative",
+    "fixture": "agents-only",
+    "prompt": "我们要发 HTTP 请求,依赖清单里该加 requests 吗?",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-chitchat-0007",
+    "category": "negative",
+    "fixture": "empty-repo",
+    "prompt": "今天天气不错。顺便问下你都会哪些编程语言?",
+    "expect": {
+      "trigger": []
+    }
+  },
+  {
+    "id": "neg-notes-doc-0008",
+    "category": "negative",
+    "fixture": "empty-repo",
+    "prompt": "在 notes/ 目录下帮我写一份 API 使用示例文档,直接写就行。",
+    "expect": {
+      "trigger": []
+    }
+  }
+]
