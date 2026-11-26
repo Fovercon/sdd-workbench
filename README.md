@@ -2,7 +2,7 @@
 
 **让 AI 编程任务的需求、设计、实现和验证有据可查。**
 
-当前版本为 **v0.6.2**。本次维护更新补充了切片证据复用示例，以及交付权限和技能读取时机的评测工具与用例。以下安装命令固定到本版本标签。`main` 用于通过验证后的发布集成，后续开发在 `codex/*` 分支进行，详见[分支约定](CONTRIBUTING.md#分支约定)。
+当前版本为 **v0.6.3**。本次更新修复切片卡片引用，保留首次检查的原始证据，并提供带实际省略计数的可选紧凑校验。以下安装命令固定到本版本标签。`main` 用于通过验证后的发布集成，后续开发在 `codex/*` 分支进行，详见[分支约定](CONTRIBUTING.md#分支约定)。
 
 [![CI](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Fovercon/sdd-workbench/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Fovercon/sdd-workbench?color=526675)](https://github.com/Fovercon/sdd-workbench/releases/latest)
@@ -31,9 +31,9 @@ Specification-driven engineering skills for coding agents, with traceable work, 
 
 完整开发流程的默认 RUN 手册从 13,540 字节减至 9,637 字节。调用可选检查点工具时，手册会指向命令和字段参考，两份合计 14,202 字节。实际模型用量随任务和读取路径变化。
 
-[上下文审视与实验](https://github.com/Fovercon/sdd-workbench/blob/v0.5.0/docs/optimization/V0.4.1-CONTEXT-REVIEW.md) · [复测协议](https://github.com/Fovercon/sdd-workbench/blob/v0.6.2/evals/context/README.md)
+[上下文审视与实验](https://github.com/Fovercon/sdd-workbench/blob/v0.5.0/docs/optimization/V0.4.1-CONTEXT-REVIEW.md) · [复测协议](https://github.com/Fovercon/sdd-workbench/blob/v0.6.3/evals/context/README.md)
 
-切片回执、时间线和任务表如何引用同一次检查，见[证据复用示例](https://github.com/Fovercon/sdd-workbench/blob/v0.6.2/docs/optimization/SLICE-COMPLETION-RECORDS.md)。12 个技能的默认运行内容沿用 v0.6.1。该运行内容此前完成 211 个标准试次，达到 13 项门槛中的 8 项。[本版改动与评测依据](https://github.com/Fovercon/sdd-workbench/blob/v0.6.2/docs/releases/0.6.2.md)
+切片回执、时间线和任务表如何引用同一次检查，见[证据复用示例](https://github.com/Fovercon/sdd-workbench/blob/v0.6.3/docs/optimization/SLICE-COMPLETION-RECORDS.md)。12 个技能保持阶段与安装兼容。最终运行内容完成 211 个标准试次，达到 13 项门槛中的 9 项；全流程成本和权限遵守仍有缺口。[本版改动与评测依据](https://github.com/Fovercon/sdd-workbench/blob/v0.6.3/docs/releases/0.6.3.md)
 
 ## 从一个任务开始
 
@@ -64,7 +64,7 @@ Specification-driven engineering skills for coding agents, with traceable work, 
 推荐在终端执行这一行（需要 Node.js 20+ 和 Git）：
 
 ```sh
-npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.2 -g -a codex hermes-agent zcode opencode pi -y
+npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.3 -g -a codex hermes-agent zcode opencode pi -y
 ```
 
 此命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)，将全部 12 个 skills
@@ -77,12 +77,12 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 
 | 平台 | 一行安装命令 |
 |---|---|
-| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.2 -g -a codex -y` |
-| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.2 -g -a hermes-agent -y` |
-| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.2 -g -a zcode -y` |
-| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.6.2'` |
-| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.2 -g -a opencode -y` |
-| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.6.2` |
+| Codex | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.3 -g -a codex -y` |
+| Hermes | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.3 -g -a hermes-agent -y` |
+| Z.ai ZCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.3 -g -a zcode -y` |
+| DeepSeek Harness | `dsh plugin --profile cli add 'github:Fovercon/sdd-workbench#v0.6.3'` |
+| OpenCode | `npx skills@1.7.4 add https://github.com/Fovercon/sdd-workbench/tree/v0.6.3 -g -a opencode -y` |
+| Pi Agent | `pi install git:github.com/Fovercon/sdd-workbench@v0.6.3` |
 
 原生插件仍读取仓库中的同一个 `skills/`，不维护平台专用指令副本。DeepSeek 命令中的
 `cli` 是 profile 名，可换成实际使用的 profile；需要 Harness 0.2.1-rc.2。
@@ -94,7 +94,7 @@ Windows 创建链接受系统权限影响时，CLI 可能回退为复制；可�
 支持插件命令的 Codex 客户端也可执行：
 
 ```sh
-codex plugin marketplace add Fovercon/sdd-workbench --ref v0.6.2 && codex plugin add sdd-workbench@sdd-workbench
+codex plugin marketplace add Fovercon/sdd-workbench --ref v0.6.3 && codex plugin add sdd-workbench@sdd-workbench
 ```
 
 ZCode 可在 Settings → Plugins → Create marketplace 中填写
@@ -107,14 +107,14 @@ ZCode 可在 Settings → Plugins → Create marketplace 中填写
 需要 Python 3.10+ 和 Git；安装器无第三方依赖，支持 macOS、Linux、Windows：
 
 ```sh
-git clone --branch v0.6.2 --depth 1 https://github.com/Fovercon/sdd-workbench.git
+git clone --branch v0.6.3 --depth 1 https://github.com/Fovercon/sdd-workbench.git
 cd sdd-workbench
 python3 tools/install.py install --agent all
 ```
 
 `all` 为六个平台各安装一份受回执管理的完整副本；若希望只有一个公共目录，使用
 `--agent shared`，并按兼容说明配置 Hermes、ZCode 的入口。也可以下载
-[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.6.2)，解压后运行安装器。
+[Release ZIP](https://github.com/Fovercon/sdd-workbench/releases/tag/v0.6.3)，解压后运行安装器。
 Windows 可将 `python3` 替换为 `python`。
 
 可指定 `--agent codex hermes zcode deepseek opencode pi` 中的一个或多个。
