@@ -330,15 +330,16 @@ class EvidenceTests(unittest.TestCase):
 
     def test_concurrent_lock_and_abrupt_termination(self):
         # No child process is left alive when the helper itself is killed.
-        script = "import pathlib,time; print('started',flush=True); p=pathlib.Path('release');\nwhile not p.exists(): time.sleep(.02)"
+        script = "import pathlib,time; pathlib.Path('ready').touch(); p=pathlib.Path('release');\nwhile not p.exists(): time.sleep(.02)"
         child = subprocess.Popen(self.args(code=script),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         try:
             deadline=time.monotonic()+6
-            while b'"stdout"' not in self.log.read_bytes() and time.monotonic()<deadline:
+            # Windows byte-range locks reject reads of the locked log as well.
+            while not (self.root/'ready').exists() and time.monotonic()<deadline:
                 if child.poll() is not None: break
                 time.sleep(.03)
             self.assertIsNone(child.poll())
-            self.assertIn(b'"stdout"',self.log.read_bytes())
+            self.assertTrue((self.root/'ready').exists())
             self.record('other', code="open('forbidden','w').close()",rc=2)
             self.assertFalse((self.root/'forbidden').exists())
             child.kill()
