@@ -35,6 +35,9 @@ delivered files or pinned revision. Inspect actual tool results and the
 mandated trace entries. A shorter record or a correct final label alone
 cannot pass the case.
 
+The [producer and fresh-recipient protocol](forward/record-once.md) follows
+the first evidence write through S02 and scores natural records as delivered.
+
 Evaluate implementation decisions, scope discipline, evidence, and routing—not exact wording or heading order.
 
 ## Case 1: MML selected-failure rerun replacement
@@ -281,6 +284,31 @@ material claims; the independent function probes/green suite are mechanical
 behavior evidence, not a semantic report score or proof of OS isolation. Preserve
 negative and partial results; interrupted trials stay unscored. A retained method
 also needs exact-snapshot standard without automatic baseline acceptance.
+
+## Original proof output survives a test revision
+
+In the [record handoff protocol](forward/record-once.md), let a first genuine
+behavioral RED run before production changes. Revise or extend the tests and
+run the same command again. Inspect both original raw outputs, exact tested
+production/test identities and the receipt's references after the slice closes.
+The later result cannot replace the earlier observation merely because argv
+matches. Compare real child output/exit with persisted records; a recording
+process returning success is not a test pass. Include compatible capture,
+self-contained/frozen receipts and project-pinned alternatives in focused guards.
+
+## Compact verification preserves diagnostics
+
+Compare full and compact verification on actual saved receipts, current source
+drift, invalid/incomplete records and no-reference documents. Preserve original
+verify exits separately from a later filter's pipeline exit. Each recorded
+target retains its actual command exit, including valid nonzero RED; history
+integrity and current applicability stay distinct. Observe natural option use,
+handwritten summaries, temporary writes and actual returned bytes alongside
+whole-flow requests and usage. Less returned text alone is not overall savings.
+In compact-result interpretation, distinguish the pre-omission history counts
+from retained rows, repeated references from unique executions, and omitted
+source fields from omitted records. Actual omission counts describe this
+invocation's projections, not unique command executions or test counts.
 
 ## General failure conditions
 

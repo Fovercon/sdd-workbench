@@ -44,6 +44,36 @@ Inspect and identify exact versions of:
 
 Do not trust paths, symbols, commands, completion claims, or line numbers merely because the card lists them. Verify short-lived execution detail against the current repository.
 
+In the receipt's card-identity field, cite the consumed revision with a Markdown
+link to its retained heading or established stable card file. Resolve the URL
+from the receipt's actual location; a same-document reference can use only the
+fragment. An inline-code card ID is a label, not a navigation link.
+
+## Proof check records
+
+Capture foreground RED/baseline, GREEN and required regression commands as
+durable invocation-specific records reachable from the receipt. Reuse the
+project's established capture when it already preserves complete output and
+tested identities. Otherwise, when
+current authority permits an appendable Markdown process log and Python 3.10+
+is available, use `scripts/evidence.py record` as described in
+[evidence records](references/evidence-records.md). Supply the actual production,
+test and relevant fixture paths before execution; use a fresh ID for each real
+invocation, including failed attempts before repairs.
+
+Run the selected proof command through capture from its first execution,
+including a quick preview inside a test-writing command. Test creation and
+the captured first run can share one tool call; a later recorded repeat is a
+separate observation.
+
+The returned `command_exit` is the check's outcome; successful recording means
+the observation was saved. Cite that actual record from the receipt's check
+role. One invocation may satisfy several roles; a later run is new evidence
+even when its command is identical. Searches and routine file reads need no
+new check record. Preserve project-required inline fields, frozen records and
+write limits; use the established evidence workflow when capture is unavailable
+or its format is incompatible. Read-only `verify` checks the saved links.
+
 ## Workflow
 
 ### 1. Establish slice identity and authority
@@ -103,7 +133,7 @@ For `RED_GREEN`:
 
 1. add or select the smallest test that expresses the slice behavior;
 2. name the production change that would make it pass;
-3. run the exact focused command;
+3. run the exact focused command through the selected capture from its first attempt;
 4. confirm it fails rather than errors;
 5. confirm the failure is caused by the missing or defective behavior.
 

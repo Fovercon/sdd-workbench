@@ -7,14 +7,22 @@ process log. Reference the exact current card and baseline record instead of
 copying their unchanged fields. Use this shape; expand the sections below only
 for information the referenced records or compact receipt cannot carry:
 
+Each command observation holds its actual argv/cwd, complete stdout/stderr,
+child exit and tested production/test/fixture identities. Capture it with the
+check, before later edits; the receipt maps roles to those actual records and
+adds classification and limits. Project-required self-contained receipts keep
+their specified command/result/identity fields inline.
+When that format requires complete hashes, include the full values for every
+required source/test file, including unchanged files, from the actual record.
+
 ```markdown
 ## receipt-s02-v1
 - Outcome / slice / mode / start-end: <actual state and timestamps>
 - Card / authority / contract: <exact record IDs, versions/hashes and exclusions>
 - Workspace baseline: <root, branch/head or file identity, relevant dirty state>
 - Actual surface / deviations: <changed files, card validation and impact>
-- Checks: <RED or baseline, GREEN, regression: command, cwd, exit/result,
-  raw output record, source/environment identity, skips and limits>
+- Checks: <RED/baseline, GREEN, regression role -> Markdown link to the actual
+  invocation record; verdict, environment limits and skips>
 - Findings / risks: <including wrong-failure attempts, classification and route>
 - Closure / next: <stop-condition evidence, task update, remaining action>
 ```
@@ -91,7 +99,7 @@ Do not omit a passing-immediately or wrong-failure investigation.
 
 ## 6. Verification evidence
 
-| Role | Contract/case | Exact command or observation | Result | Baseline/environment | Limits/skips |
+| Role | Contract/case | Actual invocation record / required inline evidence | Verdict | Baseline/environment | Limits/skips |
 |---|---|---|---|---|---|
 | focused GREEN | ... | ... | PASS/FAIL/BLOCKED | ... | ... |
 | contract | ... | ... | ... | ... | ... |

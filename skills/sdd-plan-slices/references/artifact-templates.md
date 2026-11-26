@@ -34,9 +34,26 @@ not an archive. This adds no mandatory document or universal filename convention
 
 For a small change, keep the current execution card under its slice in `tasks.md`
 and the planning/execution receipts in an existing process log. A card or receipt
-is a record, not necessarily a separate file. Give each record a stable ID and
-revision, for example `tasks.md#card-s02-v2`; mark the current card explicitly and
-retain superseded cards and failed attempts as history.
+is a record, not necessarily a separate file. For a new embedded card, make its
+ID/revision an actual unique heading, such as `### card-s02-v2`. Keep that heading
+text when the card closes; its human title and current/closed state are body
+metadata. Changes to executable card content get a new revision while the previous
+card remains retrievable. Retain established stable file/heading identities.
+
+Cite the actual record with a Markdown link relative to the citing document.
+For example, `design/evidence/s02.md` cites a card in `design/tasks.md` as:
+
+```markdown
+[card-s02-v2](../tasks.md#card-s02-v2)
+```
+
+A receipt in Tasks can use `#card-s02-v2`. The ID alone does not create a heading
+or link.
+
+If a card's exact bytes are frozen by a hash reference, leave them unchanged;
+record later current/closed state in the existing unfrozen Tasks/process record
+with a link to that snapshot. A retained `CURRENT` snapshot is historical state,
+not present implementation authority. Preserve superseded cards and failed attempts.
 
 Record each fact once and reference its exact record ID elsewhere. The current
 card still needs the contract versions/hashes, authority source and exclusions,
@@ -186,7 +203,10 @@ Only approved deferrals, each with owner and rationale.
 ## Current slice execution card
 
 ```markdown
-# Execution Card — <slice ID and title>
+# <stable-card-id>
+
+Title: <slice ID and title>
+Card state: CURRENT | CLOSED | SUPERSEDED
 
 Contract sources: <exact Spec/Plan versions/hashes, authority bases and source records>
 Authorization: planning only | implementation authorized

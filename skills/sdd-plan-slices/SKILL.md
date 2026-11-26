@@ -141,6 +141,11 @@ Order slices as a directed acyclic graph. Prefer an early tracer slice that cros
 
 Before implementing a slice, expand only that slice into a short-lived execution card. Include verified files and symbols, preconditions, the exact RED command, implementation constraints, focused and regression verification, and the evidence to report.
 
+Give each new embedded card revision a real, stable heading. Keep its title and
+current/closed state outside that heading, so closing a slice preserves the
+target of its citations. Retain prior revisions and established stable card
+identities; follow the [card template](references/artifact-templates.md#current-slice-execution-card).
+
 Keep the project's source-of-truth map consistent with the actual artifacts: the
 stable Plan owns design; Tasks owns slices/dependencies and, for small work, the
 current card. A separate card follows its existing agreed pointer. Verify inherited
