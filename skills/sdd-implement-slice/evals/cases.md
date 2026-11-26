@@ -296,6 +296,16 @@ matches. Compare real child output/exit with persisted records; a recording
 process returning success is not a test pass. Include compatible capture,
 self-contained/frozen receipts and project-pinned alternatives in focused guards.
 
+## Compact verification preserves diagnostics
+
+Compare full and compact verification on actual saved receipts, current source
+drift, invalid/incomplete records and no-reference documents. Preserve original
+verify exits separately from a later filter's pipeline exit. Each recorded
+target retains its actual command exit, including valid nonzero RED; history
+integrity and current applicability stay distinct. Observe natural option use,
+handwritten summaries, temporary writes and actual returned bytes alongside
+whole-flow requests and usage. Less returned text alone is not overall savings.
+
 ## General failure conditions
 
 The Skill fails if it:

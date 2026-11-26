@@ -406,6 +406,18 @@ def verify(root, document):
     return {'status':'VERIFIED' if valid else 'UNVERIFIED', 'links':results}, 0 if valid else 2
 
 
+def verification_summary(data):
+    links = []
+    for row in data['links']:
+        if row['history'] == 'LINK_OK':
+            continue
+        if (row['history'] == 'RECORDED' and not row['source_changes']
+                and all(value == 'MATCH' for value in row['sources'].values())):
+            row = {key:row[key] for key in ('target', 'history', 'command_exit')}
+        links.append(row)
+    return {'status':data['status'], 'links_checked':len(data['links']), 'links':links}
+
+
 def snapshot(root, names):
     result = {}
     for name in names:
@@ -582,6 +594,8 @@ def main():
     writer.add_argument('--timeout', type=float)
     writer.add_argument('argv', nargs=argparse.REMAINDER)
     reader.add_argument('--document', required=True)
+    reader.add_argument('--summary', action='store_true',
+                        help='Compact normal links and matching sources; retain record exits and diagnostics')
     args = parser.parse_args()
     try:
         root = Path(args.root).resolve(strict=True)
@@ -589,6 +603,8 @@ def main():
             data, status = record(root, args)
         else:
             data, status = verify(root, args.document)
+            if args.summary:
+                data = verification_summary(data)
     except (OSError, ValueError, UnicodeError) as exc:
         data, status = {'status':'ERROR','error':str(exc)}, 2
     print(json.dumps(data, ensure_ascii=True))

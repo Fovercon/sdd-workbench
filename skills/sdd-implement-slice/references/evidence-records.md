@@ -85,7 +85,7 @@ Keep historical cards and their stable locations available after advancing to S0
 
 ```sh
 python3 /path/to/sdd-implement-slice/scripts/evidence.py verify \
-  --root . --document design/tasks.md
+  --root . --document design/tasks.md --summary
 ```
 
 Run verification on the task table and receipt documents after writing
@@ -98,6 +98,15 @@ continued after its opening parenthesis, reports `UNSUPPORTED` and prevents
 `VERIFIED`. Use the generated single-line form for evidence citations.
 This is a scoped link checker, not a complete Markdown renderer. Code
 examples, bare textual pointers and external web links are outside this check.
+
+`--summary` keeps the same status and exit code. `links_checked` counts local
+reference occurrences, not actual checks; repeated citations count separately.
+Its `links` omits normal `LINK_OK` rows. A `RECORDED` row with no execution-time
+source changes and all current sources `MATCH` keeps its target, history and
+actual command exit, including nonzero exits. All other rows retain full
+diagnostics. Omitted source fields only describe that matching case; `VERIFIED`
+does not mean tests passed or old results are currently applicable. Omit
+`--summary` for the unchanged full per-reference output. Neither mode writes files.
 
 For recorded checks, `history=RECORDED` describes a complete historical
 observation. The per-file `sources` values `MATCH`, `CHANGED`,

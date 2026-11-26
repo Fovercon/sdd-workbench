@@ -35,14 +35,16 @@ class EvidenceTests(unittest.TestCase):
     def invoke(self, args, rc=0):
         p = subprocess.run(args, capture_output=True, timeout=12)
         self.assertEqual(p.returncode, rc, (p.stdout, p.stderr))
+        self.assertTrue(p.stdout, (p.stdout, p.stderr))
         return json.loads(p.stdout)
 
     def record(self, ident='s01-red-v1', code="print('ok')", options=(), rc=0):
         return self.invoke(self.args(ident, code, options), rc)
 
-    def verify(self, rc=0):
+    def verify(self, rc=0, *, summary=False):
         return self.invoke([sys.executable, '-B', str(SCRIPT), 'verify', '--root',
-                            str(self.root), '--document', 'design/tasks.md'], rc)
+                            str(self.root), '--document', 'design/tasks.md',
+                            *(['--summary'] if summary else [])], rc)
 
     def add_link(self, result):
         with self.doc.open('a', encoding='utf-8') as f:
@@ -80,6 +82,71 @@ class EvidenceTests(unittest.TestCase):
             self.assertEqual(result[kind+'_tail'].encode('utf-8','surrogateescape'), data[-4096:])
             self.assertEqual(b''.join(row['data'].encode('utf-8','surrogateescape')
                                      for row in rows if row.get('type') == kind), data)
+
+    def test_summary_keeps_each_record_target_and_actual_exit_without_writes(self):
+        red = self.record(code='raise SystemExit(7)')
+        green = self.record('s01-green-v1')
+        self.add_link(red)
+        self.add_link(red)
+        self.add_link(green)
+        with self.doc.open('a', encoding='utf-8') as stream:
+            stream.write('[trace](../my%20trace.md#existing-trace)\n')
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        full = self.verify()
+        result = self.verify(summary=True)
+        self.assertEqual(set(full), {'status', 'links'})
+        self.assertEqual(len(full['links']), 4)
+        self.assertEqual(result, {'status':'VERIFIED', 'links_checked':4, 'links':[
+            {'target':'../my%20trace.md#sdd-check-s01-red-v1', 'history':'RECORDED', 'command_exit':7},
+            {'target':'../my%20trace.md#sdd-check-s01-red-v1', 'history':'RECORDED', 'command_exit':7},
+            {'target':'../my%20trace.md#sdd-check-s01-green-v1', 'history':'RECORDED', 'command_exit':0}]})
+        self.assertEqual({p:p.read_bytes() for p in self.root.rglob('*') if p.is_file()}, before)
+
+    def test_summary_keeps_execution_changes_even_after_current_source_is_restored(self):
+        self.add_link(self.record(code="from pathlib import Path; Path('jobs.py').write_text('altered')"))
+        self.src.write_text('a = 1\n', encoding='utf-8')
+        item = self.verify(summary=True)['links'][0]
+        self.assertEqual(item['command_exit'], 0)
+        self.assertEqual(item['sources'], {'jobs.py':'MATCH', 'test_jobs.py':'MATCH'})
+        self.assertEqual(item['source_changes'], ['jobs.py'])
+
+    def test_summary_keeps_current_drift_when_recorded_sources_did_not_change(self):
+        self.add_link(self.record())
+        self.src.write_text('a = 2\n', encoding='utf-8')
+        (self.root/'test_jobs.py').unlink()
+        result = self.verify(summary=True)
+        self.assertEqual(result['status'], 'VERIFIED')
+        self.assertEqual(result['links'][0]['source_changes'], [])
+        self.assertEqual(result['links'][0]['sources'], {'jobs.py':'CHANGED', 'test_jobs.py':'MISSING'})
+        self.assertEqual(result['links'][0]['history'], 'RECORDED')
+
+    def test_summary_does_not_hide_broken_or_incomplete_evidence(self):
+        self.add_link(self.record(code="print('original-value')"))
+        self.add_link(self.record('interrupted', code='import time; time.sleep(10)',
+                                  options=['--timeout','0.1'], rc=2))
+        self.log.write_bytes(self.log.read_bytes().replace(b'original-value', b'tampered-value'))
+        with self.doc.open('a', encoding='utf-8') as stream:
+            stream.write('[missing](../my%20trace.md#missing)\n'
+                         '[unsupported](\nmissing.md)\n'
+                         '[trace](../my%20trace.md#existing-trace)\n')
+        full = self.verify(2)
+        result = self.verify(2, summary=True)
+        self.assertEqual(result['status'], 'UNVERIFIED')
+        self.assertEqual(result['links_checked'], 5)
+        self.assertEqual({row['history'] for row in result['links']},
+                         {'INVALID','INCOMPLETE','MISSING_ANCHOR','UNSUPPORTED'})
+        self.assertIn('digest mismatch', next(row['error'] for row in result['links']
+                                            if row['history']=='INVALID'))
+        self.assertEqual(result['links'], [row for row in full['links'] if row['history']!='LINK_OK'])
+
+    def test_summary_empty_document_and_top_level_errors_keep_failure_exit(self):
+        self.assertEqual(self.verify(2, summary=True),
+                         {'status':'NO_LOCAL_REFERENCES', 'links_checked':0, 'links':[]})
+        self.doc.unlink()
+        error = self.verify(2, summary=True)
+        self.assertEqual(error['status'], 'ERROR')
+        self.assertIn('error', error)
+        self.assertNotIn('links', error)
 
     def test_duplicate_id_never_reruns_and_digest_tampering_is_visible(self):
         self.add_link(self.record(code="print('original-value')"))
@@ -257,6 +324,8 @@ class EvidenceTests(unittest.TestCase):
         item=self.verify()['links'][0]
         self.assertEqual(item['history'],'RECORDED')
         self.assertEqual(item['sources']['jobs.py'],'CHANGED')
+        self.assertEqual(self.verify(summary=True)['links'][0], item)
+        self.assertIn('jobs.py', item['source_errors'])
 
     @unittest.skipUnless(os.name=='posix','Signal handling applies to POSIX termination')
     def test_sigterm_cleans_up_direct_child(self):
