@@ -96,11 +96,52 @@ class EvidenceTests(unittest.TestCase):
         result = self.verify(summary=True)
         self.assertEqual(set(full), {'status', 'links'})
         self.assertEqual(len(full['links']), 4)
-        self.assertEqual(result, {'status':'VERIFIED', 'links_checked':4, 'links':[
+        self.assertEqual({key:result[key] for key in ('status','links_checked','links')},
+                         {'status':'VERIFIED', 'links_checked':4, 'links':[
             {'target':'../my%20trace.md#sdd-check-s01-red-v1', 'history':'RECORDED', 'command_exit':7},
             {'target':'../my%20trace.md#sdd-check-s01-red-v1', 'history':'RECORDED', 'command_exit':7},
             {'target':'../my%20trace.md#sdd-check-s01-green-v1', 'history':'RECORDED', 'command_exit':0}]})
         self.assertEqual({p:p.read_bytes() for p in self.root.rglob('*') if p.is_file()}, before)
+
+    def test_summary_distribution_counts_omitted_and_duplicate_reference_occurrences(self):
+        red = self.record(code='raise SystemExit(7)')
+        self.add_link(red)
+        self.add_link(red)
+        self.add_link(self.record('s01-green-v1'))
+        with self.doc.open('a', encoding='utf-8') as stream:
+            stream.write('[trace](../my%20trace.md#existing-trace)\n'
+                         '[again](../my%20trace.md#existing-trace)\n'
+                         '[missing](../my%20trace.md#missing)\n')
+        full = self.verify(2)
+        result = self.verify(2, summary=True)
+        self.assertIn('history_counts', result)
+        self.assertEqual(result['history_counts'], {'RECORDED':3,'LINK_OK':2,'MISSING_ANCHOR':1})
+        self.assertEqual(result['links_checked'], 6)
+        self.assertEqual(sum(result['history_counts'].values()), result['links_checked'])
+        self.assertEqual(len(result['links']), 4)
+        self.assertEqual([(row['target'],row['command_exit']) for row in result['links']
+                          if row['history']=='RECORDED'],
+                         [('../my%20trace.md#sdd-check-s01-red-v1',7),
+                          ('../my%20trace.md#sdd-check-s01-red-v1',7),
+                          ('../my%20trace.md#sdd-check-s01-green-v1',0)])
+        self.assertIn('omission_policy', result)
+        policy = result['omission_policy']
+        self.assertEqual(policy['LINK_OK'], 'whole rows')
+        self.assertEqual(set(full['links'][0]) - set(result['links'][0]),
+                         set(policy['RECORDED']['fields']))
+        self.assertEqual(policy['RECORDED']['fields'], ['source_changes','sources'])
+        self.assertEqual(policy['RECORDED']['when'],
+                         'source_changes=[] and all sources=MATCH')
+
+    def test_summary_all_ordinary_links_remain_distinct_from_no_local_references(self):
+        self.doc.write_text('[trace](../my%20trace.md#existing-trace)\n'
+                            '[again](../my%20trace.md#existing-trace)\n', encoding='utf-8')
+        result = self.verify(summary=True)
+        self.assertIn('history_counts', result)
+        self.assertEqual(result['history_counts'], {'LINK_OK':2})
+        self.assertEqual(result['status'], 'VERIFIED')
+        self.assertEqual(result['links_checked'], 2)
+        self.assertEqual(result['links'], [])
 
     def test_summary_keeps_execution_changes_even_after_current_source_is_restored(self):
         self.add_link(self.record(code="from pathlib import Path; Path('jobs.py').write_text('altered')"))
@@ -138,15 +179,23 @@ class EvidenceTests(unittest.TestCase):
         self.assertIn('digest mismatch', next(row['error'] for row in result['links']
                                             if row['history']=='INVALID'))
         self.assertEqual(result['links'], [row for row in full['links'] if row['history']!='LINK_OK'])
+        self.assertIn('history_counts', result)
+        self.assertEqual(result['history_counts'], {'UNSUPPORTED':1,'INVALID':1,'INCOMPLETE':1,
+                                                   'MISSING_ANCHOR':1,'LINK_OK':1})
 
     def test_summary_empty_document_and_top_level_errors_keep_failure_exit(self):
-        self.assertEqual(self.verify(2, summary=True),
+        result = self.verify(2, summary=True)
+        self.assertEqual({key:result[key] for key in ('status','links_checked','links')},
                          {'status':'NO_LOCAL_REFERENCES', 'links_checked':0, 'links':[]})
+        self.assertIn('history_counts', result)
+        self.assertEqual(result['history_counts'], {})
         self.doc.unlink()
         error = self.verify(2, summary=True)
         self.assertEqual(error['status'], 'ERROR')
         self.assertIn('error', error)
         self.assertNotIn('links', error)
+        self.assertNotIn('history_counts', error)
+        self.assertNotIn('omission_policy', error)
 
     def test_duplicate_id_never_reruns_and_digest_tampering_is_visible(self):
         self.add_link(self.record(code="print('original-value')"))

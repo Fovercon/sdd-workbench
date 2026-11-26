@@ -408,14 +408,22 @@ def verify(root, document):
 
 def verification_summary(data):
     links = []
+    history_counts = {}
     for row in data['links']:
+        history_counts[row['history']] = history_counts.get(row['history'], 0) + 1
         if row['history'] == 'LINK_OK':
             continue
         if (row['history'] == 'RECORDED' and not row['source_changes']
                 and all(value == 'MATCH' for value in row['sources'].values())):
             row = {key:row[key] for key in ('target', 'history', 'command_exit')}
         links.append(row)
-    return {'status':data['status'], 'links_checked':len(data['links']), 'links':links}
+    return {'status':data['status'], 'links_checked':len(data['links']),
+            'history_counts':history_counts,
+            'omission_policy':{
+                'LINK_OK':'whole rows',
+                'RECORDED':{'fields':['source_changes','sources'],
+                            'when':'source_changes=[] and all sources=MATCH'}},
+            'links':links}
 
 
 def snapshot(root, names):

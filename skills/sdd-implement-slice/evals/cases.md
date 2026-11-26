@@ -305,6 +305,9 @@ target retains its actual command exit, including valid nonzero RED; history
 integrity and current applicability stay distinct. Observe natural option use,
 handwritten summaries, temporary writes and actual returned bytes alongside
 whole-flow requests and usage. Less returned text alone is not overall savings.
+In compact-result interpretation, distinguish the pre-omission history counts
+from retained rows, repeated references from unique executions, and omitted
+source fields from omitted records. A display policy is not an occurrence count.
 
 ## General failure conditions
 

@@ -99,14 +99,20 @@ continued after its opening parenthesis, reports `UNSUPPORTED` and prevents
 This is a scoped link checker, not a complete Markdown renderer. Code
 examples, bare textual pointers and external web links are outside this check.
 
-`--summary` keeps the same status and exit code. `links_checked` counts local
-reference occurrences, not actual checks; repeated citations count separately.
-Its `links` omits normal `LINK_OK` rows. A `RECORDED` row with no execution-time
-source changes and all current sources `MATCH` keeps its target, history and
-actual command exit, including nonzero exits. All other rows retain full
-diagnostics. Omitted source fields only describe that matching case; `VERIFIED`
-does not mean tests passed or old results are currently applicable. Omit
-`--summary` for the unchanged full per-reference output. Neither mode writes files.
+`--summary` keeps the same status and exit code. `links_checked` counts original
+reference results, including diagnostic rows. `history_counts` splits that same
+total by history **before** anything is omitted; its counts sum to the total.
+Repeated citations count separately. These are reference occurrences, not unique
+commands, tests or executions.
+
+`omission_policy` describes display rules, not this invocation's counts. `links`
+omits normal `LINK_OK` rows. Every `RECORDED` reference keeps its target, history
+and actual command exit, including nonzero exits. Only its `source_changes` and
+`sources` fields are omitted when there are no recorded execution-time changes
+and all current sources `MATCH`; the record row remains. All other rows retain
+full diagnostics. `VERIFIED` does not mean tests passed or old results are
+currently applicable. Omit `--summary` for the unchanged full per-reference output.
+Neither mode writes files.
 
 For recorded checks, `history=RECORDED` describes a complete historical
 observation. The per-file `sources` values `MATCH`, `CHANGED`,
