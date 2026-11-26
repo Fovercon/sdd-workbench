@@ -124,14 +124,13 @@ class EvidenceTests(unittest.TestCase):
                          [('../my%20trace.md#sdd-check-s01-red-v1',7),
                           ('../my%20trace.md#sdd-check-s01-red-v1',7),
                           ('../my%20trace.md#sdd-check-s01-green-v1',0)])
-        self.assertIn('omission_policy', result)
-        policy = result['omission_policy']
-        self.assertEqual(policy['LINK_OK'], 'whole rows')
+        self.assertIn('omissions', result)
+        self.assertEqual(result['omissions'], {
+            'LINK_OK':{'whole_rows':2},
+            'RECORDED':{'whole_rows':0, 'field_only_references':3,
+                        'fields':['source_changes','sources']}})
         self.assertEqual(set(full['links'][0]) - set(result['links'][0]),
-                         set(policy['RECORDED']['fields']))
-        self.assertEqual(policy['RECORDED']['fields'], ['source_changes','sources'])
-        self.assertEqual(policy['RECORDED']['when'],
-                         'source_changes=[] and all sources=MATCH')
+                         set(result['omissions']['RECORDED']['fields']))
 
     def test_summary_all_ordinary_links_remain_distinct_from_no_local_references(self):
         self.doc.write_text('[trace](../my%20trace.md#existing-trace)\n'
@@ -142,14 +141,22 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(result['status'], 'VERIFIED')
         self.assertEqual(result['links_checked'], 2)
         self.assertEqual(result['links'], [])
+        self.assertIn('omissions', result)
+        self.assertEqual(result['omissions'], {
+            'LINK_OK':{'whole_rows':2},
+            'RECORDED':{'whole_rows':0, 'field_only_references':0, 'fields':[]}})
 
     def test_summary_keeps_execution_changes_even_after_current_source_is_restored(self):
         self.add_link(self.record(code="from pathlib import Path; Path('jobs.py').write_text('altered')"))
         self.src.write_text('a = 1\n', encoding='utf-8')
-        item = self.verify(summary=True)['links'][0]
+        result = self.verify(summary=True)
+        item = result['links'][0]
         self.assertEqual(item['command_exit'], 0)
         self.assertEqual(item['sources'], {'jobs.py':'MATCH', 'test_jobs.py':'MATCH'})
         self.assertEqual(item['source_changes'], ['jobs.py'])
+        self.assertIn('omissions', result)
+        self.assertEqual(result['omissions']['RECORDED'],
+                         {'whole_rows':0, 'field_only_references':0, 'fields':[]})
 
     def test_summary_keeps_current_drift_when_recorded_sources_did_not_change(self):
         self.add_link(self.record())
@@ -160,6 +167,9 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(result['links'][0]['source_changes'], [])
         self.assertEqual(result['links'][0]['sources'], {'jobs.py':'CHANGED', 'test_jobs.py':'MISSING'})
         self.assertEqual(result['links'][0]['history'], 'RECORDED')
+        self.assertIn('omissions', result)
+        self.assertEqual(result['omissions']['RECORDED'],
+                         {'whole_rows':0, 'field_only_references':0, 'fields':[]})
 
     def test_summary_does_not_hide_broken_or_incomplete_evidence(self):
         self.add_link(self.record(code="print('original-value')"))
@@ -189,13 +199,17 @@ class EvidenceTests(unittest.TestCase):
                          {'status':'NO_LOCAL_REFERENCES', 'links_checked':0, 'links':[]})
         self.assertIn('history_counts', result)
         self.assertEqual(result['history_counts'], {})
+        self.assertIn('omissions', result)
+        self.assertEqual(result['omissions'], {
+            'LINK_OK':{'whole_rows':0},
+            'RECORDED':{'whole_rows':0, 'field_only_references':0, 'fields':[]}})
         self.doc.unlink()
         error = self.verify(2, summary=True)
         self.assertEqual(error['status'], 'ERROR')
         self.assertIn('error', error)
         self.assertNotIn('links', error)
         self.assertNotIn('history_counts', error)
-        self.assertNotIn('omission_policy', error)
+        self.assertNotIn('omissions', error)
 
     def test_duplicate_id_never_reruns_and_digest_tampering_is_visible(self):
         self.add_link(self.record(code="print('original-value')"))

@@ -105,14 +105,18 @@ total by history **before** anything is omitted; its counts sum to the total.
 Repeated citations count separately. These are reference occurrences, not unique
 commands, tests or executions.
 
-`omission_policy` describes display rules, not this invocation's counts. `links`
-omits normal `LINK_OK` rows. Every `RECORDED` reference keeps its target, history
-and actual command exit, including nonzero exits. Only its `source_changes` and
-`sources` fields are omitted when there are no recorded execution-time changes
-and all current sources `MATCH`; the record row remains. All other rows retain
-full diagnostics. `VERIFIED` does not mean tests passed or old results are
-currently applicable. Omit `--summary` for the unchanged full per-reference output.
-Neither mode writes files.
+`omissions` reports this invocation's actual projections: `LINK_OK.whole_rows`
+counts omitted ordinary-link rows. `RECORDED.whole_rows` is zero: every record
+reference keeps its target, history and actual command exit, including nonzero
+exits. `field_only_references` counts retained record references with source
+fields omitted; `fields` names those fields, or is empty when that count is zero.
+These are reference occurrences too, not unique executions.
+
+Only `source_changes` and `sources` fields are omitted, when there are no recorded
+execution-time changes and all current sources `MATCH`. The record row remains;
+all other rows retain full diagnostics. `VERIFIED` does not mean tests passed or
+old results are currently applicable. Omit `--summary` for the unchanged full
+per-reference output. Neither mode writes files.
 
 For recorded checks, `history=RECORDED` describes a complete historical
 observation. The per-file `sources` values `MATCH`, `CHANGED`,

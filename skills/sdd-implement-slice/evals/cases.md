@@ -307,7 +307,8 @@ handwritten summaries, temporary writes and actual returned bytes alongside
 whole-flow requests and usage. Less returned text alone is not overall savings.
 In compact-result interpretation, distinguish the pre-omission history counts
 from retained rows, repeated references from unique executions, and omitted
-source fields from omitted records. A display policy is not an occurrence count.
+source fields from omitted records. Actual omission counts describe this
+invocation's projections, not unique command executions or test counts.
 
 ## General failure conditions
 
