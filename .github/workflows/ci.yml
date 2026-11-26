@@ -27,7 +27,17 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python tools/package.py check
       - run: python tools/docs.py check
-      - run: python -B -m unittest discover -s tests -v
+      - name: Verify package and installer regressions
+        shell: python
+        run: |
+          import sys, unittest
+          sys.dont_write_bytecode = True
+          result = unittest.TextTestRunner(verbosity=2).run(
+              unittest.defaultTestLoader.discover('tests'))
+          for test, detail in result.failures + result.errors:
+              message = detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title={test.id()}::{message}', flush=True)
+          sys.exit(not result.wasSuccessful())
       - name: Verify maintenance protocols
         shell: python
         run: |
